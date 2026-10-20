@@ -2082,9 +2082,9 @@
         <div class="panel-head">
           <div class="panel-title">
             <h1 id="il-heading">착시(ing)</h1>
-            <p class="layer-order-note accent-note">거울에 비치면 다른 모양으로 보이는 애매한 원기둥(ambiguous cylinder) 7종 · 종류마다 원기둥 10개를 앞줄 4개-3개-2개-1개 피라미드로 배열</p>
+            <p class="layer-order-note accent-note">거울에 비치면 다른 모양으로 보이는 애매한 원기둥(ambiguous cylinder) 18종 · 종류마다 원기둥 10개를 앞줄 4개-3개-2개-1개 피라미드로 배열</p>
           </div>
-          <span class="count" aria-label="착시 종류 수">7</span>
+          <span class="count" aria-label="착시 종류 수">18</span>
         </div>
         <div class="il-scroll">
           <div class="p3-sec">
@@ -8027,7 +8027,7 @@
     }
 
     /*** 서버 순위 연동 (닷홈 /api/rank.php) ***/
-    var RANK_API_URL = 'https://jhmath.dothome.co.kr/api/rank.php';
+    var RANK_API_URL = '/api/rank.php';
 
     function submitScore(username, score, problemCount) {
       return fetch(RANK_API_URL, {
@@ -8189,8 +8189,32 @@
       var ax = Math.abs(x);
       if (shape === 'circle') { var c = Math.sqrt(Math.max(0, 1 - x * x)); return [c, -c]; }
       if (shape === 'square') return [1, -1];
-      if (shape === 'triangle') return [1 - ax, -1];
+      if (shape === 'triangle') return [1 - ax, 0];
       if (shape === 'diamond') { var d = 1 - ax; return [d, -d]; }
+      if (shape === 'pentagon') {
+        // 뾰족한 위쪽 꼭짓점(0,1), 양옆 꼭짓점(±1,0.31), 평평한 아래쪽 변(y=-0.81)
+        var pu = 1 - 0.691 * ax;
+        var pl = ax <= 0.618 ? -0.809 : -0.809 + (ax - 0.618) * 2.927;
+        return [pu, Math.min(pl, pu)];
+      }
+      if (shape === 'star') {
+        // 별(위쪽 뾰족): 위 팔은 가운데서 솟고 양옆 팔은 y=0.31 높이로 뻗는다.
+        // 아래쪽 두 다리 사이에는 오목한 골(0,-0.38)이 있고, 옆 팔 아래쪽은 파여 있다.
+        var su = ax <= 0.236 ? 1 - 2.928 * ax : 0.309;
+        var sl = ax <= 0.618 ? -0.382 - 0.691 * ax : -0.118 + (ax - 0.382) * 0.691;
+        return [su, Math.min(sl, su)];
+      }
+      if (shape === 'heart') {
+        // 하트: 위쪽 두 봉긋한 둥근 부분(중심 ±0.5, 반지름 0.5)과 가운데 골, 아래쪽 뾰족한 끝(0,-1)
+        var hdx = ax - 0.5;
+        var hu = 0.35 + Math.sqrt(Math.max(0, 0.25 - hdx * hdx));
+        var hl = -1 + 1.35 * Math.pow(ax, 0.85);
+        return [hu, hl];
+      }
+      if (shape === 'cross') {
+        // 십자(플러스): 세로 막대 |x|<=1/3 구간은 전체 높이, 그 밖에서는 가로 막대 높이만
+        return ax <= 1 / 3 ? [1, -1] : [0.34, -0.34];
+      }
       var h = Math.min(1, 2 * (1 - ax)); return [h, -h]; // hexagon
     }
 
@@ -8208,7 +8232,29 @@
       { direct: 'triangle', mirror: 'circle', dName: '삼각형', mName: '원', photo: 'assets/illusion/il6.jpg',
         desc: '직접 보면 삼각기둥, 거울 속에서는 원기둥으로 보입니다. 뾰족했던 꼭짓점의 테두리가 거울에서 둥근 곡선으로 바뀌어요.' },
       { direct: 'hexagon', mirror: 'circle', dName: '육각형', mName: '원', photo: 'assets/illusion/il7.jpg',
-        desc: '직접 보면 육각기둥이지만 거울에 비치면 원기둥으로 보입니다. 각졌던 변들이 거울 속에서는 하나의 둥근 곡선으로 이어져 보여요.' }
+        desc: '직접 보면 육각기둥이지만 거울에 비치면 원기둥으로 보입니다. 각졌던 변들이 거울 속에서는 하나의 둥근 곡선으로 이어져 보여요.' },
+      { direct: 'diamond', mirror: 'circle', dName: '마름모', mName: '원', photo: '',
+        desc: '직접 보면 위아래로 뾰족한 마름모 기둥인데 거울에 비치면 동그란 원기둥으로 보입니다. 뾰족했던 위아래 꼭짓점의 테두리가 거울에서는 둥근 곡선으로 바뀌어요.' },
+      { direct: 'circle', mirror: 'pentagon', dName: '원', mName: '오각형', photo: '',
+        desc: '직접 보면 원기둥, 거울에 비치면 뾰족한 꼭짓점이 위로 솟은 오각기둥으로 보입니다. 거울 시점에서는 테두리 가운데가 가장 높고 아래쪽은 평평해져 오각형이 만들어져요.' },
+      { direct: 'pentagon', mirror: 'circle', dName: '오각형', mName: '원', photo: '',
+        desc: '직접 보면 위쪽이 뾰족한 오각기둥인데 거울에 비치면 동그란 원기둥으로 보입니다. 각졌던 변과 꼭짓점의 테두리가 거울에서는 둥근 곡선으로 이어져요.' },
+      { direct: 'circle', mirror: 'star', dName: '원', mName: '별', photo: '',
+        desc: '직접 보면 원기둥, 거울에 비치면 위쪽이 뾰족하고 양옆으로 팔이 뻗은 별 모양 기둥으로 보입니다. 거울 시점에서는 테두리에 솟은 부분과 파인 골이 번갈아 나타나 별의 팔이 만들어져요.' },
+      { direct: 'star', mirror: 'circle', dName: '별', mName: '원', photo: '',
+        desc: '직접 보면 별 모양 기둥인데 거울에 비치면 동그란 원기둥으로 보입니다. 뾰족했던 별의 팔과 파였던 골의 테두리가 거울에서는 둥근 곡선으로 바뀌어요.' },
+      { direct: 'circle', mirror: 'heart', dName: '원', mName: '하트', photo: '',
+        desc: '직접 보면 원기둥, 거울에 비치면 위쪽이 두 봉긋하게 갈라지고 아래쪽이 뾰족한 하트 모양 기둥으로 보입니다. 거울 시점에서는 테두리 가운데가 오목하게 파여 하트의 골이 만들어져요.' },
+      { direct: 'heart', mirror: 'circle', dName: '하트', mName: '원', photo: '',
+        desc: '직접 보면 하트 모양 기둥인데 거울에 비치면 동그란 원기둥으로 보입니다. 봉긋했던 두 부분과 뾰족했던 아래 끝의 테두리가 거울에서는 둥근 곡선으로 이어져요.' },
+      { direct: 'circle', mirror: 'cross', dName: '원', mName: '십자', photo: '',
+        desc: '직접 보면 원기둥, 거울에 비치면 세로 막대와 가로 막대가 겹친 십자(플러스) 모양 기둥으로 보입니다. 거울 시점에서는 테두리가 가운데 띠에서만 낮아져 십자의 파인 모서리가 만들어져요.' },
+      { direct: 'cross', mirror: 'circle', dName: '십자', mName: '원', photo: '',
+        desc: '직접 보면 십자(플러스) 모양 기둥인데 거울에 비치면 동그란 원기둥으로 보입니다. 직각으로 파였던 모서리의 테두리가 거울에서는 둥근 곡선으로 바뀌어요.' },
+      { direct: 'diamond', mirror: 'triangle', dName: '마름모', mName: '삼각형', photo: '',
+        desc: '직접 보면 위아래로 뾰족한 마름모 기둥인데 거울에 비치면 아래쪽이 평평하고 위쪽만 뾰족한 삼각기둥으로 보입니다. 거울 시점에서는 아래쪽 테두리가 곧게 펴져 삼각형의 밑변이 만들어져요.' },
+      { direct: 'triangle', mirror: 'diamond', dName: '삼각형', mName: '마름모', photo: '',
+        desc: '직접 보면 아래쪽이 평평한 삼각기둥인데 거울에 비치면 위아래 모두 뾰족한 마름모 기둥으로 보입니다. 거울 시점에서는 평평했던 밑변 쪽 테두리도 가운데가 솟아 마름모의 아래 꼭짓점이 만들어져요.' }
     ];
 
     var canvas = document.getElementById('ilCanvas');
