@@ -8259,6 +8259,9 @@
        가 되어 테두리 고리 전체가 각 시점에서 목표 도형과 정확히 겹친다. */
     var IL_H = 2.2;
     var IL_SEG = 80;
+    // 거울 윗변 높이: 45° 시점에서 앞줄 물체의 반사상까지 거울 안에 다 들어오도록
+    // 물체 높이(≈3.2)의 3.6배 수준으로 세로로 길게 잡는다.
+    var IL_MIRROR_TOP = IL_H + 9.4;
 
     function ilProfile(shape, x) {
       var ax = Math.abs(x);
@@ -8514,7 +8517,7 @@
       }
       if (mirrorOn) {
         var ym = mesh.mirrorY, mw = mesh.mirrorHalfW;
-        eat([-mw, ym, -0.1]); eat([mw, ym, -0.1]); eat([mw, ym, IL_H + 2.5]); eat([-mw, ym, IL_H + 2.5]);
+        eat([-mw, ym, -0.1]); eat([mw, ym, -0.1]); eat([mw, ym, IL_MIRROR_TOP]); eat([-mw, ym, IL_MIRROR_TOP]);
       }
       fit.cx = (minX + maxX) / 2;
       fit.cy = (minY + maxY) / 2;
@@ -8594,7 +8597,7 @@
 
       if (mirrorOn) {
         var ym2 = mesh.mirrorY;
-        var mQuad = [[-mesh.mirrorHalfW, ym2, -0.1], [mesh.mirrorHalfW, ym2, -0.1], [mesh.mirrorHalfW, ym2, IL_H + 2.5], [-mesh.mirrorHalfW, ym2, IL_H + 2.5]].map(proj);
+        var mQuad = [[-mesh.mirrorHalfW, ym2, -0.1], [mesh.mirrorHalfW, ym2, -0.1], [mesh.mirrorHalfW, ym2, IL_MIRROR_TOP], [-mesh.mirrorHalfW, ym2, IL_MIRROR_TOP]].map(proj);
         ctx.save();
         ctx.beginPath();
         for (var m = 0; m < mQuad.length; m++) {
