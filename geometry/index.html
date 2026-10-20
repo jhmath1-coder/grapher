@@ -347,7 +347,7 @@
   <div id="titlebar">
     <svg class="appmark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="15" r="6.5" fill="none" stroke="#2f6fb2" stroke-width="2"/><path d="M4 20 L20 4" stroke="#b3352c" stroke-width="2"/><circle cx="20" cy="4" r="2.2" fill="#b3352c"/></svg>
     <span id="docTitle">제목 없음 - 동적 기하 스케치</span>
-    <span id="buildTag">빌드 2026-10-20 15:45 · 지오지브라식 명령창(상합·하합 포함)+자동완성·스냅·실시간 피드백·자동저장</span>
+    <span id="buildTag">빌드 2026-10-20 16:04 · 명령어 대확장(중·고등 과정 전체: 중심·접선·원뿔곡선·도함수·수열·통계)</span>
     <button class="tb-btn" id="undoBtn" type="button" title="실행 취소 (Ctrl+Z)">↩</button>
     <button class="tb-btn" id="redoBtn" type="button" title="다시 실행 (Ctrl+Y)">↪</button>
     <button class="tb-btn" id="shareBtn" type="button">공유</button>
@@ -511,7 +511,7 @@ function tokenize(s){
     if(ch===' '||ch==='\t'){i++;continue;}
     if(/[0-9.]/.test(ch)){let j=i;while(j<s.length&&/[0-9.]/.test(s[j]))j++;toks.push({t:'num',v:parseFloat(s.slice(i,j))});i=j;continue;}
     if(/[A-Za-z_가-힣π]/.test(ch)){let j=i;while(j<s.length&&/[A-Za-z0-9_가-힣]/.test(s[j]))j++;toks.push({t:'id',v:s.slice(i,j)});i=j;continue;}
-    if('+-*/^(),'.indexOf(ch)>=0){toks.push({t:ch});i++;continue;}
+    if('+-*/^(),!'.indexOf(ch)>=0){toks.push({t:ch});i++;continue;}
     throw new Error('알 수 없는 기호: '+ch);
   }
   toks.push({t:'end'});return toks;
@@ -531,7 +531,7 @@ function parseExpr(src){
     return n;
   }
   function parseU(){if(peek().t==='-'){next();return{k:'neg',a:parseU()};}if(peek().t==='+'){next();return parseU();}return parseP();}
-  function parseP(){let n=parseA();if(peek().t==='^'){next();const r=parseU();n={k:'bin',op:'^',l:n,r};}return n;}
+  function parseP(){let n=parseA();while(peek().t==='!'){next();n={k:'fact',a:n};}if(peek().t==='^'){next();const r=parseU();n={k:'bin',op:'^',l:n,r};}return n;}
   function parseA(){
     const tk=next();
     if(tk.t==='num')return{k:'num',v:tk.v};
@@ -547,6 +547,17 @@ function parseExpr(src){
   if(peek().t!=='end')throw new Error('수식 끝에 오류가 있습니다');
   return ast;
 }
+function gammaVal(z){ // 랑초시 근사 (계승의 실수 확장)
+  const C=[0.99999999999980993,676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+  if(z<0.5)return Math.PI/(Math.sin(Math.PI*z)*gammaVal(1-z));
+  z-=1;let x=C[0];for(let i=1;i<9;i++)x+=C[i]/(z+i);
+  const t=z+7.5;return Math.sqrt(2*Math.PI)*Math.pow(t,z+0.5)*Math.exp(-t)*x;
+}
+function factVal(v){
+  if(!isFinite(v)||v<0)return NaN;
+  if(Math.abs(v-Math.round(v))<1e-9){const n=Math.round(v);if(n>170)return Infinity;let r=1;for(let i=2;i<=n;i++)r*=i;return r;}
+  return gammaVal(v+1);
+}
 function evalAst(n,scope){
   if(!n)return NaN;
   switch(n.k){
@@ -556,6 +567,7 @@ function evalAst(n,scope){
       if(n.v==='e')return Math.E;
       return (scope&&scope[n.v]!=null)?scope[n.v]:NaN;
     case 'neg':return -evalAst(n.a,scope);
+    case 'fact':return factVal(evalAst(n.a,scope));
     case 'call':return FUNCS[n.f](evalAst(n.a,scope));
     case 'bin':{
       const l=evalAst(n.l,scope),r=evalAst(n.r,scope);
@@ -620,6 +632,9 @@ function addObj(type,params){
     else if(type==='freehand')o.name='곡선'+(++state.counters.freehand);
     else if(type==='sum')o.name='합';
     else if(type==='param')o.name='a';
+    else if(type==='conic'){state.counters.conic=(state.counters.conic||0)+1;o.name='곡선'+state.counters.conic;}
+    else if(type==='list'){state.counters.list=(state.counters.list||0)+1;o.name='리스트'+state.counters.list;}
+    else if(type==='cseg'){state.counters.cseg=(state.counters.cseg||0)+1;o.name='활꼴'+state.counters.cseg;}
   }
   state.objects.push(o);
   return o;
@@ -755,6 +770,13 @@ function pointAt(g,t){
     return{x:pts[0].x,y:pts[0].y};
   }
   if(g.kind==='function'){const y=evalAst(g.ast,Object.assign(paramScope(),{x:t}));return{x:t,y:y};}
+  if(g.kind==='conic'){
+    if(g.conic==='ellipse'){const u={x:Math.cos(g.theta),y:Math.sin(g.theta)},v=V.perp(u);
+      return{x:g.cx+u.x*g.a*Math.cos(t)+v.x*g.b*Math.sin(t),y:g.cy+u.y*g.a*Math.cos(t)+v.y*g.b*Math.sin(t)};}
+    if(g.conic==='parabola'){const uu=t*t/(4*g.p);return{x:g.vertex.x+g.axisU.x*uu+g.axisV.x*t,y:g.vertex.y+g.axisU.y*uu+g.axisV.y*t};}
+    if(g.conic==='hyperbola'){const u={x:Math.cos(g.theta),y:Math.sin(g.theta)},v=V.perp(u);
+      return{x:g.cx+u.x*g.a*Math.cosh(clamp(t,-1.7,1.7))+v.x*g.b*Math.sinh(clamp(t,-1.7,1.7)),y:g.cy+u.y*g.a*Math.cosh(clamp(t,-1.7,1.7))+v.y*g.b*Math.sinh(clamp(t,-1.7,1.7))};}
+  }
   return null;
 }
 function projectT(g,pt){
@@ -789,6 +811,13 @@ function projectT(g,pt){
     return bt;
   }
   if(g.kind==='function')return pt.x;
+  if(g.kind==='conic'){
+    if(g.conic==='ellipse'){const u={x:Math.cos(g.theta),y:Math.sin(g.theta)},v=V.perp(u);const d=V.sub(pt,{x:g.cx,y:g.cy});
+      return Math.atan2(V.dot(d,v)/g.b,V.dot(d,u)/g.a);}
+    if(g.conic==='parabola')return V.dot(V.sub(pt,g.vertex),g.axisV);
+    if(g.conic==='hyperbola'){const u={x:Math.cos(g.theta),y:Math.sin(g.theta)},v=V.perp(u);const d=V.sub(pt,{x:g.cx,y:g.cy});
+      return Math.asinh(V.dot(d,v)/g.b);}
+  }
   return 0;
 }
 function applyXformPt(p,xf,G){
@@ -820,6 +849,175 @@ function applyXform(g,xf,G){
 function polyArea(pts){let s=0;for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];s+=a.x*b.y-b.x*a.y;}return Math.abs(s/2);}
 function polyPerim(pts){let s=0;for(let i=0;i<pts.length;i++)s+=V.len(V.sub(pts[(i+1)%pts.length],pts[i]));return s;}
 function freehandLen(g){if(!g||!g.pts)return 0;let s=0;for(let i=1;i<g.pts.length;i++)s+=V.len(V.sub(g.pts[i],g.pts[i-1]));return s;}
+function circumcenterOf(p1,p2,p3){
+  const dd=2*(p1.x*(p2.y-p3.y)+p2.x*(p3.y-p1.y)+p3.x*(p1.y-p2.y));
+  if(Math.abs(dd)<1e-9)return null;
+  const s1=p1.x*p1.x+p1.y*p1.y,s2=p2.x*p2.x+p2.y*p2.y,s3=p3.x*p3.x+p3.y*p3.y;
+  return{x:(s1*(p2.y-p3.y)+s2*(p3.y-p1.y)+s3*(p1.y-p2.y))/dd,
+         y:(s1*(p3.x-p2.x)+s2*(p1.x-p3.x)+s3*(p2.x-p1.x))/dd};
+}
+function storedNum(o,base){ // {base}Val 또는 {base}Param(매개변수 id)에서 현재 숫자 해석
+  const pid=o[base+'Param'];
+  if(pid){const po=byId(pid);if(po&&po.type==='param')return po.value;}
+  return o[base+'Val'];
+}
+function storedTokVal(d){ // {v:숫자} 또는 {p:매개변수 id} 토큰 해석
+  if(!d)return NaN;
+  if(d.p){const po=byId(d.p);return po?po.value:NaN;}
+  return d.v;
+}
+function arcGeomOf(o,G){
+  const kind=o.type==='cseg'?'cseg':o.type;
+  if(o.mode==='circle'){ // (원, 시작점, 끝점): 원의 중심·반지름을 그대로 사용
+    const cg=G[o.parents[0]],s=G[o.parents[1]],e=G[o.parents[2]];
+    if(!cg||!cg.c||!s||!e)return null;
+    return{kind:kind,c:{x:cg.c.x,y:cg.c.y},r:cg.r,
+      a1:Math.atan2(s.y-cg.c.y,s.x-cg.c.x),a2:Math.atan2(e.y-cg.c.y,e.x-cg.c.x)};
+  }
+  if(o.mode==='pts3'){ // 세 점을 지나는 호: 외심이 중심, 가운데 점을 지나는 쪽으로 잰다
+    const p1=G[o.parents[0]],p2=G[o.parents[1]],p3=G[o.parents[2]];
+    if(!p1||!p2||!p3)return null;
+    const cc=circumcenterOf(p1,p2,p3);if(!cc)return null;
+    let a1=Math.atan2(p1.y-cc.y,p1.x-cc.x),a2=Math.atan2(p3.y-cc.y,p3.x-cc.x);
+    const aM=Math.atan2(p2.y-cc.y,p2.x-cc.x);
+    const TAU=2*Math.PI,dd=(x,y)=>((y-x)%TAU+TAU)%TAU;
+    if(Math.abs(dd(a1,aM)+dd(aM,a2)-dd(a1,a2))>1e-6){const tmp=a1;a1=a2;a2=tmp;}
+    return{kind:kind,c:cc,r:V.len(V.sub(p1,cc)),a1:a1,a2:a2};
+  }
+  const c=G[o.parents[0]],s=G[o.parents[1]],e=G[o.parents[2]];
+  if(!c||!s||!e)return null;
+  return{kind:o.type,c:{x:c.x,y:c.y},r:V.len(V.sub(s,c)),
+    a1:Math.atan2(s.y-c.y,s.x-c.x),a2:Math.atan2(e.y-c.y,e.x-c.x)};
+}
+/* ── 함수 스캔: 근·극값·변곡점 (구간 스캔 + 이분법, 오차 1e-4 이내) ── */
+const _scanCache=new Map();
+function scanFnPoints(fnObj,kind,lo,hi){
+  const key=fnObj.id+'|'+kind+'|'+lo+'|'+hi+'|'+(fnObj.expr||'')+'|'+JSON.stringify(paramScope());
+  if(_scanCache.has(key))return _scanCache.get(key);
+  const f=x=>evalFnObj(fnObj,GEOM,x);
+  let target;
+  if(kind==='root')target=f;
+  else if(kind==='extremum')target=x=>{const h=1e-3;return (f(x+h)-f(x-h))/(2*h);};
+  else target=x=>{const h=1e-2;return (f(x-h)-2*f(x)+f(x+h))/(h*h);};
+  const N=480,out=[];
+  const pushX=rx=>{if(!out.length||Math.abs(rx-out[out.length-1])>0.01)out.push(rx);};
+  let lastNZ=null,zeroX=null; // 부호가 있는 마지막 표본 / 사이에 낀 0 표본 (표본점이 정확히 해와 겹치는 경우)
+  for(let i=0;i<=N;i++){
+    const x=lo+(hi-lo)*i/N,v=target(x);
+    if(!isFinite(v)){lastNZ=null;zeroX=null;continue;}
+    if(Math.abs(v)<1e-12){if(zeroX===null)zeroX=x;continue;}
+    const s=v>0?1:-1;
+    if(lastNZ&&lastNZ.s!==s){
+      if(zeroX!==null)pushX(zeroX);
+      else{
+        let a=lastNZ.x,b=x,va=lastNZ.v;
+        for(let k=0;k<50;k++){const mid=(a+b)/2,vm=target(mid);if(!isFinite(vm))break;if(va*vm<=0)b=mid;else{a=mid;va=vm;}}
+        pushX((a+b)/2);
+      }
+    }
+    lastNZ={x:x,v:v,s:s};zeroX=null;
+  }
+  if(_scanCache.size>80)_scanCache.clear();
+  _scanCache.set(key,out);
+  return out;
+}
+/* ── 다항식 해석 (도함수 기호 미분·점근선용) ── */
+function polyTrim(a){while(a.length>1&&Math.abs(a[a.length-1])<1e-12)a.pop();return a;}
+function polyAdd(a,b,s){const n=Math.max(a.length,b.length),r=[];for(let i=0;i<n;i++)r.push((a[i]||0)+s*(b[i]||0));return polyTrim(r);}
+function polyMul(a,b){const r=new Array(a.length+b.length-1).fill(0);for(let i=0;i<a.length;i++)for(let j=0;j<b.length;j++)r[i+j]+=a[i]*b[j];return polyTrim(r);}
+function polyFromAst(n){
+  if(!n)return null;
+  switch(n.k){
+    case 'num':return[n.v];
+    case 'var':{if(n.v==='x')return[0,1];const sc=paramScope();return sc[n.v]!=null?[sc[n.v]]:null;}
+    case 'neg':{const a=polyFromAst(n.a);return a?a.map(v=>-v):null;}
+    case 'fact':case 'call':return null;
+    case 'bin':{
+      if(n.op==='/'){
+        const numA=polyFromAst(n.l);if(!numA)return null;
+        const den=polyFromAst(n.r);if(!den||den.length!==1||Math.abs(den[0])<1e-12)return null;
+        return polyTrim(numA.map(v=>v/den[0]));
+      }
+      const a=polyFromAst(n.l),b=polyFromAst(n.r);if(!a||!b)return null;
+      if(n.op==='+')return polyAdd(a,b,1);
+      if(n.op==='-')return polyAdd(a,b,-1);
+      if(n.op==='*')return polyMul(a,b);
+      if(n.op==='^'){
+        if(n.r.k!=='num'||!Number.isInteger(n.r.v)||n.r.v<0||n.r.v>12)return null;
+        let r=[1];for(let i=0;i<n.r.v;i++)r=polyMul(r,a);return r;
+      }
+    }
+  }
+  return null;
+}
+function polyEval(cs,x){let s=0;for(let i=cs.length-1;i>=0;i--)s=s*x+cs[i];return s;}
+function polyRootsReal(cs){
+  const d=cs.length-1;
+  if(d<1)return[];
+  if(d===1)return[-cs[0]/cs[1]];
+  if(d===2){
+    const A=cs[2],B=cs[1],C=cs[0],disc=B*B-4*A*C;
+    if(disc<0)return[];const sq=Math.sqrt(disc);
+    return disc<1e-12?[-B/(2*A)]:[(-B-sq)/(2*A),(-B+sq)/(2*A)];
+  }
+  const out=[];const N=600,LO=-60,HI=60;let px=LO,pv=polyEval(cs,LO);
+  for(let i=1;i<=N;i++){
+    const x=LO+(HI-LO)*i/N,v=polyEval(cs,x);
+    if(isFinite(pv)&&isFinite(v)&&pv*v<0){
+      let a=px,b=x,va=pv;
+      for(let k=0;k<44;k++){const mid=(a+b)/2,vm=polyEval(cs,mid);if(va*vm<=0)b=mid;else{a=mid;va=vm;}}
+      out.push((a+b)/2);
+    }
+    px=x;pv=v;
+  }
+  return out;
+}
+function asymptotesOf(fnObj){
+  const ast=fnObj.ast;if(!ast)return[];
+  let numA=null,denA=null;
+  if(ast.k==='bin'&&ast.op==='/'){numA=polyFromAst(ast.l);denA=polyFromAst(ast.r);}
+  else{numA=polyFromAst(ast);denA=numA?[1]:null;}
+  if(!numA||!denA)return[];
+  const out=[];
+  if(denA.length>1){
+    for(const r of polyRootsReal(denA)){
+      if(Math.abs(polyEval(numA,r))>1e-6)out.push({v:r});
+    }
+  }
+  const dn=numA.length-1,dd=denA.length-1;
+  if(dn<dd)out.push({l:{m:0,b:0}});
+  else if(dn===dd)out.push({l:{m:0,b:numA[dn]/denA[dd]}});
+  else if(dn===dd+1){ // 사선 점근선: 다항식 나눗셈의 몫 (1차)
+    const rem=numA.slice();
+    const q1=numA[dn]/denA[dd];
+    for(let i=0;i<denA.length;i++)rem[dn-dd+i]-=q1*denA[i];
+    const q0=(rem[dd]||0)/denA[dd];
+    out.push({l:{m:q1,b:q0}});
+  }
+  return out;
+}
+function conicSamplePts(g){
+  if(!g)return[];
+  if(g.conic==='ellipse'){
+    const u={x:Math.cos(g.theta),y:Math.sin(g.theta)},v=V.perp(u),pts=[];
+    for(let i=0;i<=96;i++){const t=2*Math.PI*i/96;pts.push({x:g.cx+u.x*g.a*Math.cos(t)+v.x*g.b*Math.sin(t),y:g.cy+u.y*g.a*Math.cos(t)+v.y*g.b*Math.sin(t)});}
+    return[pts];
+  }
+  if(g.conic==='hyperbola'){
+    const u={x:Math.cos(g.theta),y:Math.sin(g.theta)},v=V.perp(u);
+    return[1,-1].map(s=>{
+      const pts=[];
+      for(let i=0;i<=48;i++){const t=-1.7+3.4*i/48;pts.push({x:g.cx+u.x*s*g.a*Math.cosh(t)+v.x*g.b*Math.sinh(t),y:g.cy+u.y*s*g.a*Math.cosh(t)+v.y*g.b*Math.sinh(t)});}
+      return pts;
+    });
+  }
+  if(g.conic==='parabola'){
+    const pts=[],T=g.T||8;
+    for(let i=0;i<=72;i++){const t=-T+2*T*i/72;const uu=t*t/(4*g.p);pts.push({x:g.vertex.x+g.axisU.x*uu+g.axisV.x*t,y:g.vertex.y+g.axisU.y*uu+g.axisV.y*t});}
+    return[pts];
+  }
+  return[];
+}
 
 function applyAffine(A,p){return{x:A.a*p.x+A.b*p.y+A.tx,y:A.c*p.x+A.d*p.y+A.ty};}
 function affineFrom(P,Q){
@@ -914,6 +1112,46 @@ function computeGeom(o,G){
         const ang=base+(o.idx||0)*2*Math.PI/(o.n||5);
         return{kind:'point',x:c.x+r*Math.cos(ang),y:c.y+r*Math.sin(ang)};
       }
+      if(o.kind==='circumcenter'||o.kind==='incenter'||o.kind==='centroid'||o.kind==='orthocenter'){
+        const A=G[o.parents[0]],B=G[o.parents[1]],C=G[o.parents[2]];if(!A||!B||!C)return null;
+        if(o.kind==='centroid')return{kind:'point',x:(A.x+B.x+C.x)/3,y:(A.y+B.y+C.y)/3};
+        if(o.kind==='incenter'){
+          const a=V.len(V.sub(C,B)),b=V.len(V.sub(C,A)),c=V.len(V.sub(B,A)),s=a+b+c;
+          if(s<1e-12)return null;
+          return{kind:'point',x:(a*A.x+b*B.x+c*C.x)/s,y:(a*A.y+b*B.y+c*C.y)/s};
+        }
+        const cc=circumcenterOf(A,B,C);if(!cc)return null;
+        if(o.kind==='circumcenter')return{kind:'point',x:cc.x,y:cc.y};
+        return{kind:'point',x:A.x+B.x+C.x-2*cc.x,y:A.y+B.y+C.y-2*cc.y}; // 수심 = A+B+C−2·외심
+      }
+      if(o.kind==='polycentroid'){
+        const pg=G[o.parents[0]];if(!pg||!pg.pts||pg.pts.length<3)return null;
+        const pts=pg.pts;let cr=0,cx=0,cy=0;
+        for(let i=0;i<pts.length;i++){const p=pts[i],q=pts[(i+1)%pts.length];const f=p.x*q.y-q.x*p.y;cr+=f;cx+=(p.x+q.x)*f;cy+=(p.y+q.y)*f;}
+        if(Math.abs(cr)<1e-12){const m=pts.reduce((s,p)=>({x:s.x+p.x/pts.length,y:s.y+p.y/pts.length}),{x:0,y:0});return{kind:'point',x:m.x,y:m.y};}
+        return{kind:'point',x:cx/(3*cr),y:cy/(3*cr)};
+      }
+      if(o.kind==='division'){
+        const A=G[o.parents[0]],B=G[o.parents[1]];if(!A||!B)return null;
+        const m=storedNum(o,'m'),n=storedNum(o,'n');if(!isFinite(m)||!isFinite(n))return null;
+        if(o.ext){const d=m-n;if(Math.abs(d)<1e-12)return null;return{kind:'point',x:(m*B.x-n*A.x)/d,y:(m*B.y-n*A.y)/d};}
+        const d=m+n;if(Math.abs(d)<1e-12)return null;
+        return{kind:'point',x:(n*A.x+m*B.x)/d,y:(n*A.y+m*B.y)/d};
+      }
+      if(o.kind==='divfrac'){
+        const g=G[o.parents[0]];if(!g||!g.d)return null;
+        const t=storedNum(o,'t');if(!isFinite(t))return null;
+        const p=V.add(g.a,V.mul(g.d,t));return{kind:'point',x:p.x,y:p.y};
+      }
+      if(o.kind==='focuspt'){const cg=G[o.parents[0]];if(!cg||!cg.foci)return null;const f=cg.foci[o.idx||0];return f?{kind:'point',x:f.x,y:f.y}:null;}
+      if(o.kind==='vertexpt'){const cg=G[o.parents[0]];if(!cg||!cg.vertices)return null;const v=cg.vertices[o.idx||0];return v?{kind:'point',x:v.x,y:v.y}:null;}
+      if(o.kind==='scanpt'){
+        const fn=byId(o.parents[0]);if(!fn)return null;
+        const xs=scanFnPoints(fn,o.scanKind,o.lo,o.hi);const x=xs[o.idx||0];
+        if(x==null)return null;
+        const y=o.scanKind==='root'?0:evalFnObj(fn,G,x);
+        return{kind:'point',x:x,y:isFinite(y)?y:0};
+      }
       return null;
     }
     case 'segment':case 'ray':case 'line':case 'vector':{
@@ -935,6 +1173,39 @@ function computeGeom(o,G){
         const d=V.perp(V.sub(b,a));
         if(V.len(d)<1e-12)return null;
         return lineGeom(mid,V.add(mid,d),'line');
+      }
+      if(o.mode==='unit'){ // 단위벡터: 원본 벡터와 같은 방향, 길이 1
+        const g=G[o.parents[0]];if(!g||!g.d||g.len<1e-12)return null;
+        const u=V.unit(g.d);return lineGeom(g.a,V.add(g.a,u),'vector');
+      }
+      if(o.mode==='tangentC'){ // 점에서 원에 그은 접선 (idx번째 접점 방향)
+        const P=G[o.parents[0]],cg=G[o.parents[1]];if(!P||!cg||!cg.c)return null;
+        const d=V.sub(P,cg.c),L=V.len(d);
+        if(L<cg.r-1e-9)return null; // 원 안의 점에서는 접선 없음
+        let T;
+        if(Math.abs(L-cg.r)<1e-7)T={x:P.x,y:P.y};
+        else{
+          const th=Math.atan2(d.y,d.x),ph=Math.acos(clamp(cg.r/L,-1,1));
+          const ang=th+((o.idx||0)===0?ph:-ph);
+          T={x:cg.c.x+cg.r*Math.cos(ang),y:cg.c.y+cg.r*Math.sin(ang)};
+        }
+        if(V.len(V.sub(T,P))<1e-9){const u=V.unit(V.sub(P,cg.c));return lineGeom(P,V.add(P,V.perp(u)),'line');}
+        return lineGeom(P,T,'line');
+      }
+      if(o.mode==='tangentF'){ // 점의 x좌표에서 함수 그래프에 그은 접선
+        const P=G[o.parents[0]],fn=byId(o.parents[1]);if(!P||!fn)return null;
+        const x0=P.x,y0=evalFnObj(fn,G,x0);if(!isFinite(y0))return null;
+        const h=1e-5,slope=(evalFnObj(fn,G,x0+h)-evalFnObj(fn,G,x0-h))/(2*h);
+        if(!isFinite(slope))return null;
+        return lineGeom({x:x0,y:y0},{x:x0+1,y:y0+slope},'line');
+      }
+      if(o.mode==='directrix'){const cg=G[o.parents[0]];if(!cg||!cg.dirLine)return null;return lineGeom(cg.dirLine.a,cg.dirLine.b,'line');}
+      if(o.mode==='axis'){const cg=G[o.parents[0]];if(!cg||!cg.axisPts)return null;const ap=cg.axisPts[o.idx||0];if(!ap)return null;return lineGeom(ap[0],ap[1],'line');}
+      if(o.mode==='asymptote'){
+        const fn=byId(o.parents[0]);if(!fn)return null;
+        const list=asymptotesOf(fn);const it=list[o.idx||0];if(!it)return null;
+        if(it.v!=null)return lineGeom({x:it.v,y:0},{x:it.v,y:1},'line');
+        return lineGeom({x:0,y:it.l.b},{x:1,y:it.l.m+it.l.b},'line');
       }
       return null;
     }
@@ -959,11 +1230,74 @@ function computeGeom(o,G){
       const pts=o.parents.map(id=>G[id]);if(pts.some(p=>!p))return null;
       return{kind:'polygon',pts:pts.map(p=>({x:p.x,y:p.y}))};
     }
-    case 'arc':case 'sector':{
-      const c=G[o.parents[0]],s=G[o.parents[1]],e=G[o.parents[2]];
-      if(!c||!s||!e)return null;
-      return{kind:o.type,c:{x:c.x,y:c.y},r:V.len(V.sub(s,c)),
-        a1:Math.atan2(s.y-c.y,s.x-c.x),a2:Math.atan2(e.y-c.y,e.x-c.x)};
+    case 'arc':case 'sector':case 'cseg':{
+      return arcGeomOf(o,G);
+    }
+    case 'conic':{
+      if(o.conic==='ellipse'||o.conic==='hyperbola'){
+        const F1=G[o.parents[0]],F2=G[o.parents[1]],P=G[o.parents[2]];
+        if(!F1||!F2||!P)return null;
+        const ctr={x:(F1.x+F2.x)/2,y:(F1.y+F2.y)/2};
+        const c=V.len(V.sub(F2,F1))/2;
+        const d1=V.len(V.sub(P,F1)),d2=V.len(V.sub(P,F2));
+        const u=c>1e-12?V.unit(V.sub(F2,F1)):{x:1,y:0},v=V.perp(u);
+        if(o.conic==='ellipse'){
+          const a=(d1+d2)/2;if(a<=c+1e-9)return null;
+          const b=Math.sqrt(Math.max(a*a-c*c,1e-12));
+          const pt=(lx,ly)=>({x:ctr.x+u.x*lx+v.x*ly,y:ctr.y+u.y*lx+v.y*ly});
+          return{kind:'conic',conic:'ellipse',cx:ctr.x,cy:ctr.y,a:a,b:b,theta:Math.atan2(u.y,u.x),
+            foci:[{x:F1.x,y:F1.y},{x:F2.x,y:F2.y}],
+            vertices:[pt(a,0),pt(-a,0),pt(0,b),pt(0,-b)],
+            axisPts:[[pt(-a,0),pt(a,0)],[pt(0,-b),pt(0,b)]]};
+        }
+        const a=Math.abs(d1-d2)/2;if(a<1e-9||a>=c-1e-9)return null;
+        const b=Math.sqrt(Math.max(c*c-a*a,1e-12));
+        const pt=(lx,ly)=>({x:ctr.x+u.x*lx+v.x*ly,y:ctr.y+u.y*lx+v.y*ly});
+        return{kind:'conic',conic:'hyperbola',cx:ctr.x,cy:ctr.y,a:a,b:b,theta:Math.atan2(u.y,u.x),
+          foci:[{x:F1.x,y:F1.y},{x:F2.x,y:F2.y}],
+          vertices:[pt(a,0),pt(-a,0)],
+          axisPts:[[pt(-a,0),pt(a,0)],[pt(0,-1),pt(0,1)]]};
+      }
+      if(o.conic==='parabola'){
+        const F=G[o.parents[0]],lg=G[o.parents[1]];
+        if(!F||!lg||!lg.d)return null;
+        const du=V.unit(lg.d); // 준선 방향
+        const foot=V.add(lg.a,V.mul(du,V.dot(V.sub(F,lg.a),du))); // 초점에서 준선에 내린 수선의 발
+        const dist=V.len(V.sub(F,foot));if(dist<1e-9)return null;
+        const p=dist/2;
+        const vertex={x:(F.x+foot.x)/2,y:(F.y+foot.y)/2};
+        const axisU=V.unit(V.sub(F,foot)); // 정점에서 초점을 향하는 축 방향
+        const T=Math.min(Math.sqrt(48*p),16);
+        return{kind:'conic',conic:'parabola',cx:vertex.x,cy:vertex.y,p:p,vertex:vertex,axisU:axisU,axisV:du,T:T,
+          foci:[{x:F.x,y:F.y}],vertices:[{x:vertex.x,y:vertex.y}],
+          axisPts:[[{x:vertex.x-axisU.x*3,y:vertex.y-axisU.y*3},{x:vertex.x+axisU.x*3,y:vertex.y+axisU.y*3}]],
+          dirLine:{a:{x:foot.x-du.x*T,y:foot.y-du.y*T},b:{x:foot.x+du.x*T,y:foot.y+du.y*T}}};
+      }
+      return null;
+    }
+    case 'list':{
+      const values=[],pts=[];
+      if(o.seq){
+        const from=storedTokVal(o.seq.from),to=storedTokVal(o.seq.to);
+        if(isFinite(from)&&isFinite(to)){
+          const sc=paramScope();let cnt=0;
+          for(let k=from;k<=to+1e-9&&cnt<500;k++,cnt++){
+            const s=Object.assign({},sc);s[o.seq.varName]=k;
+            if(o.seq.ast2){const x=evalAst(o.seq.ast,s),y=evalAst(o.seq.ast2,s);if(isFinite(x)&&isFinite(y))pts.push({x:x,y:y});}
+            else{const val=evalAst(o.seq.ast,s);if(isFinite(val))values.push(val);}
+          }
+        }
+        return{kind:'list',values:values,pts:pts};
+      }
+      (o.items||[]).forEach(d=>{
+        if(d.t==='n')values.push(d.v);
+        else if(d.t==='p'){const po=byId(d.id);if(po)values.push(po.value);}
+        else if(d.t==='pt')pts.push({x:d.x,y:d.y});
+        else if(d.t==='o'){const oo=byId(d.id),g2=G[d.id];
+          if(oo&&oo.type==='point'&&g2&&g2.x!=null)pts.push({x:g2.x,y:g2.y});
+          else if(g2&&g2.value!=null&&isFinite(g2.value))values.push(g2.value);}
+      });
+      return{kind:'list',values:values,pts:pts};
     }
     case 'gellipse':{
       // 지구본 타원: parents [중심점, 반지름점], 매개변수 t(도, 자전)와 기울기(도, 자전축 기울기)에 종속
@@ -1069,6 +1403,8 @@ function measureValue(o,G){
           if(g.kind==='circle')return num(2*Math.PI*g.r);
           if(g.kind==='polygon')return num(polyPerim(g.pts));
           if(g.kind==='arc'){let sw=g.a2-g.a1;while(sw<0)sw+=2*Math.PI;return num(g.r*sw);}
+          if(g.kind==='cseg'){let sw=g.a2-g.a1;while(sw<0)sw+=2*Math.PI;while(sw>=2*Math.PI)sw-=2*Math.PI;return num(g.r*sw+2*g.r*Math.sin(sw/2));}
+          if(g.kind==='sector'){let sw=g.a2-g.a1;while(sw<0)sw+=2*Math.PI;return num(g.r*sw+2*g.r);}
           return num(NaN);}
         const a=R(o.refs[0]),b=R(o.refs[1]);if(!a||!b)return num(NaN);return num(V.len(V.sub(b,a)));
       }
@@ -1083,6 +1419,7 @@ function measureValue(o,G){
         if(g.kind==='polygon')return num(polyArea(g.pts));
         if(g.kind==='circle')return num(Math.PI*g.r*g.r);
         if(g.kind==='sector'){let sw=g.a2-g.a1;while(sw<0)sw+=2*Math.PI;return num(0.5*g.r*g.r*sw);}
+        if(g.kind==='cseg'){let sw=g.a2-g.a1;while(sw<0)sw+=2*Math.PI;while(sw>=2*Math.PI)sw-=2*Math.PI;return num(0.5*g.r*g.r*(sw-Math.sin(sw)));}
         return num(NaN);
       }
       case 'coord':{const p=R(o.refs[0]);if(!p)return{value:NaN,text:'(—, —)'};return{value:p.x,text:fmtPt(p)};}
@@ -1103,11 +1440,70 @@ function measureValue(o,G){
         const scope=fullScope();const v=evalAst(o.ast,scope);
         return{value:v,text:fmt(v)};
       }
+      case 'cmd':{
+        const A=o.cmdArgs||[];
+        const lv=d=>{ // 리스트 기술자 → 숫자 배열
+          if(!d)return[];
+          if(d.t==='lit')return d.items.slice();
+          if(d.t==='lo'){const g=R(d.id);return(g&&g.values)?g.values.slice():[];}
+          return[];
+        };
+        const nv=d=>{ // 숫자 기술자 → 숫자
+          if(!d)return NaN;
+          if(d.t==='n')return d.v;
+          if(d.t==='p'){const po=byId(d.id);return po?po.value:NaN;}
+          if(d.t==='o'){const g=R(d.id),oo=byId(d.id);
+            if(oo&&oo.type==='param')return oo.value;
+            if(g){if(g.value!=null)return g.value;if(g.len!=null)return g.len;}
+            return NaN;}
+          return NaN;
+        };
+        const ints=A.map(d=>Math.round(nv(d)));
+        switch(o.cmdOp){
+          case 'const':return num(o.cmdVal);
+          case 'mean':{const vs=lv(A[0]);return num(vs.length?vs.reduce((s,v)=>s+v,0)/vs.length:NaN);}
+          case 'median':{const vs=lv(A[0]).sort((x,y)=>x-y);if(!vs.length)return num(NaN);const m2=Math.floor(vs.length/2);return num(vs.length%2?vs[m2]:(vs[m2-1]+vs[m2])/2);}
+          case 'mode':{const vs=lv(A[0]);if(!vs.length)return num(NaN);const fq=new Map();let best=vs[0],bc=0;
+            for(const v of vs){const c=(fq.get(v)||0)+1;fq.set(v,c);if(c>bc){bc=c;best=v;}}return num(best);}
+          case 'variance':case 'stdev':{const vs=lv(A[0]);if(!vs.length)return num(NaN);
+            const mu=vs.reduce((s,v)=>s+v,0)/vs.length;const va=vs.reduce((s,v)=>s+(v-mu)*(v-mu),0)/vs.length;
+            return num(o.cmdOp==='variance'?va:Math.sqrt(va));}
+          case 'max':{const vs=lv(A[0]);return num(vs.length?Math.max.apply(null,vs):NaN);}
+          case 'min':{const vs=lv(A[0]);return num(vs.length?Math.min.apply(null,vs):NaN);}
+          case 'count':{const d=A[0];if(d&&d.t==='lo'){const g=R(d.id);return num(g?((g.values||[]).length+(g.pts||[]).length):NaN);}return num(lv(d).length);}
+          case 'sumlist':{const vs=lv(A[0]);return num(vs.reduce((s,v)=>s+v,0));}
+          case 'gcd':{let g2=0;for(const v of ints){if(!isFinite(v))return num(NaN);g2=gcd2(g2,Math.abs(v));}return num(g2);}
+          case 'lcm':{let l2=1;for(const v of ints){if(!isFinite(v)||v===0)return num(0);l2=Math.abs(l2*v)/gcd2(l2,Math.abs(v));}return num(l2);}
+          case 'div':{const a2=nv(A[0]),b2=nv(A[1]);return num(b2?Math.floor(a2/b2):NaN);}
+          case 'mod':{const a2=nv(A[0]),b2=nv(A[1]);return num(b2?a2-b2*Math.floor(a2/b2):NaN);}
+          case 'abs':return num(Math.abs(nv(A[0])));
+          case 'fact':return num(factVal(nv(A[0])));
+          case 'npr':{const n2=ints[0],r2=ints[1];if(!isFinite(n2)||!isFinite(r2)||r2<0||r2>n2)return num(NaN);let pr=1;for(let i=0;i<r2;i++)pr*=n2-i;return num(pr);}
+          case 'ncr':{const n2=ints[0],r2=Math.min(ints[1],ints[0]-ints[1]);if(!isFinite(n2)||!isFinite(ints[1])||ints[1]<0||ints[1]>n2)return num(NaN);let pr=1;for(let i=0;i<r2;i++)pr=pr*(n2-i)/(i+1);return num(pr);}
+          case 'dot':{const g1=R(A[0].id),g2=R(A[1].id);if(!g1||!g2||!g1.d||!g2.d)return num(NaN);return num(V.dot(g1.d,g2.d));}
+          case 'limit':{
+            const fn=byId(A[0].id);if(!fn)return num(NaN);
+            const a0=nv(A[1]);if(!isFinite(a0))return num(NaN);
+            let prev=null,ans=NaN;
+            for(const h of [1e-2,1e-3,1e-4,1e-5]){
+              const v1=evalFnObj(fn,G,a0+h),v2=evalFnObj(fn,G,a0-h);
+              const cur=(isFinite(v1)&&isFinite(v2))?(v1+v2)/2:(isFinite(v1)?v1:v2);
+              if(!isFinite(cur))continue;
+              ans=cur;
+              if(prev!=null&&Math.abs(cur-prev)<1e-7)break;
+              prev=cur;
+            }
+            return num(ans);
+          }
+        }
+        return num(NaN);
+      }
     }
   }catch(e){return{value:NaN,text:'—'};}
   return{value:NaN,text:'—'};
 }
 function sgn(v){return(v<0?' − '+fmt(-v):' + '+fmt(v));}
+function gcd2(a,b){a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a;}
 
 function recompute(){
   GEOM={};
@@ -1414,6 +1810,37 @@ function drawObject(o,g){
       el('ellipse',Object.assign(attrs,{cx:c.x,cy:c.y,rx:rx,ry:ry}),grp);
       break;
     }
+    case 'conic':{
+      const branches=conicSamplePts(g);
+      branches.forEach((line,bi)=>{
+        if(line.length<2)return;
+        const dAttr=line.map((p,i)=>{const q=P(p);return(i?'L':'M')+q.x.toFixed(1)+' '+q.y.toFixed(1);}).join(' ');
+        el('path',Object.assign(strokeAttrs(o),{d:dAttr,'stroke-width':o.width+(sel?1.2:hoverId===o.id?1.6:0)}),grp);
+        if(bi===0)el('path',{d:dAttr,fill:'none',stroke:'transparent','stroke-width':11,'data-hit':'1'},grp);
+      });
+      const lp=P({x:g.cx,y:g.cy});
+      labelFor(o,{x:lp.x+8,y:lp.y-8},o.name,11.5);
+      break;
+    }
+    case 'cseg':{
+      let sw=g.a2-g.a1;while(sw<0)sw+=2*Math.PI;while(sw>=2*Math.PI)sw-=2*Math.PI;
+      const p1=P({x:g.c.x+g.r*Math.cos(g.a1),y:g.c.y+g.r*Math.sin(g.a1)});
+      const p2=P({x:g.c.x+g.r*Math.cos(g.a2),y:g.c.y+g.r*Math.sin(g.a2)});
+      const large=sw>Math.PI?1:0;
+      const d='M '+p1.x+' '+p1.y+' A '+(g.r*state.view.scale)+' '+(g.r*state.view.scale)+' 0 '+large+' 0 '+p2.x+' '+p2.y+' Z';
+      const attrs=strokeAttrs(o);attrs.fill=o.color;attrs['fill-opacity']=0.16;
+      el('path',Object.assign(attrs,{d:d}),grp);
+      break;
+    }
+    case 'list':{
+      (g.pts||[]).forEach(pt=>{
+        const q=P(pt);
+        el('circle',{cx:q.x,cy:q.y,r:3.2,fill:o.color,stroke:'#fff','stroke-width':1},grp);
+      });
+      if(g.pts&&g.pts.length){const q=P(g.pts[g.pts.length-1]);labelFor(o,{x:q.x+7,y:q.y-6},o.name,11.5);}
+      else if(g.values&&g.values.length){const pp=P({x:state.view.cx-3,y:state.view.cy+2.5});labelFor(o,{x:pp.x,y:pp.y},o.name+' = {'+g.values.slice(0,8).map(v=>fmt(v)).join(', ')+(g.values.length>8?', …':'')+'}',11.5);}
+      break;
+    }
     case 'sum':{
       // 구분구적법: 직사각형(상합·하합) / 사다리꼴 / 적분 영역을 반투명하게 채운다
       if(g.rects)g.rects.forEach(r=>{
@@ -1550,6 +1977,16 @@ function defOf(o){
       if(o.kind==='pole')return '지구본 '+(o.poleSign<0?'남극':'북극')+'점 — 기울어진 자전축의 끝점 (기울기 '+(o.tiltParam?nm(o.tiltParam):'0°')+')';
       if(o.kind==='midpoint')return o.parents.length===1?nm(o.parents[0])+'의 중점':nm(o.parents[0])+nm(o.parents[1])+'의 중점';
       if(o.kind==='intersect')return nm(o.parents[0])+'와(과) '+nm(o.parents[1])+'의 교점';
+      if(o.kind==='circumcenter')return '삼각형 '+o.parents.map(nm).join('')+'의 외심';
+      if(o.kind==='incenter')return '삼각형 '+o.parents.map(nm).join('')+'의 내심';
+      if(o.kind==='centroid')return '삼각형 '+o.parents.map(nm).join('')+'의 무게중심';
+      if(o.kind==='orthocenter')return '삼각형 '+o.parents.map(nm).join('')+'의 수심';
+      if(o.kind==='polycentroid')return nm(o.parents[0])+'의 무게중심';
+      if(o.kind==='division')return nm(o.parents[0])+nm(o.parents[1])+'를 '+fmt(storedNum(o,'m'))+' : '+fmt(storedNum(o,'n'))+'로 '+(o.ext?'외분':'내분')+'하는 점';
+      if(o.kind==='divfrac')return nm(o.parents[0])+' 위에서 비율 '+fmt(storedNum(o,'t'))+' 위치의 점';
+      if(o.kind==='focuspt')return nm(o.parents[0])+'의 초점';
+      if(o.kind==='vertexpt')return nm(o.parents[0])+'의 정점';
+      if(o.kind==='scanpt')return ({root:'x절편 (근)',extremum:'극값점',inflection:'변곡점'})[o.scanKind]+' · '+nm(o.parents[0])+'(x)';
       return '점';
     case 'segment':case 'ray':case 'line':{
       const t=o.type==='segment'?'선분':o.type==='ray'?'반직선':'직선';
@@ -1558,9 +1995,15 @@ function defOf(o){
       if(o.mode==='perp')return nm(o.parents[0])+'를 지나고 '+nm(o.parents[1])+'에 수직인 직선';
       if(o.mode==='bisector')return '∠'+nm(o.parents[0])+nm(o.parents[1])+nm(o.parents[2])+'의 이등분선';
       if(o.mode==='perpbis')return nm(o.parents[0])+nm(o.parents[1])+'의 수직이등분선';
+      if(o.mode==='tangentC')return nm(o.parents[0])+'에서 '+nm(o.parents[1])+'에 그은 접선';
+      if(o.mode==='tangentF')return nm(o.parents[1])+'(x)의 접선 ('+nm(o.parents[0])+'의 x좌표)';
+      if(o.mode==='directrix')return nm(o.parents[0])+'의 준선';
+      if(o.mode==='axis')return nm(o.parents[0])+'의 대칭축';
+      if(o.mode==='asymptote')return nm(o.parents[0])+'(x)의 점근선';
+      if(o.mode==='unit')return nm(o.parents[0])+'의 단위벡터';
       return t;
     }
-    case 'vector':return nm(o.parents[0])+'에서 '+nm(o.parents[1])+'(으)로 가는 벡터';
+    case 'vector':return o.mode==='unit'?nm(o.parents[0])+'의 단위벡터':nm(o.parents[0])+'에서 '+nm(o.parents[1])+'(으)로 가는 벡터';
     case 'freehand':return '펜으로 그린 자유 곡선';
     case 'circle':
       if(o.mode==='pts3')return '세 점 '+nm(o.parents[0])+', '+nm(o.parents[1])+', '+nm(o.parents[2])+'를 지나는 원';
@@ -1572,7 +2015,12 @@ function defOf(o){
     case 'arc':return nm(o.parents[0])+'를 중심으로 하는 호';
     case 'sector':return nm(o.parents[0])+'를 중심으로 하는 부채꼴';
     case 'text':return '글 상자';
-    case 'measure':return {length:'길이 측정',angle:'각의 크기 측정',area:'넓이 측정',coord:'좌표 측정',slope:'기울기 측정',radius:'반지름의 길이',ratio:'비율',equation:'방정식',calc:'계산: '+(o.expr||'')}[o.mtype]||'측정';
+    case 'measure':return {length:'길이 측정',angle:'각의 크기 측정',area:'넓이 측정',coord:'좌표 측정',slope:'기울기 측정',radius:'반지름의 길이',ratio:'비율',equation:'방정식',calc:'계산: '+(o.expr||''),cmd:o.cmdLabel||'명령 계산'}[o.mtype]||'측정';
+    case 'conic':return {ellipse:'타원 — 초점 '+nm(o.parents[0])+', '+nm(o.parents[1])+', 지나는 점 '+nm(o.parents[2]),
+      hyperbola:'쌍곡선 — 초점 '+nm(o.parents[0])+', '+nm(o.parents[1])+', 지나는 점 '+nm(o.parents[2]),
+      parabola:'포물선 — 초점 '+nm(o.parents[0])+', 준선 '+nm(o.parents[1])}[o.conic]||'원뿔곡선';
+    case 'cseg':return (o.mode==='circle'?nm(o.parents[0]):'세 점')+'의 활꼴';
+    case 'list':return o.seq?('수열 — '+o.seq.varName+' = '+fmt(storedTokVal(o.seq.from))+' ~ '+fmt(storedTokVal(o.seq.to))):'리스트';
     case 'function':return o.derivOf?nm(o.derivOf)+'(x)의 도함수 그래프':'함수 그래프';
     case 'param':return '매개변수 ('+fmt(o.min)+' ~ '+fmt(o.max)+')';
     case 'locus':return nm(o.parents[1])+'의 자취 ('+nm(o.parents[0])+' 이동)';
@@ -1601,6 +2049,18 @@ function valueOf(o){
     case 'arc':{let sw=g.a2-g.a1;while(sw<0)sw+=2*Math.PI;return '호의 길이 '+fmt(g.r*sw);}
     case 'sector':{let sw=g.a2-g.a1;while(sw<0)sw+=2*Math.PI;return '넓이 '+fmt(0.5*g.r*g.r*sw);}
     case 'measure':return g.text;
+    case 'conic':{
+      if(g.conic==='ellipse')return '장축 '+fmt(2*g.a)+' · 단축 '+fmt(2*g.b);
+      if(g.conic==='hyperbola')return '실축 '+fmt(2*g.a)+' · 허축 '+fmt(2*g.b);
+      if(g.conic==='parabola')return '초점 거리 p = '+fmt(g.p)+' · 정점 '+fmtPt(g.vertex);
+      return '원뿔곡선';
+    }
+    case 'cseg':{let sw=g.a2-g.a1;while(sw<0)sw+=2*Math.PI;while(sw>=2*Math.PI)sw-=2*Math.PI;return '호의 길이 '+fmt(g.r*sw)+' · 넓이 '+fmt(0.5*g.r*g.r*(sw-Math.sin(sw)));}
+    case 'list':{
+      if(g.values&&g.values.length)return '{'+g.values.slice(0,10).map(v=>fmt(v)).join(', ')+(g.values.length>10?', …':'')+'} · '+g.values.length+'개';
+      if(g.pts&&g.pts.length)return '점 '+g.pts.length+'개';
+      return '빈 리스트';
+    }
     case 'sum':return fmt(g.value);
     case 'function':return o.name+'(x) = '+(o.expr||'');
     case 'param':return fmt(o.value);
@@ -1841,7 +2301,7 @@ function dlgInfo(){
     '<p>점·선·원을 작도하고 자유점을 끌어 움직이면, 교점·중점·수선·측정값이 의존 관계를 따라 실시간으로 함께 움직입니다. 매개변수 슬라이더, 함수 그래프, 변환, 자취, 애니메이션을 지원합니다.</p>'+
     '<p>데스모스·알지오매스·지오지브라의 장점을 더했습니다: 미지수→슬라이더 자동 제안, 스냅샷 공유 링크와 버전 기록, 함수 오디오 트레이스, 블록코딩 작도, 문서(활동지) 모드, 작도 단계 재생과 대수창 양방향 편집.</p>'+
     '<p style="color:var(--ink2);">Geometer\'s Sketchpad 5.03의 화면 구성에서 영감을 받은 웹 재현입니다.</p>'+
-    '<p style="color:var(--ink2);">빌드 2026-10-20 15:45 · 지오지브라식 명령창(상합·하합 포함)+자동완성·스냅·실시간 피드백·자동저장</p>');
+    '<p style="color:var(--ink2);">빌드 2026-10-20 16:04 · 명령어 대확장(중·고등 과정 전체: 중심·접선·원뿔곡선·도함수·수열·통계)</p>');
 }
 function dlgShortcuts(){
   const rows=[['Ctrl+1 ~ 15','도구 선택 (1 이동·2 점·3 원·4 선분·5 다각형·6 글·7 정보·8 사용자 도구·9 벡터·0 세 점 원, 11~15는 Ctrl+1 뒤 숫자: 각·정다각형·펜·슬라이더·지우개)'],
@@ -4449,6 +4909,100 @@ function mkSumCmd(kind,a){
   s.color=kind==='upper'?PALETTE[2]:kind==='lower'?PALETTE[4]:kind==='trap'?PALETTE[5]:PALETTE[1];
   return s;
 }
+/* ── 확장 명령용 헬퍼 ── */
+function numTokDesc(tok){ // 숫자 인자 → 기술자 (매개변수·측정값은 이름으로 추적)
+  tok=String(tok==null?'':tok).trim();
+  const pm=isParamName(tok);
+  if(pm)return{t:'p',id:pm.id};
+  const o=findObjByName(tok);
+  if(o&&(o.type==='measure'||o.type==='sum'))return{t:'o',id:o.id};
+  return{t:'n',v:evalNumExpr(tok)};
+}
+function storedArg(out,base,tok){ // numTokDesc를 개체 필드({base}Val/{base}Param)에 저장
+  const d=numTokDesc(tok);
+  if(d.t==='p'){out[base+'Param']=d.id;out[base+'Val']=byId(d.id).value;}
+  else if(d.t==='o'){const g=GEOM[d.id];out[base+'Val']=g&&g.value!=null?g.value:evalNumExpr(tok);out[base+'Obj']=d.id;}
+  else out[base+'Val']=d.v;
+  return out;
+}
+function mkCmdMeasure(op,args,label){
+  const o=addObj('measure',{mtype:'cmd',cmdOp:op,cmdArgs:args,cmdLabel:label,refs:[],x:0,y:0,prefix:''});
+  o.name=uniqueName(label);
+  const k=state.counters.measure;
+  o.x=state.view.cx-3.2+(k%4)*0.9;o.y=state.view.cy+2.6-Math.floor(k%12/4)*0.7;
+  return o;
+}
+function argListDesc(tok){
+  tok=String(tok==null?'':tok).trim();
+  if(tok.charAt(0)==='{'){
+    const inner=tok.slice(1,tok.lastIndexOf('}'));
+    const items=splitArgs(inner).filter(s=>s!=='').map(s=>{
+      const o=findObjByName(s);
+      if(o&&(o.type==='measure'||o.type==='sum'||o.type==='param'))return o.type==='param'?{t:'p',id:o.id}:{t:'o',id:o.id};
+      return{t:'n',v:evalNumExpr(s)};
+    });
+    // 기술자를 즉시 숫자 배열로 환원 (lit) — 단, 이름 참조는 값으로 고정
+    const vals=items.map(d=>d.t==='n'?d.v:(d.t==='p'?byId(d.id).value:(GEOM[d.id]&&GEOM[d.id].value!=null?GEOM[d.id].value:NaN)));
+    if(vals.some(v=>!isFinite(v)))throw new Error('리스트 원소를 숫자로 계산할 수 없습니다: '+tok);
+    return{t:'lit',items:vals};
+  }
+  const o=findObjByName(tok);
+  if(o&&o.type==='list')return{t:'lo',id:o.id};
+  throw new Error('리스트를 찾을 수 없습니다: '+tok+' (예: {1, 2, 3} 또는 수열 이름)');
+}
+function mkListLiteral(tok){
+  const inner=tok.slice(1,tok.lastIndexOf('}'));
+  const parts=splitArgs(inner).filter(s=>s!=='');
+  const items=parts.map(s=>{
+    s=s.trim();
+    if(s.charAt(0)==='('){
+      const pp=splitArgs(s.slice(1,s.lastIndexOf(')')));
+      if(pp.length===2)return{t:'pt',x:evalNumExpr(pp[0]),y:evalNumExpr(pp[1])};
+    }
+    const o=findObjByName(s);
+    if(o&&(o.type==='measure'||o.type==='sum'))return{t:'o',id:o.id};
+    if(o&&o.type==='param')return{t:'p',id:o.id};
+    if(o&&o.type==='point')return{t:'o',id:o.id};
+    return{t:'n',v:evalNumExpr(s)};
+  });
+  const o=addObj('list',{items:items});
+  o.color=PALETTE[6];
+  return o;
+}
+function triPointIds(a){
+  if(a.length===1){
+    const poly=argObj(a[0],['polygon'],'삼각형(다각형)');
+    if(!poly.parents||poly.parents.length<3)throw new Error('삼각형의 꼭짓점이 부족합니다.');
+    return poly.parents.slice(0,3);
+  }
+  if(a.length===3)return a.map(t=>argPoint(t).id);
+  throw new Error('인자는 점 3개 또는 삼각형 1개여야 합니다.');
+}
+function mkCenterCmd(kind,a){
+  const ids=triPointIds(a);
+  const p=addPoint(kind,{parents:ids});
+  p.color={circumcenter:PALETTE[2],incenter:PALETTE[7],centroid:PALETTE[3],orthocenter:PALETTE[1]}[kind]||PALETTE[4];
+  recompute();
+  if(!GEOM[p.id])throw new Error('중심을 만들 수 없습니다 (점이 한 직선 위에 있거나 겹칩니다).');
+  return p;
+}
+function mkArcCmd(type,a){
+  let mode,parents;
+  const o0=findObjByName(a[0]||'');
+  if(a.length===3&&o0&&o0.type==='circle'){mode='circle';parents=[o0.id,argPoint(a[1]).id,argPoint(a[2]).id];}
+  else if(a.length===3){mode='pts3';parents=[argPoint(a[0]).id,argPoint(a[1]).id,argPoint(a[2]).id];}
+  else throw new Error('인자는 (원, 점, 점) 또는 (점, 점, 점)이어야 합니다.');
+  const o=addObj(type,{mode:mode,parents:parents});
+  o.color=PALETTE[2];
+  recompute();
+  if(!GEOM[o.id])throw new Error('호를 만들 수 없습니다 (세 점이 한 직선 위에 있습니다).');
+  return o;
+}
+function tangentCount(P,cg){
+  const L=V.len(V.sub(P,cg.c));
+  if(L<cg.r-1e-7)return 0;
+  return Math.abs(L-cg.r)<1e-6?1:2;
+}
 const CMD_LINE_TYPES=['segment','ray','line','vector'];
 const CMD_XFORM_TYPES=['point','segment','ray','line','circle','polygon','arc','sector','vector','freehand'];
 const COMMANDS=[
@@ -4531,7 +5085,226 @@ const COMMANDS=[
  {names:['상합','UpperSum'],sig:'상합[함수, 시작, 끝, 개수]',run(a){return mkSumCmd('upper',a);}},
  {names:['하합','LowerSum'],sig:'하합[함수, 시작, 끝, 개수]',run(a){return mkSumCmd('lower',a);}},
  {names:['사다리꼴합','TrapezoidalSum'],sig:'사다리꼴합[함수, 시작, 끝, 개수]',run(a){return mkSumCmd('trap',a);}},
+
+ /* ── 삼각형의 중심 ── */
+ {names:['외심','Circumcenter'],cat:'삼각형의 중심',sig:'외심[점, 점, 점] · 외심[삼각형]',run(a){return mkCenterCmd('circumcenter',a);}},
+ {names:['내심','Incenter'],cat:'삼각형의 중심',sig:'내심[점, 점, 점] · 내심[삼각형]',run(a){return mkCenterCmd('incenter',a);}},
+ {names:['무게중심','Centroid'],cat:'삼각형의 중심',sig:'무게중심[점, 점, 점] · 무게중심[다각형]',run(a){
+   if(a.length===1){const poly=argObj(a[0],['polygon'],'다각형');
+     if(poly.parents&&poly.parents.length===3){const p=addPoint('centroid',{parents:poly.parents.slice(0,3)});p.color=PALETTE[3];return p;}
+     const p=addPoint('polycentroid',{parents:[poly.id]});p.color=PALETTE[3];return p;}
+   return mkCenterCmd('centroid',a);}},
+ {names:['수심','Orthocenter'],cat:'삼각형의 중심',sig:'수심[점, 점, 점] · 수심[삼각형]',run(a){return mkCenterCmd('orthocenter',a);}},
+
+ /* ── 원 심화 ── */
+ {names:['접선','Tangent'],cat:'원 심화',sig:'접선[점, 원] · 접선[점, 함수]',run(a){
+   const p=argPoint(a[0]);
+   const t=findObjByName(a[1]||'');
+   if(!t)throw new Error('원이나 함수를 찾을 수 없습니다: '+a[1]);
+   if(t.type==='function'){const l=addObj('line',{mode:'tangentF',parents:[p.id,t.id]});l.color=PALETTE[1];recompute();if(!GEOM[l.id])throw new Error('접선을 그을 수 없습니다.');return l;}
+   if(t.type==='circle'){
+     recompute();const pg=GEOM[p.id],cg=GEOM[t.id];
+     if(!pg||!cg)throw new Error('접선을 그을 수 없습니다.');
+     const n=tangentCount(pg,cg);
+     if(n===0)throw new Error('원 안의 점에서는 접선을 그을 수 없습니다.');
+     const out=[];
+     for(let i=0;i<n;i++){const l=addObj('line',{mode:'tangentC',parents:[p.id,t.id],idx:i});l.color=PALETTE[1];out.push(l);}
+     return out;
+   }
+   throw new Error(a[1]+'은(는) 원이나 함수가 아닙니다.');}},
+ {names:['호','Arc'],cat:'원 심화',sig:'호[원, 점, 점] · 호[점, 점, 점]',run(a){return mkArcCmd('arc',a);}},
+ {names:['부채꼴','CircularSector'],cat:'원 심화',sig:'부채꼴[원, 점, 점] · 부채꼴[점, 점, 점]',run(a){return mkArcCmd('sector',a);}},
+ {names:['활꼴','CircularSegment'],cat:'원 심화',sig:'활꼴[원, 점, 점] · 활꼴[점, 점, 점]',run(a){return mkArcCmd('cseg',a);}},
+ {names:['둘레','Perimeter','Circumference'],cat:'원 심화',sig:'둘레[다각형·원·활꼴]',run(a){const o=argObj(a[0],['polygon','circle','cseg','arc'],'도형');return mkMeasure('length',[o.id],o);}},
+
+ /* ── 분할 ── */
+ {names:['내분점','DivisionPoint','InternalDivision'],cat:'분할',sig:'내분점[점, 점, m, n] · 내분점[선분, 비율]',run(a){
+   if(a.length===2){const s=argObj(a[0],['segment'],'선분');const o=storedArg({parents:[s.id]},'t',a[1]);
+     const p=addPoint('divfrac',o);p.color=PALETTE[4];return p;}
+   if(a.length===4){const p1=argPoint(a[0]),p2=argPoint(a[1]);
+     const o=storedArg(storedArg({parents:[p1.id,p2.id]},'m',a[2]),'n',a[3]);
+     const p=addPoint('division',o);p.color=PALETTE[4];return p;}
+   throw new Error('내분점[점, 점, m, n] 또는 내분점[선분, 비율] 형태로 입력하세요.');}},
+ {names:['외분점','ExternalDivision'],cat:'분할',sig:'외분점[점, 점, m, n]',run(a){
+   if(a.length!==4)throw new Error('외분점[점, 점, m, n] 형태로 입력하세요.');
+   const p1=argPoint(a[0]),p2=argPoint(a[1]);
+   const o=storedArg(storedArg({parents:[p1.id,p2.id],ext:true},'m',a[2]),'n',a[3]);
+   const p=addPoint('division',o);p.color=PALETTE[1];
+   recompute();if(!GEOM[p.id])throw new Error('외분점을 만들 수 없습니다 (m = n이면 외분점이 없습니다).');
+   return p;}},
+
+ /* ── 함수 심화 ── */
+ {names:['도함수','Derivative'],cat:'함수 심화',sig:'도함수[함수]',run(a){
+   const fn=argFunction(a[0]);
+   const cs=polyFromAst(fn.ast);
+   if(cs&&cs.length>=2){ // 다항식: 기호 미분
+     const dc=[];for(let i=1;i<cs.length;i++)dc.push(cs[i]*i);
+     const terms=[];
+     for(let i=dc.length-1;i>=0;i--){
+       if(Math.abs(dc[i])<1e-12)continue;
+       const c=dc[i];
+       const coef=(Math.abs(Math.abs(c)-1)<1e-12&&i>0)?(c<0?'−':''):fmt(Math.abs(c));
+       terms.push({neg:c<0,txt:coef+(i===0?'':(i===1?'x':'x^'+i))});
+     }
+     let expr='0';
+     if(terms.length){expr=terms.map((t,i)=>(i===0?(t.neg?'−':''):(t.neg?' − ':' + '))+t.txt).join('');}
+     const f=addObj('function',{expr:expr,ast:parseExpr(expr.replace(/−/g,'-'))});
+     f.color='#b3352c';return f;
+   }
+   const f=addObj('function',{derivOf:fn.id,expr:fn.expr}); // 그 외: 수치 미분 그래프
+   f.color='#b3352c';return f;}},
+ {names:['근','Roots','Root'],cat:'함수 심화',sig:'근[함수] · 근[함수, 시작, 끝]',run(a){
+   const fn=argFunction(a[0]);
+   let lo,hi;
+   if(a.length>=3){lo=evalNumExpr(a[1]);hi=evalNumExpr(a[2]);}
+   else{const vr=visibleRange();lo=Math.floor(vr.x0);hi=Math.ceil(vr.x1);}
+   recompute();
+   const xs=scanFnPoints(fn,'root',lo,hi);
+   if(!xs.length)throw new Error('구간 안에 근이 없습니다.');
+   return xs.map((x,i)=>{const p=addPoint('scanpt',{parents:[fn.id],scanKind:'root',idx:i,lo:lo,hi:hi});p.color=PALETTE[1];return p;});}},
+ {names:['극값','Extremum'],cat:'함수 심화',sig:'극값[함수] · 극값[함수, 시작, 끝]',run(a){
+   const fn=argFunction(a[0]);
+   let lo,hi;
+   if(a.length>=3){lo=evalNumExpr(a[1]);hi=evalNumExpr(a[2]);}
+   else{const vr=visibleRange();lo=Math.floor(vr.x0);hi=Math.ceil(vr.x1);}
+   recompute();
+   const xs=scanFnPoints(fn,'extremum',lo,hi);
+   if(!xs.length)throw new Error('구간 안에 극값이 없습니다.');
+   return xs.map((x,i)=>{const p=addPoint('scanpt',{parents:[fn.id],scanKind:'extremum',idx:i,lo:lo,hi:hi});p.color=PALETTE[7];return p;});}},
+ {names:['변곡점','InflectionPoint'],cat:'함수 심화',sig:'변곡점[함수] · 변곡점[함수, 시작, 끝]',run(a){
+   const fn=argFunction(a[0]);
+   let lo,hi;
+   if(a.length>=3){lo=evalNumExpr(a[1]);hi=evalNumExpr(a[2]);}
+   else{const vr=visibleRange();lo=Math.floor(vr.x0);hi=Math.ceil(vr.x1);}
+   recompute();
+   const xs=scanFnPoints(fn,'inflection',lo,hi);
+   if(!xs.length)throw new Error('구간 안에 변곡점이 없습니다.');
+   return xs.map((x,i)=>{const p=addPoint('scanpt',{parents:[fn.id],scanKind:'inflection',idx:i,lo:lo,hi:hi});p.color=PALETTE[5];return p;});}},
+ {names:['극한','Limit'],cat:'함수 심화',sig:'극한[함수, x값]',run(a){
+   const fn=argFunction(a[0]);
+   return mkCmdMeasure('limit',[{t:'o',id:fn.id},numTokDesc(a[1])],'극한');}},
+ {names:['점근선','Asymptote'],cat:'함수 심화',sig:'점근선[함수] (유리함수)',run(a){
+   const fn=argFunction(a[0]);
+   recompute();
+   const list=asymptotesOf(fn);
+   if(!list.length)throw new Error('점근선을 찾을 수 없습니다 (유리함수에서만 지원합니다).');
+   return list.map((it,i)=>{const l=addObj('line',{mode:'asymptote',parents:[fn.id],idx:i});l.color=PALETTE[7];l.dash='dash';return l;});}},
+
+ /* ── 원뿔곡선 ── */
+ {names:['타원','Ellipse'],cat:'원뿔곡선',sig:'타원[초점, 초점, 지나는 점]',run(a){
+   const f1=argPoint(a[0]),f2=argPoint(a[1]),p=argPoint(a[2]);
+   recompute();const g1=GEOM[f1.id],g2=GEOM[f2.id],gp=GEOM[p.id];
+   if(!g1||!g2||!gp)throw new Error('타원을 만들 수 없습니다.');
+   const c=V.len(V.sub(g2,g1))/2,aa=(V.len(V.sub(gp,g1))+V.len(V.sub(gp,g2)))/2;
+   if(aa<=c+1e-9)throw new Error('타원이 되려면 지나는 점이 두 초점 바깥쪽에 있어야 합니다.');
+   const o=addObj('conic',{conic:'ellipse',parents:[f1.id,f2.id,p.id]});o.color=PALETTE[3];return o;}},
+ {names:['쌍곡선','Hyperbola'],cat:'원뿔곡선',sig:'쌍곡선[초점, 초점, 지나는 점]',run(a){
+   const f1=argPoint(a[0]),f2=argPoint(a[1]),p=argPoint(a[2]);
+   recompute();const g1=GEOM[f1.id],g2=GEOM[f2.id],gp=GEOM[p.id];
+   if(!g1||!g2||!gp)throw new Error('쌍곡선을 만들 수 없습니다.');
+   const c=V.len(V.sub(g2,g1))/2,aa=Math.abs(V.len(V.sub(gp,g1))-V.len(V.sub(gp,g2)))/2;
+   if(aa<1e-9||aa>=c-1e-9)throw new Error('쌍곡선이 되려면 |PF₁−PF₂|가 두 초점 사이 거리보다 작아야 합니다.');
+   const o=addObj('conic',{conic:'hyperbola',parents:[f1.id,f2.id,p.id]});o.color=PALETTE[7];return o;}},
+ {names:['포물선','Parabola'],cat:'원뿔곡선',sig:'포물선[초점, 준선]',run(a){
+   const f=argPoint(a[0]);const l=argLineLike(a[1]);
+   recompute();const gf=GEOM[f.id],gl=GEOM[l.id];
+   if(!gf||!gl)throw new Error('포물선을 만들 수 없습니다.');
+   const du=V.unit(gl.d);const foot=V.add(gl.a,V.mul(du,V.dot(V.sub(gf,gl.a),du)));
+   if(V.len(V.sub(gf,foot))<1e-9)throw new Error('초점이 준선 위에 있으면 포물선이 되지 않습니다.');
+   const o=addObj('conic',{conic:'parabola',parents:[f.id,l.id]});o.color=PALETTE[2];return o;}},
+ {names:['초점','Focus','Foci'],cat:'원뿔곡선',sig:'초점[원뿔곡선]',run(a){
+   const o=argObj(a[0],['conic'],'원뿔곡선');
+   recompute();const cg=GEOM[o.id];
+   if(!cg||!cg.foci||!cg.foci.length)throw new Error('초점을 찾을 수 없습니다.');
+   return cg.foci.map((f,i)=>{const p=addPoint('focuspt',{parents:[o.id],idx:i});p.color=PALETTE[1];return p;});}},
+ {names:['준선','Directrix'],cat:'원뿔곡선',sig:'준선[포물선]',run(a){
+   const o=argObj(a[0],['conic'],'원뿔곡선');
+   const l=addObj('line',{mode:'directrix',parents:[o.id]});l.color=PALETTE[7];l.dash='dash';
+   recompute();if(!GEOM[l.id])throw new Error('준선은 포물선에서만 만들 수 있습니다.');
+   return l;}},
+ {names:['정점','Vertex'],cat:'원뿔곡선',sig:'정점[원뿔곡선] · 정점[다각형]',run(a){
+   const o=argObj(a[0],['conic','polygon'],'개체');
+   if(o.type==='polygon')return o.parents.map(id=>byId(id)).filter(Boolean);
+   recompute();const cg=GEOM[o.id];
+   if(!cg||!cg.vertices||!cg.vertices.length)throw new Error('정점을 찾을 수 없습니다.');
+   return cg.vertices.map((v,i)=>{const p=addPoint('vertexpt',{parents:[o.id],idx:i});p.color=PALETTE[2];return p;});}},
+ {names:['대칭축','Axis'],cat:'원뿔곡선',sig:'대칭축[원뿔곡선]',run(a){
+   const o=argObj(a[0],['conic'],'원뿔곡선');
+   recompute();const cg=GEOM[o.id];
+   if(!cg||!cg.axisPts||!cg.axisPts.length)throw new Error('대칭축을 찾을 수 없습니다.');
+   return cg.axisPts.map((ap,i)=>{const l=addObj('line',{mode:'axis',parents:[o.id],idx:i});l.color=PALETTE[6];l.dash='dash';return l;});}},
+
+ /* ── 수열·리스트 ── */
+ {names:['수열','Sequence'],cat:'수열·리스트',sig:'수열[식, 변수, 시작, 끝] · 수열[(x식, y식), 변수, 시작, 끝]',run(a){
+   if(a.length<4)throw new Error('수열[식, 변수, 시작값, 끝값] 형태로 입력하세요.');
+   const varTok=String(a[1]).trim();
+   if(!/^[A-Za-z_가-힣][A-Za-z0-9_가-힣]*$/.test(varTok))throw new Error('변수 이름이 올바르지 않습니다: '+a[1]);
+   const exprTok=String(a[0]).trim();
+   let ast=null,ast2=null;
+   if(exprTok.charAt(0)==='('){
+     const inner=exprTok.slice(1,exprTok.lastIndexOf(')'));
+     const parts=splitArgs(inner);
+     if(parts.length!==2)throw new Error('점 수열은 (x식, y식) 형태여야 합니다.');
+     try{ast=parseExpr(parts[0]);ast2=parseExpr(parts[1]);}catch(e){throw new Error('수식 오류: '+e.message);}
+   }else{
+     try{ast=parseExpr(exprTok);}catch(e){throw new Error('수식 오류: '+e.message);}
+   }
+   const o=addObj('list',{seq:{ast:ast,ast2:ast2,varName:varTok,from:numTokDesc(a[2]),to:numTokDesc(a[3])},items:null});
+   o.name=uniqueName('수열');o.color=PALETTE[6];return o;}},
+ {names:['합계','Sum'],cat:'수열·리스트',sig:'합계[리스트]',run(a){return mkCmdMeasure('sumlist',[argListDesc(a[0])],'합계');}},
+
+ /* ── 통계·확률 ── */
+ {names:['평균','Mean'],cat:'통계·확률',sig:'평균[리스트]',run(a){return mkCmdMeasure('mean',[argListDesc(a[0])],'평균');}},
+ {names:['중앙값','Median'],cat:'통계·확률',sig:'중앙값[리스트]',run(a){return mkCmdMeasure('median',[argListDesc(a[0])],'중앙값');}},
+ {names:['최빈값','Mode'],cat:'통계·확률',sig:'최빈값[리스트]',run(a){return mkCmdMeasure('mode',[argListDesc(a[0])],'최빈값');}},
+ {names:['표준편차','StDev','SD'],cat:'통계·확률',sig:'표준편차[리스트]',run(a){return mkCmdMeasure('stdev',[argListDesc(a[0])],'표준편차');}},
+ {names:['분산','Variance'],cat:'통계·확률',sig:'분산[리스트]',run(a){return mkCmdMeasure('variance',[argListDesc(a[0])],'분산');}},
+ {names:['최대값','Max'],cat:'통계·확률',sig:'최대값[리스트]',run(a){return mkCmdMeasure('max',[argListDesc(a[0])],'최대값');}},
+ {names:['최소값','Min'],cat:'통계·확률',sig:'최소값[리스트]',run(a){return mkCmdMeasure('min',[argListDesc(a[0])],'최소값');}},
+ {names:['개수','Count','Length'],cat:'통계·확률',sig:'개수[리스트]',run(a){return mkCmdMeasure('count',[argListDesc(a[0])],'개수');}},
+ {names:['순열','nPr','Permutation'],cat:'통계·확률',sig:'순열[n, r] — 서로 다른 n개에서 r개를 뽑아 나열',run(a){
+   if(a.length<2)throw new Error('순열[n, r] 형태로 입력하세요.');
+   return mkCmdMeasure('npr',[numTokDesc(a[0]),numTokDesc(a[1])],'순열');}},
+ {names:['조합','nCr','Combination'],cat:'통계·확률',sig:'조합[n, r] — 서로 다른 n개에서 r개를 뽑기',run(a){
+   if(a.length<2)throw new Error('조합[n, r] 형태로 입력하세요.');
+   return mkCmdMeasure('ncr',[numTokDesc(a[0]),numTokDesc(a[1])],'조합');}},
+ {names:['계승','Factorial'],cat:'통계·확률',sig:'계승[n] — n! (수식에 n! 로도 쓸 수 있음)',run(a){return mkCmdMeasure('fact',[numTokDesc(a[0])],'계승');}},
+ {names:['임의정수','RandomBetween'],cat:'통계·확률',sig:'임의정수[최소, 최대] — 만들 때 한 번 뽑는 무작위 정수',run(a){
+   const lo=Math.round(evalNumExpr(a[0])),hi=Math.round(evalNumExpr(a[1]));
+   if(!(hi>=lo))throw new Error('최대값이 최소값보다 작습니다.');
+   const o=mkCmdMeasure('const',[],'임의정수');
+   o.cmdVal=lo+Math.floor(Math.random()*(hi-lo+1));
+   return o;}},
+
+ /* ── 수와 연산 ── */
+ {names:['최대공약수','GCD'],cat:'수와 연산',sig:'최대공약수[a, b, ...]',run(a){
+   if(a.length<2)throw new Error('최대공약수[a, b] 형태로 입력하세요.');
+   return mkCmdMeasure('gcd',a.map(t=>numTokDesc(t)),'최대공약수');}},
+ {names:['최소공배수','LCM'],cat:'수와 연산',sig:'최소공배수[a, b, ...]',run(a){
+   if(a.length<2)throw new Error('최소공배수[a, b] 형태로 입력하세요.');
+   return mkCmdMeasure('lcm',a.map(t=>numTokDesc(t)),'최소공배수');}},
+ {names:['절대값','Abs'],cat:'수와 연산',sig:'절대값[수]',run(a){return mkCmdMeasure('abs',[numTokDesc(a[0])],'절대값');}},
+ {names:['몫','Div'],cat:'수와 연산',sig:'몫[a, b] — a를 b로 나눈 몫',run(a){
+   if(a.length<2)throw new Error('몫[a, b] 형태로 입력하세요.');
+   return mkCmdMeasure('div',[numTokDesc(a[0]),numTokDesc(a[1])],'몫');}},
+ {names:['나머지','Mod'],cat:'수와 연산',sig:'나머지[a, b] — a를 b로 나눈 나머지',run(a){
+   if(a.length<2)throw new Error('나머지[a, b] 형태로 입력하세요.');
+   return mkCmdMeasure('mod',[numTokDesc(a[0]),numTokDesc(a[1])],'나머지');}},
+
+ /* ── 벡터 심화 ── */
+ {names:['내적','Dot'],cat:'벡터',sig:'내적[벡터, 벡터]',run(a){
+   const v1=argObj(a[0],['vector','segment'],'벡터'),v2=argObj(a[1],['vector','segment'],'벡터');
+   return mkCmdMeasure('dot',[{t:'o',id:v1.id},{t:'o',id:v2.id}],'내적');}},
+ {names:['단위벡터','UnitVector'],cat:'벡터',sig:'단위벡터[벡터]',run(a){
+   const v=argObj(a[0],['vector','segment'],'벡터');
+   const o=addObj('vector',{mode:'unit',parents:[v.id]});o.color=PALETTE[5];
+   recompute();if(!GEOM[o.id])throw new Error('단위벡터를 만들 수 없습니다 (길이가 0인 벡터).');
+   return o;}},
 ];
+COMMANDS.forEach((c,i)=>{ // 기존 명령의 도움말 카테고리 (배열 순서 기준)
+  if(c.cat)return;
+  c.cat=i<13?'작도':i<18?'측정':i<22?'변환':i<26?'미적분':'기타';
+});
 function findCommand(name){
   if(!name)return null;
   const low=String(name).toLowerCase();
@@ -4574,6 +5347,10 @@ function execCommandInner(str){
       assignCmdName(res,name);
       return res;
     }
+    if(rhs.charAt(0)==='{'&&rhs.charAt(rhs.length-1)==='}'){
+      const l=mkListLiteral(rhs);
+      cmdSetName(l,name);return l;
+    }
     const tm=rhs.match(/^\((.*)\)$/s);
     if(tm&&splitArgs(tm[1]).length===2){
       const parts=splitArgs(tm[1]);
@@ -4609,6 +5386,7 @@ function execCommandInner(str){
     const parts=splitArgs(tm[1]);
     return addPoint('free',{x:evalNumExpr(parts[0]),y:evalNumExpr(parts[1])});
   }
+  if(str.charAt(0)==='{'&&str.charAt(str.length-1)==='}')return mkListLiteral(str);
   const so=findObjByName(str);
   if(so)return{selectOnly:so};
   let ast;try{ast=parseExpr(str);}catch(e){throw new Error('알 수 없는 명령입니다: '+str);}
@@ -4748,11 +5526,20 @@ cmdInput.addEventListener('keydown',e=>{
   }
 });
 function cmdHelpDlg(){
-  openDialog('명령어 도움말',
+  const CAT_ORDER=['작도','삼각형의 중심','원 심화','분할','측정','변환','함수 심화','원뿔곡선','수열·리스트','통계·확률','수와 연산','벡터','미적분','기타'];
+  const rowHtml=c=>'<tr><td style="text-align:left;white-space:nowrap;"><b>'+c.names[0]+'</b>'+(c.names.length>1?' <span style="color:var(--ink2);font-size:11.5px;">'+c.names.slice(1).join(' · ')+'</span>':'')+'</td><td style="text-align:left;">'+c.sig+'</td></tr>';
+  let groups='';
+  for(const cat of CAT_ORDER){
+    const cs=COMMANDS.filter(c=>c.cat===cat);
+    if(!cs.length)continue;
+    groups+='<h4 style="margin:14px 0 4px;">'+cat+' ('+cs.length+')</h4><table>'+cs.map(rowHtml).join('')+'</table>';
+  }
+  openDialog('명령어 도움말 — 총 '+COMMANDS.length+'종',
     '<p style="margin-top:0;">하단 입력창에 <b>이름[인자, ...]</b> 또는 <b>이름(인자, ...)</b> 형태로 입력하세요. 결과에 이름을 붙이려면 <b>이름 = 명령[...]</b>처럼 씁니다. 입력창 포커스 단축키는 <kbd>F2</kbd>, ↑/↓ 키로 이전 명령을 다시 불러옵니다.</p>'+
-    '<p><b>할당</b> — A=(1, 2) 점 · a=3 매개변수 · y=2x+1 직선 · f(x)=x^2 함수</p>'+
-    '<table>'+COMMANDS.map(c=>'<tr><td style="text-align:left;white-space:nowrap;"><b>'+c.names[0]+'</b>'+(c.names.length>1?' <span style="color:var(--ink2);font-size:11.5px;">'+c.names.slice(1).join(' · ')+'</span>':'')+'</td><td style="text-align:left;">'+c.sig+'</td></tr>').join('')+'</table>'+
+    '<p><b>할당</b> — A=(1, 2) 점 · a=3 매개변수 · y=2x+1 직선 · f(x)=x^2 함수 · L={1, 2, 3} 리스트</p>'+
+    groups+
     '<p><b>구분구적법</b> — 상합[f, 0, 3, n] · 하합[f, 0, 3, n] · 사다리꼴합[f, 0, 3, n] · 적분[f, 0, 3]. 개수 자리에 매개변수 이름을 쓰면 슬라이더를 움직일 때 직사각형과 합이 실시간으로 바뀝니다.</p>'+
+    '<p><b>리스트와 통계</b> — L={1, 2, 3, 4}처럼 리스트를 만들고 평균[L] · 표준편차[L] 등을 구합니다. 수열[n^2, n, 1, 5]는 {1, 4, 9, 16, 25} 리스트, 수열[(n, n^2), n, 0, 4]는 점들의 리스트가 됩니다. 계승은 수식에서 5! 처럼도 쓸 수 있습니다.</p>'+
     '<p style="color:var(--ink2);font-size:12px;">인자는 기존 개체 이름(A, AB, f 등), 숫자, (x, y) 좌표, 매개변수 이름을 쓸 수 있습니다. 명령을 입력하는 동안에는 캔버스에 반투명 미리보기가 나타납니다.</p>',
     [{label:'닫기',primary:true}]);
 }
