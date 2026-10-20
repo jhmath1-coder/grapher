@@ -224,6 +224,39 @@
   /* ── 타이틀바 버튼 · 새 패널들 ─────────────────────────── */
   .tb-btn{border:1px solid var(--line); background:var(--btn); border-radius:5px; padding:3px 10px; cursor:pointer; white-space:nowrap;}
   .tb-btn:hover{background:var(--btn-hover);}
+  .tb-btn:disabled{opacity:.38; cursor:default;}
+  .tb-btn:disabled:hover{background:var(--btn);}
+  /* ── 명령 입력창 (지오지브라식) ─────────────────────────── */
+  #cmdbar{
+    flex:0 0 auto; display:flex; align-items:center; gap:8px; background:var(--chrome);
+    border-top:1px solid var(--line); padding:6px 10px; user-select:none;
+  }
+  #cmdbar label{font-weight:700; white-space:nowrap;}
+  #cmdWrap{position:relative; flex:1; min-width:0;}
+  #cmdInput{
+    width:100%; padding:7px 10px; border:1px solid var(--line2); border-radius:6px;
+    font-family:inherit; font-size:13.5px; background:var(--btn); color:var(--ink);
+  }
+  #cmdInput:focus{outline:2px solid var(--accent-soft); border-color:var(--accent);}
+  #cmdSuggest{
+    position:absolute; left:0; right:0; bottom:calc(100% + 6px); display:none; z-index:120;
+    background:var(--panel); border:1px solid var(--line2); border-radius:7px; box-shadow:var(--shadow); overflow:hidden;
+  }
+  .cmd-sug{display:flex; gap:10px; align-items:baseline; padding:6px 10px; cursor:pointer;}
+  .cmd-sug span{color:var(--ink2); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .cmd-sug.on,.cmd-sug:hover{background:var(--accent-soft);}
+  .cmd-hint{padding:6px 10px; color:var(--ink2); font-size:12.5px;}
+  #cmdError{
+    flex:0 0 auto; display:none; background:#fbeae8; color:#a12b21; padding:5px 12px;
+    font-size:12.5px; border-top:1px solid #e5c4c0;
+  }
+  @media (prefers-color-scheme: dark){ #cmdError{background:#3d2320; color:#f0a9a0; border-top-color:#5a3530;} }
+  #liveTip{
+    position:absolute; z-index:31; display:none; pointer-events:none; white-space:nowrap;
+    background:var(--panel); border:1px solid var(--accent); color:var(--ink);
+    border-radius:6px; padding:3px 8px; font-size:12px; box-shadow:0 2px 8px rgba(0,0,0,.15);
+  }
+  @media (max-width:760px){ #cmdInput{font-size:16px;} #cmdbar{padding:5px 8px;} }
   #audioPanel{
     position:absolute; right:10px; top:10px; z-index:45; width:268px; max-width:calc(100vw - 20px); display:none;
     background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--shadow); padding:10px 12px;
@@ -299,7 +332,7 @@
     .mb-item{padding:6px 9px;}
   }
   @media print{
-    #titlebar,#menubar,#toolbox,#panel,#bottombar,#zoomCtl,#animPanel,#audioPanel,#blockPanel,#modalWrap,#toast{display:none !important;}
+    #titlebar,#menubar,#toolbox,#panel,#bottombar,#zoomCtl,#animPanel,#audioPanel,#blockPanel,#modalWrap,#toast,#cmdbar,#cmdError,#liveTip{display:none !important;}
     body{overflow:visible;}
     #docMode{position:static !important; overflow:visible !important; background:#fff;}
     #docMode .doc-tools{display:none !important;}
@@ -314,7 +347,9 @@
   <div id="titlebar">
     <svg class="appmark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="15" r="6.5" fill="none" stroke="#2f6fb2" stroke-width="2"/><path d="M4 20 L20 4" stroke="#b3352c" stroke-width="2"/><circle cx="20" cy="4" r="2.2" fill="#b3352c"/></svg>
     <span id="docTitle">제목 없음 - 동적 기하 스케치</span>
-    <span id="buildTag">빌드 2026-10-20 14:47 · 지구본 세차 운동(t-기울기 연동)</span>
+    <span id="buildTag">빌드 2026-10-20 15:45 · 지오지브라식 명령창(상합·하합 포함)+자동완성·스냅·실시간 피드백·자동저장</span>
+    <button class="tb-btn" id="undoBtn" type="button" title="실행 취소 (Ctrl+Z)">↩</button>
+    <button class="tb-btn" id="redoBtn" type="button" title="다시 실행 (Ctrl+Y)">↪</button>
     <button class="tb-btn" id="shareBtn" type="button">공유</button>
     <button class="tb-btn" id="blockBtn" type="button">블록코딩</button>
     <button class="tb-btn" id="docBtn" type="button">문서 모드</button>
@@ -329,6 +364,7 @@
     <div id="canvasWrap">
       <svg id="svg" xmlns="http://www.w3.org/2000/svg" aria-label="작도 캔버스"></svg>
       <div id="pendingHint"></div>
+      <div id="liveTip"></div>
       <div id="zoomCtl">
         <button type="button" id="zoomIn" title="확대">+</button>
         <button type="button" id="zoomFit" title="전체 보기" style="font-size:11px;">전체</button>
@@ -412,6 +448,16 @@
       <span id="statusXY"></span>
     </div>
   </div>
+
+  <div id="cmdbar">
+    <label for="cmdInput">입력:</label>
+    <div id="cmdWrap">
+      <input id="cmdInput" type="text" placeholder="명령 입력 — 예: 중점[A, B], 상합[f, 0, 3, 10], A=(1, 2), f(x)=x^2 (포커스: F2)" autocomplete="off" spellcheck="false" />
+      <div id="cmdSuggest"></div>
+    </div>
+    <button class="tb-btn" id="cmdHelp" type="button" title="명령어 도움말">?</button>
+  </div>
+  <div id="cmdError" role="alert"></div>
 
   <div id="docMode">
     <div class="doc-tools">
@@ -572,6 +618,7 @@ function addObj(type,params){
     else if(type==='text')o.name='글'+(++state.counters.text);
     else if(type==='vector')o.name='벡터'+(++state.counters.vector);
     else if(type==='freehand')o.name='곡선'+(++state.counters.freehand);
+    else if(type==='sum')o.name='합';
     else if(type==='param')o.name='a';
   }
   state.objects.push(o);
@@ -749,6 +796,7 @@ function applyXformPt(p,xf,G){
   if(xf.kind==='rotate'){const c=G[xf.center];if(!c)return p;return V.add(c,V.rot(V.sub(p,c),xf.angle*RAD));}
   if(xf.kind==='dilate'){const c=G[xf.center];if(!c)return p;return V.add(c,V.mul(V.sub(p,c),xf.ratio));}
   if(xf.kind==='reflect'){const ax=G[xf.axis];if(!ax)return p;const u=V.unit(ax.d);const proj=V.add(ax.a,V.mul(u,V.dot(V.sub(p,ax.a),u)));return V.sub(V.mul(proj,2),p);}
+  if(xf.kind==='reflectPt'){const c=G[xf.center];if(!c)return p;return{x:2*c.x-p.x,y:2*c.y-p.y};}
   return p;
 }
 function applyXform(g,xf,G){
@@ -881,6 +929,13 @@ function computeGeom(o,G){
         if(V.len(dir)<1e-9)return null;
         return lineGeom(b,V.add(b,dir),'ray');
       }
+      if(o.mode==='perpbis'){ // 수직이등분선: 두 점의 중점을 지나고 두 점을 잇는 방향에 수직인 직선
+        const a=G[o.parents[0]],b=G[o.parents[1]];if(!a||!b)return null;
+        const mid={x:(a.x+b.x)/2,y:(a.y+b.y)/2};
+        const d=V.perp(V.sub(b,a));
+        if(V.len(d)<1e-12)return null;
+        return lineGeom(mid,V.add(mid,d),'line');
+      }
       return null;
     }
     case 'circle':{
@@ -943,9 +998,63 @@ function computeGeom(o,G){
       return{kind:'function',ast:o.ast,expr:o.expr};
     }
     case 'param':return{kind:'param',value:o.value};
+    case 'sum':{
+      const fn=byId(o.fnId);if(!fn)return null;
+      return computeSumGeom(o,fn,G);
+    }
     case 'locus':return o._geomCache||null;
   }
   return null;
+}
+/* ═══════════════ 구분구적법 (상합·하합·사다리꼴합·적분) ═══════════════ */
+function sumResolve(o){
+  const rp=id=>{const p=id?byId(id):null;return(p&&p.type==='param')?p.value:null;};
+  let a=rp(o.aParam);if(a==null)a=o.a;
+  let b=rp(o.bParam);if(b==null)b=o.b;
+  let n=rp(o.nParam);n=(n==null?o.n:Math.round(n));
+  n=clamp(isFinite(n)?n:1,1,200);
+  return{a:a,b:b,n:n};
+}
+function evalFnObj(fnObj,G,x){
+  const g=G[fnObj.id];const sc=paramScope();
+  if(g&&g.derivAst){const h=1e-4;const f=xx=>evalAst(g.derivAst,Object.assign({},sc,{x:xx}));const v=(f(x+h)-f(x-h))/(2*h);return isFinite(v)?v:NaN;}
+  if(fnObj.ast){const v=evalAst(fnObj.ast,Object.assign({},sc,{x:x}));return isFinite(v)?v:NaN;}
+  return NaN;
+}
+function computeSumGeom(o,fn,G){
+  const r=sumResolve(o);const a=r.a,b=r.b,n=r.n;
+  if(!isFinite(a)||!isFinite(b)||a===b)return null;
+  if(o.sumKind==='integral'){
+    const N=240,h=(b-a)/N;let s=0;const pts=[];
+    for(let i=0;i<=N;i++){
+      const x=a+h*i;const y=evalFnObj(fn,G,x);
+      pts.push({x:x,y:isFinite(y)?y:0});
+      if(isFinite(y))s+=y*(i===0||i===N?1:(i%2?4:2));
+    }
+    return{kind:'sum',value:s*h/3,area:pts,a:a,b:b};
+  }
+  const lo=Math.min(a,b),hi=Math.max(a,b),sgnV=a<=b?1:-1;
+  const w=(hi-lo)/n,rects=[],traps=[];let total=0;
+  const K=n>60?10:20;
+  for(let i=0;i<n;i++){
+    const x0=lo+i*w,x1=x0+w;
+    if(o.sumKind==='trap'){
+      const y0=evalFnObj(fn,G,x0),y1=evalFnObj(fn,G,x1);
+      const yy0=isFinite(y0)?y0:0,yy1=isFinite(y1)?y1:0;
+      traps.push([{x:x0,y:0},{x:x1,y:0},{x:x1,y:yy1},{x:x0,y:yy0}]);
+      total+=(yy0+yy1)/2*w;
+    }else{
+      let ex=o.sumKind==='upper'?-Infinity:Infinity;
+      for(let k=0;k<=K;k++){
+        const y=evalFnObj(fn,G,x0+w*k/K);
+        if(isFinite(y))ex=o.sumKind==='upper'?Math.max(ex,y):Math.min(ex,y);
+      }
+      if(!isFinite(ex))ex=0;
+      rects.push({x0:x0,x1:x1,y0:Math.min(0,ex),y1:Math.max(0,ex)});
+      total+=ex*w;
+    }
+  }
+  return{kind:'sum',value:sgnV*total,rects:rects,traps:traps,a:a,b:b,n:n};
 }
 function measureValue(o,G){
   const R=id=>G[id];
@@ -1149,7 +1258,7 @@ function drawGrid(g){
   }
 }
 function strokeAttrs(o,extra){
-  const a=Object.assign({'stroke':o.color,'stroke-width':o.width,'fill':'none','stroke-linecap':'round'},extra||{});
+  const a=Object.assign({'stroke':o.color,'stroke-width':o.width+(typeof hoverId!=='undefined'&&hoverId===o.id?1.6:0),'fill':'none','stroke-linecap':'round'},extra||{});
   if(o.dash==='dot')a['stroke-dasharray']='1.5 4';
   if(o.dash==='dash')a['stroke-dasharray']='7 4';
   return a;
@@ -1172,7 +1281,7 @@ function drawObject(o,g){
   const P=p=>toPx(p);
   switch(o.type){
     case 'point':{
-      const p=P(g);const r=state.pointR+(o.kind==='intersect'?0.5:0);
+      const p=P(g);const r=state.pointR+(o.kind==='intersect'?0.5:0)+(hoverId===o.id?1.6:0);
       el('circle',{cx:p.x,cy:p.y,r:r+7,fill:'transparent','data-hit':'1'},grp);
       el('circle',{cx:p.x,cy:p.y,r:r,fill:sel?'#fff':o.color,stroke:o.color,'stroke-width':sel?2.4:1.4},grp);
       if(o.trace){}
@@ -1182,7 +1291,7 @@ function drawObject(o,g){
     case 'segment':case 'ray':case 'line':{
       const seg=clipLine(g);if(!seg)break;
       const a=P(seg[0]),b=P(seg[1]);
-      el('line',Object.assign(strokeAttrs(o),{x1:a.x,y1:a.y,x2:b.x,y2:b.y,'stroke-width':o.width+ (sel?1.2:0)}),grp);
+      el('line',Object.assign(strokeAttrs(o),{x1:a.x,y1:a.y,x2:b.x,y2:b.y,'stroke-width':o.width+(sel?1.2:hoverId===o.id?1.6:0)}),grp);
       el('line',{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:'transparent','stroke-width':11,'data-hit':'1'},grp);
       if(o.type==='segment'){
         const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
@@ -1193,7 +1302,7 @@ function drawObject(o,g){
     }
     case 'circle':{
       const c=P(g.c);
-      el('circle',Object.assign(strokeAttrs(o),{cx:c.x,cy:c.y,r:g.r*state.view.scale,'stroke-width':o.width+(sel?1.2:0)}),grp);
+      el('circle',Object.assign(strokeAttrs(o),{cx:c.x,cy:c.y,r:g.r*state.view.scale,'stroke-width':o.width+(sel?1.2:hoverId===o.id?1.6:0)}),grp);
       el('circle',{cx:c.x,cy:c.y,r:g.r*state.view.scale,fill:'none',stroke:'transparent','stroke-width':11,'data-hit':'1'},grp);
       labelFor(o,{x:c.x+g.r*state.view.scale*0.72,y:c.y-g.r*state.view.scale*0.72},o.name,11.5);
       break;
@@ -1226,7 +1335,7 @@ function drawObject(o,g){
     case 'vector':{
       const seg=clipLine(g);if(!seg)break;
       const a=P(seg[0]),b=P(seg[1]);
-      el('line',Object.assign(strokeAttrs(o),{x1:a.x,y1:a.y,x2:b.x,y2:b.y,'stroke-width':o.width+(sel?1.2:0)}),grp);
+      el('line',Object.assign(strokeAttrs(o),{x1:a.x,y1:a.y,x2:b.x,y2:b.y,'stroke-width':o.width+(sel?1.2:hoverId===o.id?1.6:0)}),grp);
       const dx=b.x-a.x,dy=b.y-a.y,L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L;
       const hs=11,hw=4.6,bx=b.x-ux*hs,by=b.y-uy*hs;
       el('polygon',{points:b.x+','+b.y+' '+(bx-uy*hw)+','+(by+ux*hw)+' '+(bx+uy*hw)+','+(by-ux*hw),fill:o.color},grp);
@@ -1237,7 +1346,7 @@ function drawObject(o,g){
     case 'freehand':{
       if(g.pts&&g.pts.length>1){
         const dAttr=g.pts.map((p,i)=>{const q=P(p);return(i?'L':'M')+q.x.toFixed(1)+' '+q.y.toFixed(1);}).join(' ');
-        el('path',Object.assign(strokeAttrs(o),{d:dAttr,'stroke-width':o.width+(sel?1.2:0)}),grp);
+        el('path',Object.assign(strokeAttrs(o),{d:dAttr,'stroke-width':o.width+(sel?1.2:hoverId===o.id?1.6:0)}),grp);
         el('path',{d:dAttr,fill:'none',stroke:'transparent','stroke-width':11,'data-hit':'1'},grp);
         const mid=P(g.pts[Math.floor(g.pts.length/2)]);
         labelFor(o,{x:mid.x+6,y:mid.y-6},o.name,11.5);
@@ -1300,8 +1409,32 @@ function drawObject(o,g){
       const attrs=strokeAttrs(o);
       if(g.back){attrs['stroke-dasharray']='5 4';attrs['stroke-opacity']=0.45;}
       attrs['stroke-width']=o.width+(sel?1.2:0);
+      if(hoverId===o.id)attrs['stroke-width']=o.width+1.6;
       if(g.rot)attrs.transform='rotate('+g.rot+' '+c.x+' '+c.y+')'; // 자전축 기울기만큼 전체 투영 회전
       el('ellipse',Object.assign(attrs,{cx:c.x,cy:c.y,rx:rx,ry:ry}),grp);
+      break;
+    }
+    case 'sum':{
+      // 구분구적법: 직사각형(상합·하합) / 사다리꼴 / 적분 영역을 반투명하게 채운다
+      if(g.rects)g.rects.forEach(r=>{
+        const p1=P({x:r.x0,y:r.y0}),p2=P({x:r.x1,y:r.y1});
+        el('rect',{x:Math.min(p1.x,p2.x),y:Math.min(p1.y,p2.y),width:Math.abs(p2.x-p1.x),height:Math.abs(p2.y-p1.y),
+          fill:o.color,'fill-opacity':0.28,stroke:o.color,'stroke-width':1.1,'data-hit':'1'},grp);
+      });
+      if(g.traps)g.traps.forEach(t=>{
+        el('polygon',{points:t.map(p=>{const q=P(p);return q.x+','+q.y;}).join(' '),
+          fill:o.color,'fill-opacity':0.28,stroke:o.color,'stroke-width':1.1,'data-hit':'1'},grp);
+      });
+      if(g.area&&g.area.length>1){
+        let dAttr=g.area.map((p,i)=>{const q=P(p);return(i?'L':'M')+q.x.toFixed(1)+' '+q.y.toFixed(1);}).join(' ');
+        const pa=P({x:g.area[g.area.length-1].x,y:0}),pb=P({x:g.area[0].x,y:0});
+        dAttr+=' L'+pa.x.toFixed(1)+' '+pa.y.toFixed(1)+' L'+pb.x.toFixed(1)+' '+pb.y.toFixed(1)+' Z';
+        el('path',{d:dAttr,fill:o.color,'fill-opacity':0.22,stroke:o.color,'stroke-width':1.2,'data-hit':'1'},grp);
+      }
+      if(isFinite(g.value)){
+        const lo=Math.min(g.a,g.b);const pp=P({x:lo,y:0});
+        labelFor(o,{x:pp.x+5,y:pp.y-8},o.name+' = '+fmt(g.value),12);
+      }
       break;
     }
     case 'locus':{
@@ -1346,6 +1479,44 @@ function render(){
       c.setAttribute('data-interest',i);
     });
   }
+  // 작도 중 고스트 미리보기 (커서까지의 예상 도형)
+  if(pending.length&&!drag){
+    const gg=el('g',{opacity:0.8},svg);
+    const gA={'stroke':'#2f6fb2','stroke-width':1.3,'stroke-dasharray':'5 4',fill:'none','pointer-events':'none'};
+    const pgeos=pending.map(id=>GEOM[id]).filter(g=>g&&g.x!=null);
+    if(pgeos.length){
+      const last=pgeos[pgeos.length-1],mp=toPx(mouseMath);
+      if(['segment','line','vector','regpoly','circle3'].includes(state.tool)){
+        const a=toPx(last);el('line',Object.assign({},gA,{x1:a.x,y1:a.y,x2:mp.x,y2:mp.y}),gg);
+      }else if(state.tool==='circle'&&pending.length===1){
+        const c=toPx(last);const r=Math.hypot(mp.x-c.x,mp.y-c.y);
+        el('circle',Object.assign({},gA,{cx:c.x,cy:c.y,r:r}),gg);
+        el('line',Object.assign({},gA,{x1:c.x,y1:c.y,x2:mp.x,y2:mp.y}),gg);
+      }else if(state.tool==='polygon'){
+        const pts=pgeos.map(g=>toPx(g));pts.push(mp);
+        el('polyline',Object.assign({},gA,{points:pts.map(p=>p.x+','+p.y).join(' ')}),gg);
+      }else if(state.tool==='angle'&&pending.length>=1){
+        if(pending.length===1){const a=toPx(last);el('line',Object.assign({},gA,{x1:a.x,y1:a.y,x2:mp.x,y2:mp.y}),gg);}
+        else{const v=toPx(pgeos[1]),a=toPx(pgeos[0]);
+          el('line',Object.assign({},gA,{x1:v.x,y1:v.y,x2:a.x,y2:a.y}),gg);
+          el('line',Object.assign({},gA,{x1:v.x,y1:v.y,x2:mp.x,y2:mp.y}),gg);}
+      }
+    }
+  }
+  // 스마트 스냅 하이라이트
+  if(snapInfo){
+    const p=toPx(snapInfo);
+    el('circle',{cx:p.x,cy:p.y,r:9.5,fill:'none',stroke:'#e07b00','stroke-width':2.2,'pointer-events':'none'},svg);
+    const t=el('text',{x:p.x+12,y:p.y-10,'font-size':11.5,fill:'#b35f00','font-weight':'700','paint-order':'stroke',stroke:'#fff','stroke-width':3,'pointer-events':'none'},svg);
+    t.textContent='스냅: '+snapInfo.label;
+  }
+  // 명령 입력 미리보기 (반투명)
+  if(typeof cmdPreviewList!=='undefined'&&cmdPreviewList.length){
+    const pg=el('g',{opacity:0.45,'pointer-events':'none'},svg);
+    const savedRoot=renderRoot;renderRoot=pg;
+    cmdPreviewList.forEach(it=>{try{drawObject(it.o,it.g);}catch(e){}});
+    renderRoot=savedRoot;
+  }
   // 오디오 트레이스 커서
   if(audioTrace.fnId&&audioTrace.x!=null){
     const fo=byId(audioTrace.fnId);
@@ -1361,13 +1532,14 @@ function render(){
   // 선택 표시 (점 제외 개체 윤곽 강조)
   updateStatus();
   refreshAlgValues();
+  refreshUndoBtns();
 }
 /* ═══════════════ 정의 · 값 (대수창) ═══════════════ */
 function nm(id){const o=byId(id);return o?displayName(o):'?';}
 function defOf(o){
   if(o.xform){
     const s=nm(o.xform.source);
-    return {'translate':'벡터만큼 평행이동한 상','rotate':'회전이동한 상','dilate':'닮음변환한 상','reflect':'선대칭이동한 상'}[o.xform.kind]+' · '+s;
+    return {'translate':'벡터만큼 평행이동한 상','rotate':'회전이동한 상','dilate':'닮음변환한 상','reflect':'선대칭이동한 상','reflectPt':'점대칭이동한 상'}[o.xform.kind]+' · '+s;
   }
   switch(o.type){
     case 'point':
@@ -1385,6 +1557,7 @@ function defOf(o){
       if(o.mode==='parallel')return nm(o.parents[0])+'를 지나고 '+nm(o.parents[1])+'에 평행한 직선';
       if(o.mode==='perp')return nm(o.parents[0])+'를 지나고 '+nm(o.parents[1])+'에 수직인 직선';
       if(o.mode==='bisector')return '∠'+nm(o.parents[0])+nm(o.parents[1])+nm(o.parents[2])+'의 이등분선';
+      if(o.mode==='perpbis')return nm(o.parents[0])+nm(o.parents[1])+'의 수직이등분선';
       return t;
     }
     case 'vector':return nm(o.parents[0])+'에서 '+nm(o.parents[1])+'(으)로 가는 벡터';
@@ -1403,6 +1576,12 @@ function defOf(o){
     case 'function':return o.derivOf?nm(o.derivOf)+'(x)의 도함수 그래프':'함수 그래프';
     case 'param':return '매개변수 ('+fmt(o.min)+' ~ '+fmt(o.max)+')';
     case 'locus':return nm(o.parents[1])+'의 자취 ('+nm(o.parents[0])+' 이동)';
+    case 'sum':{
+      const r=sumResolve(o);const fnm=nm(o.fnId);
+      const range='['+fmt(r.a)+', '+fmt(r.b)+']';
+      return {integral:'적분 · '+fnm+', '+range,upper:'상합 · '+fnm+', '+range+', '+r.n+'개 구간',
+        lower:'하합 · '+fnm+', '+range+', '+r.n+'개 구간',trap:'사다리꼴합 · '+fnm+', '+range+', '+r.n+'개 구간'}[o.sumKind]||'합';
+    }
     case 'iterate':return '반복: '+o.pre.map((p,i)=>nm(p)+'→'+nm(o.img[i])).join(', ');
     case 'gellipse':return o.role==='meridian'?('지구본 자오선 λ='+o.lam+'° — 기울어진 자전축 기준 정사영 타원 (가로 반축이 cos(λ+t)로 변함)'):('지구본 위선 φ='+(o.phi>0?'+':'')+o.phi+'° — 기울어진 자전축에 수직인 정사영 타원');
   }
@@ -1422,6 +1601,7 @@ function valueOf(o){
     case 'arc':{let sw=g.a2-g.a1;while(sw<0)sw+=2*Math.PI;return '호의 길이 '+fmt(g.r*sw);}
     case 'sector':{let sw=g.a2-g.a1;while(sw<0)sw+=2*Math.PI;return '넓이 '+fmt(0.5*g.r*g.r*sw);}
     case 'measure':return g.text;
+    case 'sum':return fmt(g.value);
     case 'function':return o.name+'(x) = '+(o.expr||'');
     case 'param':return fmt(o.value);
     case 'text':return o.text;
@@ -1487,6 +1667,8 @@ function renderAlgebra(){
       }
       row.appendChild(box);
     }
+    row.addEventListener('mouseenter',()=>{hoverId=o.id;render();});
+    row.addEventListener('mouseleave',()=>{if(hoverId===o.id){hoverId=null;render();}});
     row.addEventListener('click',()=>{selectOnly(o.id);render();renderAlgebra();renderProto();});
     row.addEventListener('dblclick',()=>openProps(o.id));
     list.appendChild(row);
@@ -1532,7 +1714,7 @@ function updateStatus(){
   if(!selObjs.length)$('#statusSel').textContent='';
   else{
     const cnt={};
-    selObjs.forEach(o=>{const k={point:'점',segment:'선분',ray:'반직선',line:'직선',circle:'원',polygon:'다각형',arc:'호',sector:'부채꼴',text:'글',measure:'측정',function:'함수',param:'매개변수',locus:'자취',iterate:'반복',gellipse:'지구본 타원',vector:'벡터',freehand:'자유 곡선'}[o.type]||o.type;cnt[k]=(cnt[k]||0)+1;});
+    selObjs.forEach(o=>{const k={point:'점',segment:'선분',ray:'반직선',line:'직선',circle:'원',polygon:'다각형',arc:'호',sector:'부채꼴',text:'글',measure:'측정',function:'함수',param:'매개변수',locus:'자취',iterate:'반복',gellipse:'지구본 타원',vector:'벡터',freehand:'자유 곡선',sum:'구분구적 합'}[o.type]||o.type;cnt[k]=(cnt[k]||0)+1;});
     $('#statusSel').textContent='선택된 개체: '+Object.keys(cnt).map(k=>cnt[k]+'개의 '+k).join(', ');
   }
 }
@@ -1562,7 +1744,7 @@ function undo(){if(!past.length){toast('실행 취소할 내용이 없습니다.
 function redo(){if(!future.length){toast('다시 실행할 내용이 없습니다.');return;}past.push(snapshot());restore(future.pop());}
 /* ═══════════════ 버전 기록 (localStorage, 최근 20개 자동 저장) ═══════════════ */
 let verTimer=null;
-function scheduleVersionSave(){clearTimeout(verTimer);verTimer=setTimeout(saveVersionNow,1200);}
+function scheduleVersionSave(){clearTimeout(verTimer);verTimer=setTimeout(saveVersionNow,1200);scheduleAutosave();}
 function loadVersions(){try{return JSON.parse(localStorage.getItem('dgs-version-history')||'[]');}catch(e){return[];}}
 function saveVersionNow(){
   try{
@@ -1659,14 +1841,17 @@ function dlgInfo(){
     '<p>점·선·원을 작도하고 자유점을 끌어 움직이면, 교점·중점·수선·측정값이 의존 관계를 따라 실시간으로 함께 움직입니다. 매개변수 슬라이더, 함수 그래프, 변환, 자취, 애니메이션을 지원합니다.</p>'+
     '<p>데스모스·알지오매스·지오지브라의 장점을 더했습니다: 미지수→슬라이더 자동 제안, 스냅샷 공유 링크와 버전 기록, 함수 오디오 트레이스, 블록코딩 작도, 문서(활동지) 모드, 작도 단계 재생과 대수창 양방향 편집.</p>'+
     '<p style="color:var(--ink2);">Geometer\'s Sketchpad 5.03의 화면 구성에서 영감을 받은 웹 재현입니다.</p>'+
-    '<p style="color:var(--ink2);">빌드 2026-10-20 14:47 · 지구본 세차 운동(t-기울기 연동)</p>');
+    '<p style="color:var(--ink2);">빌드 2026-10-20 15:45 · 지오지브라식 명령창(상합·하합 포함)+자동완성·스냅·실시간 피드백·자동저장</p>');
 }
 function dlgShortcuts(){
   const rows=[['Ctrl+1 ~ 15','도구 선택 (1 이동·2 점·3 원·4 선분·5 다각형·6 글·7 정보·8 사용자 도구·9 벡터·0 세 점 원, 11~15는 Ctrl+1 뒤 숫자: 각·정다각형·펜·슬라이더·지우개)'],
     ['Ctrl+Z / Ctrl+Y','실행 취소 / 다시 실행'],['Ctrl+X / C / V','잘라내기 / 복사 / 붙여넣기'],
     ['Ctrl+N / O / S / P','새 문서 / 열기 / 저장 / 인쇄'],['Ctrl+B / I / U','굵게 / 기울임 / 밑줄 (글 개체)'],
     ['Delete','선택한 개체 지우기 (종속 개체도 함께)'],['Esc','작업 취소 · 선택 해제'],['Enter','다각형 완성'],
-    ['휠 / 두 손가락','확대·축소'],['빈 곳 끌기','범위 선택 (이동 도구)'],['F1','단축키 안내']];
+    ['휠 / 두 손가락','확대·축소'],['빈 곳 끌기','범위 선택 (이동 도구)'],['F1','단축키 안내'],
+    ['F2','명령 입력창으로 이동 (예: 중점[A, B], 상합[f, 0, 3, 10])'],
+    ['↑ / ↓ (입력창에서)','이전 명령 다시 불러오기 / 자동 완성 후보 이동'],
+    ['Alt (점을 끌 때)','스마트 스냅 잠시 끄기']];
   openDialog('단축키 안내','<table>'+rows.map(r=>'<tr><td style="text-align:left;white-space:nowrap;"><kbd>'+r[0]+'</kbd></td><td style="text-align:left;">'+r[1]+'</td></tr>').join('')+'</table>');
 }
 
@@ -1730,6 +1915,12 @@ function hitTest(m){
       const p=toPx(g);
       if(Math.abs(p.x-mousePx.x)<70&&Math.abs(p.y-mousePx.y)<14)return o;
     }
+    else if(o.type==='sum'){
+      const inBox=(xs,ys)=>m.x>=Math.min.apply(null,xs)&&m.x<=Math.max.apply(null,xs)&&m.y>=Math.min.apply(null,ys)&&m.y<=Math.max.apply(null,ys);
+      if((g.rects||[]).some(r=>inBox([r.x0,r.x1],[r.y0,r.y1])))return o;
+      if((g.traps||[]).some(t=>inBox(t.map(p=>p.x),t.map(p=>p.y))))return o;
+      if(g.area&&g.area.length&&inBox(g.area.map(p=>p.x),g.area.map(p=>p.y).concat([0])))return o;
+    }
     else if(o.type==='locus'){
       if(g.pts&&g.pts.some(p=>V.len(V.sub(m,p))<tol))return o;
     }
@@ -1758,6 +1949,8 @@ function obtainPoint(m,ev){
     p.color=PALETTE[2];
     return p;
   }
+  const sn=findSnap(m,null);
+  if(sn)return addPoint('free',{x:sn.x,y:sn.y});
   const p=addPoint('free',{x:snapCoord(m.x),y:snapCoord(m.y)});
   return p;
 }
@@ -1798,6 +1991,7 @@ function xformCenter(){
 svg.addEventListener('contextmenu',e=>e.preventDefault());
 svg.addEventListener('pointerdown',e=>{
   svg.setPointerCapture(e.pointerId);
+  altDown=!!e.altKey;snapInfo=null;hideLiveTip();
   const rect=svg.getBoundingClientRect();
   mousePx={x:e.clientX-rect.left,y:e.clientY-rect.top};
   mouseMath=toMath(mousePx);
@@ -2016,7 +2210,8 @@ svg.addEventListener('pointermove',e=>{
   mousePx={x:e.clientX-rect.left,y:e.clientY-rect.top};
   mouseMath=toMath(mousePx);
   $('#statusXY').textContent='x '+fmt(mouseMath.x)+' · y '+fmt(mouseMath.y);
-  if(!drag)return;
+  altDown=!!e.altKey;
+  if(!drag){updateHoverSnapFeedback();return;}
   if(drag.mode==='pan'){
     state.view.cx=drag.cx-(mousePx.x-drag.sx)/state.view.scale;
     state.view.cy=drag.cy+(mousePx.y-drag.sy)/state.view.scale;
@@ -2024,7 +2219,11 @@ svg.addEventListener('pointermove',e=>{
   }
   if(drag.mode==='point'){
     const o=byId(drag.id);if(!o)return;
-    o.x=snapCoord(mouseMath.x);o.y=snapCoord(mouseMath.y);
+    const sn=findSnap(mouseMath,o.id);
+    snapInfo=sn;
+    if(sn){o.x=sn.x;o.y=sn.y;}
+    else{o.x=snapCoord(mouseMath.x);o.y=snapCoord(mouseMath.y);}
+    updateLiveTip();
     afterDragMove(o);render();return;
   }
   if(drag.mode==='onpoint'){
@@ -2114,7 +2313,7 @@ svg.addEventListener('pointerup',e=>{
       if(p.x>=x0&&p.x<=x1&&p.y>=y0&&p.y<=y1&&!state.sel.includes(o.id))state.sel.push(o.id);
     });
   }
-  const wasDrag=drag;drag=null;
+  const wasDrag=drag;drag=null;snapInfo=null;hideLiveTip();
   if(wasDrag&&(wasDrag.mode==='rotate'||wasDrag.mode==='scale'))setPendingHint('');
   if(wasDrag)render(),renderAlgebra();
 });
@@ -3351,7 +3550,7 @@ function openProps(id,infoOnly){
   if(o.type==='function'&&!o.derivOf)extra='<p><button type="button" id="ppEditFn" style="border:1px solid var(--line2);background:var(--btn);border-radius:5px;padding:5px 12px;cursor:pointer;">함수식 편집…</button></p>';
   if(o.type==='param')extra='<p><button type="button" id="ppEditPm" style="border:1px solid var(--line2);background:var(--btn);border-radius:5px;padding:5px 12px;cursor:pointer;">매개변수 편집…</button></p>';
   openDialog((infoOnly?'정보 — ':'속성 — ')+displayName(o),
-    '<table><tr><th style="text-align:left;">종류</th><td style="text-align:left;">'+({point:'점',segment:'선분',ray:'반직선',line:'직선',circle:'원',polygon:'다각형',arc:'호',sector:'부채꼴',text:'글',measure:'측정',function:'함수',param:'매개변수',locus:'자취',iterate:'반복',gellipse:'지구본 타원'}[o.type]||o.type)+'</td></tr>'+
+    '<table><tr><th style="text-align:left;">종류</th><td style="text-align:left;">'+({point:'점',segment:'선분',ray:'반직선',line:'직선',circle:'원',polygon:'다각형',arc:'호',sector:'부채꼴',text:'글',measure:'측정',function:'함수',param:'매개변수',locus:'자취',iterate:'반복',gellipse:'지구본 타원',sum:'구분구적 합'}[o.type]||o.type)+'</td></tr>'+
     '<tr><th style="text-align:left;">정의</th><td style="text-align:left;">'+defOf(o)+'</td></tr>'+
     '<tr><th style="text-align:left;">현재 값</th><td style="text-align:left;">'+valueOf(o)+'</td></tr>'+
     '<tr><th style="text-align:left;">상위 개체</th><td style="text-align:left;">'+parents+'</td></tr>'+
@@ -3491,6 +3690,7 @@ function newDocument(){
       state.docName='제목 없음';
       document.title='제목 없음 - 동적 기하 스케치';$('#docTitle').textContent='제목 없음 - 동적 기하 스케치';
       render();renderAlgebra();
+      saveAutosaveNow(); // 자동 저장도 빈 문서로 초기화 (새로고침 시 이전 작업이 되살아나지 않게)
     }}]);
 }
 function saveDocument(){
@@ -3564,6 +3764,8 @@ $('#panelToggle').addEventListener('click',()=>{
   $('#panel').classList.toggle('hidden');
   setTimeout(render,40);
 });
+$('#undoBtn').addEventListener('click',()=>undo());
+$('#redoBtn').addEventListener('click',()=>redo());
 $('#algAddParam').addEventListener('click',()=>paramDlg(null));
 $('#protoAll').addEventListener('click',()=>{state.proto=null;render();renderAlgebra();});
 let protoTimer=null;
@@ -3602,6 +3804,11 @@ document.addEventListener('keydown',e=>{
   const tag=(e.target.tagName||'').toLowerCase();
   const inField=tag==='input'||tag==='textarea'||tag==='select'||e.target.isContentEditable;
   if(e.key==='F1'){e.preventDefault();dlgShortcuts();return;}
+  if(e.key==='F2'){e.preventDefault();const ci=$('#cmdInput');if(ci){ci.focus();ci.select();}return;}
+  if(e.target&&e.target.id==='cmdInput'){
+    if(e.key==='Escape'){hideCmdSuggest();e.target.blur();}
+    return;
+  }
   if(e.key==='Escape'){
     if($('#modalWrap').style.display==='flex'){closeDialog();return;}
     if(openMenuEl){closeMenus();return;}
@@ -4053,6 +4260,504 @@ $('#blockBtn').addEventListener('click',()=>{
 });
 $('#docBtn').addEventListener('click',openDocMode);
 
+/* ═══════════════ 자동 저장 (localStorage) · 실행취소 버튼 상태 ═══════════════ */
+const AUTOSAVE_KEY='dgs-autosave';
+let asTimer=null;
+function scheduleAutosave(){clearTimeout(asTimer);asTimer=setTimeout(saveAutosaveNow,1000);}
+function saveAutosaveNow(){
+  try{localStorage.setItem(AUTOSAVE_KEY,JSON.stringify(snapshotData(),(k,v)=>k==='_geomCache'?undefined:v));}catch(e){}
+}
+function loadAutosave(){
+  try{
+    const s=localStorage.getItem(AUTOSAVE_KEY);if(!s)return null;
+    const d=JSON.parse(s);
+    return(d&&Array.isArray(d.objects))?d:null;
+  }catch(e){return null;}
+}
+function refreshUndoBtns(){
+  const u=$('#undoBtn'),r=$('#redoBtn');
+  if(u)u.disabled=!past.length;
+  if(r)r.disabled=!future.length;
+}
+
+/* ═══════════════ 스마트 스냅 · hover · 실시간 피드백 ═══════════════ */
+let hoverId=null, snapInfo=null, altDown=false;
+const liveTip=$('#liveTip');
+window.addEventListener('keydown',e=>{if(e.key==='Alt')altDown=true;});
+window.addEventListener('keyup',e=>{if(e.key==='Alt')altDown=false;});
+window.addEventListener('blur',()=>{altDown=false;});
+function hideLiveTip(){if(liveTip)liveTip.style.display='none';}
+function findSnap(m,excludeId){
+  if(altDown)return null;
+  const thr=13/state.view.scale;
+  let best=null;
+  const consider=(x,y,label,prio)=>{
+    const d=Math.hypot(x-m.x,y-m.y);
+    if(d<=thr){
+      const score=d-prio*thr*0.08;
+      if(!best||score<best.score)best={x:x,y:y,label:label,score:score};
+    }
+  };
+  for(const o of state.objects){
+    if(o.hidden||o.id===excludeId||!visibleObj(o))continue;
+    const g=GEOM[o.id];if(!g)continue;
+    if(o.type==='point'&&g.x!=null)consider(g.x,g.y,(o.kind==='midpoint'?'중점 ':'점 ')+o.name,3);
+    else if(o.type==='segment'&&g.a)consider((g.a.x+g.b.x)/2,(g.a.y+g.b.y)/2,'중점 '+displayName(o),2);
+  }
+  interestPts.forEach(ip=>consider(ip.x,ip.y,'교점',2.5));
+  if(state.grid.show){
+    const st=state.grid.snap?0.5:1;
+    consider(Math.round(m.x/st)*st,Math.round(m.y/st)*st,'격자점',1);
+  }
+  return best?{x:best.x,y:best.y,label:best.label}:null;
+}
+function updateLiveTip(){
+  if(!liveTip)return;
+  const parts=[];
+  const snapTools=['point','segment','line','vector','circle','circle3','angle','regpoly','polygon'];
+  if(snapInfo&&((drag&&drag.mode==='point')||snapTools.includes(state.tool)))parts.push('스냅: '+snapInfo.label);
+  if(pending.length&&!drag){
+    const lastG=GEOM[pending[pending.length-1]];
+    if(lastG&&lastG.x!=null){
+      if(['segment','line','vector'].includes(state.tool))parts.push('길이 '+fmt(V.len(V.sub(mouseMath,lastG))));
+      else if(state.tool==='circle')parts.push('반지름 '+fmt(V.len(V.sub(mouseMath,lastG))));
+      else if(state.tool==='regpoly')parts.push('반지름 '+fmt(V.len(V.sub(mouseMath,lastG))));
+      else if(state.tool==='angle'&&pending.length===2){
+        const v=GEOM[pending[1]],p0=GEOM[pending[0]];
+        if(v&&p0&&v.x!=null&&p0.x!=null){
+          const a1=V.sub(p0,v),a2=V.sub(mouseMath,v);
+          const ang=Math.acos(clamp(V.dot(a1,a2)/((V.len(a1)*V.len(a2))||1),-1,1))*DEG;
+          parts.push('각도 '+fmt(ang,1)+'°');
+        }
+      }
+      else if(state.tool==='polygon'){
+        parts.push('변의 길이 '+fmt(V.len(V.sub(mouseMath,lastG))));
+        if(pending.length>=3){
+          const p0=GEOM[pending[0]];
+          if(p0&&p0.x!=null){
+            const pp0=toPx(p0);
+            if(Math.hypot(pp0.x-mousePx.x,pp0.y-mousePx.y)<16){
+              const pts=pending.map(id=>GEOM[id]).filter(g=>g&&g.x!=null);
+              if(pts.length>=3)parts.push('닫으면 넓이 '+fmt(polyArea(pts)));
+            }
+          }
+        }
+      }
+    }
+  }
+  if(!parts.length&&hoverId&&state.tool==='move'&&!drag){
+    const o=byId(hoverId);if(o)parts.push(displayName(o));
+  }
+  if(!parts.length){liveTip.style.display='none';return;}
+  liveTip.textContent=parts.join(' · ');
+  liveTip.style.display='block';
+  liveTip.style.left=Math.max(2,Math.min(mousePx.x+14,W()-160))+'px';
+  liveTip.style.top=(mousePx.y+16)+'px';
+}
+function updateHoverSnapFeedback(){
+  let hov=null;
+  if(state.tool==='move'&&state.toolVariant.arrow==='move'){
+    const h=hitTest(mouseMath);hov=h?h.id:null;
+  }
+  const hovChanged=hov!==hoverId;hoverId=hov;
+  svg.style.cursor=hoverId?'pointer':'';
+  let sn=null;
+  if(['point','segment','line','vector','circle','circle3','angle','regpoly','polygon'].includes(state.tool))sn=findSnap(mouseMath,null);
+  const snChanged=JSON.stringify(sn)!==JSON.stringify(snapInfo);snapInfo=sn;
+  updateLiveTip();
+  if(hovChanged||snChanged||pending.length)render();
+}
+svg.addEventListener('pointerleave',()=>{
+  if(hoverId){hoverId=null;}
+  snapInfo=null;hideLiveTip();render();
+});
+
+/* ═══════════════ 명령어 입력 (지오지브라식) ═══════════════ */
+const cmdInput=$('#cmdInput'), cmdSuggest=$('#cmdSuggest'), cmdError=$('#cmdError');
+let cmdHistory=[], cmdHistIdx=-1, cmdSugIdx=-1, cmdSugItems=[], cmdPreviewList=[], cmdPrevTimer=null;
+function splitArgs(s){
+  const out=[];let depth=0,cur='';
+  for(const ch of s){
+    if('([{'.indexOf(ch)>=0)depth++;
+    else if(')]}'.indexOf(ch)>=0)depth--;
+    if(ch===','&&depth===0){out.push(cur.trim());cur='';}
+    else cur+=ch;
+  }
+  if(cur.trim()!==''||out.length)out.push(cur.trim());
+  return out;
+}
+function findObjByName(name){
+  if(!name)return null;
+  name=String(name).trim();
+  return state.objects.find(o=>o.name===name)||state.objects.find(o=>displayName(o)===name)||null;
+}
+function evalNumExpr(tok){
+  tok=String(tok==null?'':tok).trim();
+  if(/^-?\d+(\.\d+)?$/.test(tok))return parseFloat(tok);
+  let ast;try{ast=parseExpr(tok);}catch(e){throw new Error('수식 오류: '+tok);}
+  const v=evalAst(ast,fullScope());
+  if(!isFinite(v))throw new Error('숫자로 계산할 수 없습니다: '+tok);
+  return v;
+}
+function isParamName(tok){
+  const o=findObjByName(tok||'');
+  return(o&&o.type==='param')?o:null;
+}
+function argPoint(tok){
+  tok=String(tok==null?'':tok).trim();
+  if(!tok)throw new Error('인자가 부족합니다.');
+  const o=findObjByName(tok);
+  if(o){if(o.type!=='point')throw new Error(tok+'은(는) 점이 아닙니다.');return o;}
+  const m=tok.match(/^\((.*)\)$/s);
+  if(m){
+    const parts=splitArgs(m[1]);
+    if(parts.length===2)return addPoint('free',{x:evalNumExpr(parts[0]),y:evalNumExpr(parts[1])});
+  }
+  throw new Error('점을 찾을 수 없습니다: '+tok);
+}
+function argObj(tok,types,label){
+  tok=String(tok==null?'':tok).trim();
+  if(!tok)throw new Error('인자가 부족합니다.');
+  const o=findObjByName(tok);
+  if(!o)throw new Error(label+'을(를) 찾을 수 없습니다: '+tok);
+  if(types&&!types.includes(o.type))throw new Error(tok+'은(는) '+label+'이(가) 아닙니다.');
+  return o;
+}
+function argLineLike(tok){return argObj(tok,['segment','ray','line','vector'],'직선');}
+function argFunction(tok){return argObj(tok,['function'],'함수');}
+function mkXformCmd(src,xf){
+  xf.source=src.id;
+  const c=addObj(src.type,{xform:xf,mode:src.mode});
+  c.parents=[];c.color=PALETTE[5];c.dash='dash';
+  return c;
+}
+function mkSumCmd(kind,a){
+  const fn=argFunction(a[0]);
+  const base={integral:'적분',upper:'상합',lower:'하합',trap:'사다리꼴합'}[kind];
+  const o={sumKind:kind,fnId:fn.id,parents:[fn.id],a:0,b:0,n:10,aParam:null,bParam:null,nParam:null};
+  const pa=isParamName(a[1]),pb=isParamName(a[2]);
+  if(pa){o.aParam=pa.id;o.a=pa.value;}else o.a=evalNumExpr(a[1]);
+  if(pb){o.bParam=pb.id;o.b=pb.value;}else o.b=evalNumExpr(a[2]);
+  if(kind!=='integral'){
+    if(a.length<4||a[3]==null||String(a[3]).trim()==='')throw new Error(base+'에는 구간의 개수가 필요합니다. 예: '+base+'['+fn.name+', 0, 3, 10]');
+    const pn=isParamName(a[3]);
+    if(pn){o.nParam=pn.id;o.n=clamp(Math.round(pn.value),1,200);}
+    else o.n=clamp(Math.round(evalNumExpr(a[3])),1,200);
+  }
+  const s=addObj('sum',o);
+  s.name=uniqueName(base);
+  s.color=kind==='upper'?PALETTE[2]:kind==='lower'?PALETTE[4]:kind==='trap'?PALETTE[5]:PALETTE[1];
+  return s;
+}
+const CMD_LINE_TYPES=['segment','ray','line','vector'];
+const CMD_XFORM_TYPES=['point','segment','ray','line','circle','polygon','arc','sector','vector','freehand'];
+const COMMANDS=[
+ {names:['중점','Midpoint'],sig:'중점[점, 점] · 중점[선분]',run(a){
+   if(a.length===1){const s=argObj(a[0],['segment'],'선분');const m=addPoint('midpoint',{parents:[s.id]});m.color=PALETTE[4];return m;}
+   const p1=argPoint(a[0]),p2=argPoint(a[1]);const m=addPoint('midpoint',{parents:[p1.id,p2.id]});m.color=PALETTE[4];return m;}},
+ {names:['선분','Segment'],sig:'선분[점, 점]',run(a){const p1=argPoint(a[0]),p2=argPoint(a[1]);return addObj('segment',{mode:'pts',parents:[p1.id,p2.id]});}},
+ {names:['직선','Line'],sig:'직선[점, 점]',run(a){const p1=argPoint(a[0]),p2=argPoint(a[1]);return addObj('line',{mode:'pts',parents:[p1.id,p2.id]});}},
+ {names:['반직선','Ray'],sig:'반직선[점, 점]',run(a){const p1=argPoint(a[0]),p2=argPoint(a[1]);return addObj('ray',{mode:'pts',parents:[p1.id,p2.id]});}},
+ {names:['수선','PerpendicularLine'],sig:'수선[점, 직선]',run(a){const p=argPoint(a[0]),l=argLineLike(a[1]);return addObj('line',{mode:'perp',parents:[p.id,l.id]});}},
+ {names:['평행선','ParallelLine'],sig:'평행선[점, 직선]',run(a){const p=argPoint(a[0]),l=argLineLike(a[1]);return addObj('line',{mode:'parallel',parents:[p.id,l.id]});}},
+ {names:['각의이등분선','AngleBisector'],sig:'각의이등분선[점, 점, 점]',run(a){const p1=argPoint(a[0]),p2=argPoint(a[1]),p3=argPoint(a[2]);return addObj('ray',{mode:'bisector',parents:[p1.id,p2.id,p3.id]});}},
+ {names:['수직이등분선','PerpendicularBisector'],sig:'수직이등분선[점, 점] · 수직이등분선[선분]',run(a){
+   let p1,p2;
+   if(a.length===1){const s=argObj(a[0],['segment'],'선분');p1=byId(s.parents[0]);p2=byId(s.parents[1]);}
+   else{p1=argPoint(a[0]);p2=argPoint(a[1]);}
+   if(!p1||!p2)throw new Error('수직이등분선을 만들 점을 찾을 수 없습니다.');
+   return addObj('line',{mode:'perpbis',parents:[p1.id,p2.id]});}},
+ {names:['원','Circle'],sig:'원[중심, 점] · 원[중심, 반지름] · 원[점, 점, 점]',run(a){
+   if(a.length===3){const p1=argPoint(a[0]),p2=argPoint(a[1]),p3=argPoint(a[2]);
+     const c=addObj('circle',{mode:'pts3',parents:[p1.id,p2.id,p3.id]});
+     recompute();if(!GEOM[c.id])throw new Error('세 점이 한 직선 위에 있어 원을 만들 수 없습니다.');
+     return c;}
+   const c0=argPoint(a[0]);
+   const pm=isParamName(a[1]);
+   if(pm)return addObj('circle',{mode:'radiusVal',parents:[c0.id],r:pm.value,rParam:pm.id});
+   const o2=findObjByName(a[1]||'');
+   if(o2&&o2.type==='point')return addObj('circle',{mode:'pts',parents:[c0.id,o2.id]});
+   if(o2&&o2.type==='segment')return addObj('circle',{mode:'radiusSeg',parents:[c0.id,o2.id]});
+   if(String(a[1]).trim().indexOf('(')===0){const p2=argPoint(a[1]);return addObj('circle',{mode:'pts',parents:[c0.id,p2.id]});}
+   return addObj('circle',{mode:'radiusVal',parents:[c0.id],r:evalNumExpr(a[1])});}},
+ {names:['교점','Intersect'],sig:'교점[개체, 개체] · 교점[개체, 개체, 번호]',run(a){
+   const o1=argObj(a[0],null,'개체'),o2=argObj(a[1],null,'개체');
+   recompute();const ints=intersectGeoms(GEOM[o1.id],GEOM[o2.id]);
+   if(!ints.length)throw new Error('교점이 없습니다.');
+   let idxs=ints.map((_,i)=>i);
+   if(a.length>=3){const k=Math.round(evalNumExpr(a[2]))-1;if(k<0||k>=ints.length)throw new Error('교점 번호가 범위를 벗어났습니다.');idxs=[k];}
+   return idxs.map(i=>{const p=addPoint('intersect',{parents:[o1.id,o2.id],idx:i});p.color=PALETTE[1];return p;});}},
+ {names:['다각형','Polygon'],sig:'다각형[점, 점, 점, ...]',run(a){
+   if(a.length<3)throw new Error('다각형에는 점이 3개 이상 필요합니다.');
+   const pts=a.map(t=>argPoint(t));
+   const poly=addObj('polygon',{parents:pts.map(p=>p.id),fillMode:'fillstroke'});poly.color=PALETTE[3];return poly;}},
+ {names:['정다각형','RegularPolygon'],sig:'정다각형[중심, 점, 변의 개수]',run(a){
+   const c=argPoint(a[0]),d=argPoint(a[1]);
+   const n=Math.round(evalNumExpr(a[2]));
+   if(!isFinite(n)||n<3||n>24)throw new Error('변의 개수는 3~24 사이로 입력하세요.');
+   const verts=[];
+   for(let i=0;i<n;i++){const v=addPoint('regvert',{parents:[c.id,d.id],idx:i,n:n});v.label=false;verts.push(v);}
+   const poly=addObj('polygon',{parents:verts.map(v=>v.id),fillMode:'fillstroke'});poly.color=PALETTE[3];return poly;}},
+ {names:['벡터','Vector'],sig:'벡터[점, 점] · 벡터[(x, y)]',run(a){
+   if(a.length===1){const p=argPoint(a[0]);const O=addPoint('free',{x:0,y:0});O.label=false;
+     const v=addObj('vector',{mode:'pts',parents:[O.id,p.id]});v.color=PALETTE[5];return v;}
+   const p1=argPoint(a[0]),p2=argPoint(a[1]);const v=addObj('vector',{mode:'pts',parents:[p1.id,p2.id]});v.color=PALETTE[5];return v;}},
+ {names:['거리','Distance'],sig:'거리[점, 점]',run(a){
+   if(a.length===1){const o=argObj(a[0],CMD_LINE_TYPES.concat(['circle','polygon']),'개체');return mkMeasure('length',[o.id],o);}
+   const p1=argPoint(a[0]),p2=argPoint(a[1]);return mkMeasure('length',[p1.id,p2.id],p1);}},
+ {names:['길이','Length'],sig:'길이[선분·원·다각형·벡터]',run(a){const o=argObj(a[0],CMD_LINE_TYPES.concat(['circle','polygon','freehand']),'개체');return mkMeasure('length',[o.id],o);}},
+ {names:['각도','각','Angle'],sig:'각도[점, 점, 점]',run(a){const p1=argPoint(a[0]),p2=argPoint(a[1]),p3=argPoint(a[2]);return mkMeasure('angle',[p1.id,p2.id,p3.id],p2);}},
+ {names:['넓이','Area'],sig:'넓이[다각형·원·부채꼴]',run(a){const o=argObj(a[0],['polygon','circle','sector'],'도형');return mkMeasure('area',[o.id],o);}},
+ {names:['기울기','Slope'],sig:'기울기[직선]',run(a){const o=argLineLike(a[0]);return mkMeasure('slope',[o.id],o);}},
+ {names:['평행이동','Translate'],sig:'평행이동[개체, 벡터]',run(a){const o=argObj(a[0],CMD_XFORM_TYPES,'개체');const v=argObj(a[1],['vector','segment'],'벡터');return mkXformCmd(o,{kind:'translate',vector:v.id});}},
+ {names:['회전','Rotate'],sig:'회전[개체, 각도] · 회전[개체, 각도, 중심점]',run(a){
+   const o=argObj(a[0],CMD_XFORM_TYPES,'개체');const ang=evalNumExpr(a[1]);
+   const xf={kind:'rotate',angle:ang,center:null};
+   if(a.length>=3)xf.center=argPoint(a[2]).id;
+   return mkXformCmd(o,xf);}},
+ {names:['선대칭','점대칭','Reflect'],sig:'선대칭[개체, 직선] · 선대칭[개체, 점]',run(a){
+   const o=argObj(a[0],CMD_XFORM_TYPES,'개체');
+   const t=findObjByName(a[1]||'');
+   if(!t)throw new Error('대칭축이나 중심을 찾을 수 없습니다: '+a[1]);
+   if(t.type==='point')return mkXformCmd(o,{kind:'reflectPt',center:t.id});
+   if(CMD_LINE_TYPES.includes(t.type))return mkXformCmd(o,{kind:'reflect',axis:t.id});
+   throw new Error(a[1]+'은(는) 직선이나 점이 아닙니다.');}},
+ {names:['확대','Dilate'],sig:'확대[개체, 배율] · 확대[개체, 배율, 중심점]',run(a){
+   const o=argObj(a[0],CMD_XFORM_TYPES,'개체');const r=evalNumExpr(a[1]);
+   const xf={kind:'dilate',ratio:r,center:null};
+   if(a.length>=3)xf.center=argPoint(a[2]).id;
+   return mkXformCmd(o,xf);}},
+ {names:['적분','Integral'],sig:'적분[함수, 시작, 끝]',run(a){return mkSumCmd('integral',a);}},
+ {names:['상합','UpperSum'],sig:'상합[함수, 시작, 끝, 개수]',run(a){return mkSumCmd('upper',a);}},
+ {names:['하합','LowerSum'],sig:'하합[함수, 시작, 끝, 개수]',run(a){return mkSumCmd('lower',a);}},
+ {names:['사다리꼴합','TrapezoidalSum'],sig:'사다리꼴합[함수, 시작, 끝, 개수]',run(a){return mkSumCmd('trap',a);}},
+];
+function findCommand(name){
+  if(!name)return null;
+  const low=String(name).toLowerCase();
+  return COMMANDS.find(c=>c.names.some(n=>n===name||n.toLowerCase()===low))||null;
+}
+function runCommand(name,argStr){
+  const cmd=findCommand(name);
+  if(!cmd)throw new Error('알 수 없는 명령입니다: '+name);
+  return cmd.run(splitArgs(argStr||''));
+}
+function assignCmdName(res,name){
+  const o=Array.isArray(res)?res[0]:res;
+  if(!o||!o.id)return;
+  if(state.objects.some(x=>x!==o&&x.name===name))o.name=uniqueName(name);
+  else o.name=name;
+}
+function nextFuncNameFree(){
+  const av=state.funcNames.filter(n=>!state.objects.some(x=>x.type==='function'&&x.name===n));
+  return av[0]||uniqueName('f');
+}
+function cmdSetName(o,name){
+  o.name=state.objects.some(x=>x!==o&&x.name===name)?uniqueName(name):name;
+}
+function execCommandInner(str){
+  str=str.trim();
+  if(!str)throw new Error('명령을 입력하세요.');
+  let m=str.match(/^([A-Za-z_가-힣][A-Za-z0-9_가-힣]*)\s*\(\s*x\s*\)\s*=\s*(.+)$/s);
+  if(m){
+    let ast;try{ast=parseExpr(m[2]);}catch(e){throw new Error('수식 오류: '+e.message);}
+    const f=addObj('function',{expr:m[2],ast:ast});
+    cmdSetName(f,m[1]);f.color='#b3352c';
+    return f;
+  }
+  m=str.match(/^([A-Za-z_가-힣π][A-Za-z0-9_가-힣]*)\s*=\s*(.+)$/s);
+  if(m){
+    const name=m[1],rhs=m[2].trim();
+    const cm=rhs.match(/^([^\s[\](]+)\s*[[(](.*)[\])]$/s);
+    if(cm&&findCommand(cm[1])){
+      const res=runCommand(cm[1],cm[2]);
+      assignCmdName(res,name);
+      return res;
+    }
+    const tm=rhs.match(/^\((.*)\)$/s);
+    if(tm&&splitArgs(tm[1]).length===2){
+      const parts=splitArgs(tm[1]);
+      const px=evalNumExpr(parts[0]),py=evalNumExpr(parts[1]);
+      const exP=state.objects.find(o=>o.type==='point'&&(o.kind==='free'||o.kind==='coord')&&o.name===name);
+      if(exP){exP.x=px;exP.y=py;return exP;} // 같은 이름의 자유점이 있으면 그 점을 새 좌표로 재정의
+      const p=addPoint('free',{x:px,y:py});
+      cmdSetName(p,name);return p; // 이름이 다른 개체와 겹치면 번호를 붙인다
+    }
+    let ast;try{ast=parseExpr(rhs);}catch(e){throw new Error('수식 오류: '+e.message);}
+    const vars=new Set();collectVars(ast,vars);
+    if(vars.has('x')){
+      const f=addObj('function',{expr:rhs,ast:ast});
+      if(name==='y')f.name=nextFuncNameFree();else cmdSetName(f,name);
+      f.color='#b3352c';
+      return f;
+    }
+    const v=evalAst(ast,fullScope());
+    if(!isFinite(v))throw new Error('숫자로 계산할 수 없습니다: '+rhs);
+    const ex=state.objects.find(o=>o.type==='param'&&o.name===name);
+    if(ex){ // 기존 매개변수 재정의: 새 값이 범위 밖이면 슬라이더 범위를 넓혀서라도 그 값으로 정한다
+      if(v<ex.min)ex.min=v-5;
+      if(v>ex.max)ex.max=v+5;
+      ex.value=v;return ex;
+    }
+    let mn=-10,mx=10;if(v<mn)mn=v-5;if(v>mx)mx=v+5;
+    return addObj('param',{name:name,value:v,min:mn,max:mx,step:0.1,color:PALETTE[6]});
+  }
+  m=str.match(/^([^\s[\](]+)\s*[[(](.*)[\])]$/s);
+  if(m&&findCommand(m[1]))return runCommand(m[1],m[2]);
+  const tm=str.match(/^\((.*)\)$/s);
+  if(tm&&splitArgs(tm[1]).length===2){
+    const parts=splitArgs(tm[1]);
+    return addPoint('free',{x:evalNumExpr(parts[0]),y:evalNumExpr(parts[1])});
+  }
+  const so=findObjByName(str);
+  if(so)return{selectOnly:so};
+  let ast;try{ast=parseExpr(str);}catch(e){throw new Error('알 수 없는 명령입니다: '+str);}
+  const vars=new Set();collectVars(ast,vars);
+  if(vars.has('x'))throw new Error('함수는 f(x)=식 또는 이름=식 형태로 입력하세요.');
+  const mo=addObj('measure',{mtype:'calc',refs:[],ast:ast,expr:str,x:state.view.cx-2,y:state.view.cy+2,prefix:''});
+  mo.name='m'+(++state.counters.measure);
+  return mo;
+}
+function execCommand(str){
+  cmdError.style.display='none';
+  const backup=snapshot();
+  beginAction();
+  try{
+    const res=execCommandInner(str);
+    if(res&&res.selectOnly)state.sel=[res.selectOnly.id];
+    else{
+      const made=Array.isArray(res)?res:(res?[res]:[]);
+      if(made.length)state.sel=made.map(o=>o.id);
+    }
+    cmdPreviewList=[];
+    render();renderAlgebra();
+    return true;
+  }catch(e){
+    restore(backup);
+    cmdError.textContent='입력 오류: '+(e&&e.message?e.message:e);
+    cmdError.style.display='block';
+    return false;
+  }
+}
+function dryRunCommand(str){
+  cmdPreviewList=[];
+  const mm=str.match(/^([A-Za-z_가-힣π][A-Za-z0-9_가-힣]*)\s*=/);
+  if(mm&&(state.objects.some(o=>o.type==='param'&&o.name===mm[1])||state.objects.some(o=>o.type==='point'&&(o.kind==='free'||o.kind==='coord')&&o.name===mm[1])))return; // 기존 개체 재정의는 미리보기 생략
+  const savedObjects=state.objects,savedUid=state.uid,savedCounters=JSON.stringify(state.counters),savedSel=state.sel;
+  state.objects=state.objects.slice();
+  try{
+    const before=new Set(state.objects.map(o=>o.id));
+    const res=execCommandInner(str);
+    if(res&&res.selectOnly)throw new Error('no preview');
+    recompute();
+    cmdPreviewList=state.objects.filter(o=>!before.has(o.id))
+      .map(o=>({o:JSON.parse(JSON.stringify(o,(k,v)=>k==='_geomCache'?undefined:v)),g:GEOM[o.id]}))
+      .filter(it=>it.g);
+  }catch(e){cmdPreviewList=[];}
+  state.objects=savedObjects;state.uid=savedUid;
+  try{state.counters=JSON.parse(savedCounters);}catch(e){}
+  state.sel=savedSel;
+  recompute();
+}
+function scheduleCmdPreview(){
+  clearTimeout(cmdPrevTimer);
+  cmdPrevTimer=setTimeout(()=>{
+    const v=cmdInput.value.trim();
+    if(!v){if(cmdPreviewList.length){cmdPreviewList=[];render();}return;}
+    dryRunCommand(v);
+    render();
+  },160);
+}
+function parseCmdContext(){
+  const v=cmdInput.value;
+  const eq=v.indexOf('=');
+  if(eq>=0){
+    const rhs=v.slice(eq+1);
+    const m=rhs.match(/^\s*([^\s[\](]*)\s*([[(])([\s\S]*)$/);
+    if(m)return{name:m[1],inside:true};
+    return{name:'',inside:false,assign:true};
+  }
+  const m=v.match(/^([^\s[\](]*)\s*([[(])([\s\S]*)$/);
+  if(m)return{name:m[1],inside:true};
+  return{name:v.trim(),inside:false};
+}
+function hideCmdSuggest(){cmdSuggest.style.display='none';cmdSugItems=[];cmdSugIdx=-1;}
+function markCmdSug(){
+  cmdSugItems.forEach((it,i)=>it.el.classList.toggle('on',i===cmdSugIdx));
+}
+function completeCommand(c){
+  cmdInput.value=c.names[0]+'[';
+  cmdInput.focus();
+  updateCmdSuggest();scheduleCmdPreview();
+}
+function updateCmdSuggest(){
+  const ctx=parseCmdContext();
+  cmdSuggest.innerHTML='';cmdSugItems=[];cmdSugIdx=-1;
+  if(ctx.assign){cmdSuggest.style.display='none';return;}
+  if(ctx.inside){
+    const cmd=findCommand(ctx.name);
+    if(cmd){
+      cmdSuggest.style.display='block';
+      const d=document.createElement('div');d.className='cmd-hint';d.textContent=cmd.sig;
+      cmdSuggest.appendChild(d);
+    }else cmdSuggest.style.display='none';
+    return;
+  }
+  const tok=ctx.name;
+  if(!tok||tok.indexOf('(')>=0||tok.indexOf(')')>=0){cmdSuggest.style.display='none';return;}
+  const low=tok.toLowerCase();
+  const cands=COMMANDS.filter(c=>c.names.some(n=>n.indexOf(tok)===0||n.toLowerCase().indexOf(low)===0));
+  if(!cands.length){cmdSuggest.style.display='none';return;}
+  cmdSuggest.style.display='block';
+  cands.slice(0,8).forEach(c=>{
+    const d=document.createElement('div');d.className='cmd-sug';
+    const b=document.createElement('b');b.textContent=c.names[0];
+    const s=document.createElement('span');s.textContent=c.sig;
+    d.appendChild(b);d.appendChild(s);
+    d.addEventListener('mousedown',e=>{e.preventDefault();completeCommand(c);});
+    cmdSuggest.appendChild(d);cmdSugItems.push({el:d,cmd:c});
+  });
+}
+cmdInput.addEventListener('input',()=>{updateCmdSuggest();scheduleCmdPreview();});
+cmdInput.addEventListener('blur',()=>setTimeout(hideCmdSuggest,150));
+cmdInput.addEventListener('keydown',e=>{
+  const sugOpen=cmdSuggest.style.display==='block'&&cmdSugItems.length>0;
+  if(e.key==='Enter'){
+    if(sugOpen&&cmdSugIdx>=0){e.preventDefault();completeCommand(cmdSugItems[cmdSugIdx].cmd);return;}
+    e.preventDefault();
+    const v=cmdInput.value;
+    if(!v.trim())return;
+    if(execCommand(v)){
+      if(cmdHistory[cmdHistory.length-1]!==v)cmdHistory.push(v);
+      cmdHistIdx=cmdHistory.length;
+      cmdInput.value='';hideCmdSuggest();cmdPreviewList=[];render();
+    }
+  }else if(e.key==='ArrowDown'){
+    e.preventDefault();
+    if(sugOpen){cmdSugIdx=Math.min(cmdSugItems.length-1,cmdSugIdx+1);markCmdSug();}
+    else if(cmdHistIdx<cmdHistory.length-1){cmdHistIdx++;cmdInput.value=cmdHistory[cmdHistIdx];updateCmdSuggest();}
+    else{cmdHistIdx=cmdHistory.length;cmdInput.value='';}
+  }else if(e.key==='ArrowUp'){
+    e.preventDefault();
+    if(sugOpen){cmdSugIdx=Math.max(0,cmdSugIdx-1);markCmdSug();}
+    else if(cmdHistIdx>0){cmdHistIdx--;cmdInput.value=cmdHistory[cmdHistIdx];updateCmdSuggest();}
+  }else if(e.key==='Tab'){
+    if(sugOpen){e.preventDefault();completeCommand(cmdSugItems[Math.max(0,cmdSugIdx)].cmd);}
+  }else if(e.key==='Escape'){
+    hideCmdSuggest();
+  }
+});
+function cmdHelpDlg(){
+  openDialog('명령어 도움말',
+    '<p style="margin-top:0;">하단 입력창에 <b>이름[인자, ...]</b> 또는 <b>이름(인자, ...)</b> 형태로 입력하세요. 결과에 이름을 붙이려면 <b>이름 = 명령[...]</b>처럼 씁니다. 입력창 포커스 단축키는 <kbd>F2</kbd>, ↑/↓ 키로 이전 명령을 다시 불러옵니다.</p>'+
+    '<p><b>할당</b> — A=(1, 2) 점 · a=3 매개변수 · y=2x+1 직선 · f(x)=x^2 함수</p>'+
+    '<table>'+COMMANDS.map(c=>'<tr><td style="text-align:left;white-space:nowrap;"><b>'+c.names[0]+'</b>'+(c.names.length>1?' <span style="color:var(--ink2);font-size:11.5px;">'+c.names.slice(1).join(' · ')+'</span>':'')+'</td><td style="text-align:left;">'+c.sig+'</td></tr>').join('')+'</table>'+
+    '<p><b>구분구적법</b> — 상합[f, 0, 3, n] · 하합[f, 0, 3, n] · 사다리꼴합[f, 0, 3, n] · 적분[f, 0, 3]. 개수 자리에 매개변수 이름을 쓰면 슬라이더를 움직일 때 직사각형과 합이 실시간으로 바뀝니다.</p>'+
+    '<p style="color:var(--ink2);font-size:12px;">인자는 기존 개체 이름(A, AB, f 등), 숫자, (x, y) 좌표, 매개변수 이름을 쓸 수 있습니다. 명령을 입력하는 동안에는 캔버스에 반투명 미리보기가 나타납니다.</p>',
+    [{label:'닫기',primary:true}]);
+}
+$('#cmdHelp').addEventListener('click',cmdHelpDlg);
+
 /* ═══════════════ 시작 ═══════════════ */
 function fitView(){
   recompute();
@@ -4077,7 +4782,11 @@ if(location.hash&&location.hash.indexOf('#s=')===0){
     if(s&&s.objects){applyData(s);_fromHash=true;setTimeout(()=>toast('공유 링크의 스냅샷을 열었습니다.'),350);}
   }catch(e){}
 }
-if(!_fromHash)loadExample();
+if(!_fromHash){
+  const _as=loadAutosave();
+  if(_as){applyData(_as);if(_as.objects&&_as.objects.length)setTimeout(()=>toast('이전 작업을 복원했습니다.'),400);}
+  else loadExample();
+}
 if(innerWidth<=760)fitView();
 render();
 renderAlgebra();
