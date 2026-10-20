@@ -314,7 +314,7 @@
   <div id="titlebar">
     <svg class="appmark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="15" r="6.5" fill="none" stroke="#2f6fb2" stroke-width="2"/><path d="M4 20 L20 4" stroke="#b3352c" stroke-width="2"/><circle cx="20" cy="4" r="2.2" fill="#b3352c"/></svg>
     <span id="docTitle">제목 없음 - 동적 기하 스케치</span>
-    <span id="buildTag">빌드 2026-10-20 14:12 · 예제 메뉴 11종 추가(회전하는 지구본 포함)</span>
+    <span id="buildTag">빌드 2026-10-20 14:38 · 지구본 기울어진 축 회전(23.5°) + GSP 변환 예제 5종</span>
     <button class="tb-btn" id="shareBtn" type="button">공유</button>
     <button class="tb-btn" id="blockBtn" type="button">블록코딩</button>
     <button class="tb-btn" id="docBtn" type="button">문서 모드</button>
@@ -834,6 +834,12 @@ function computeGeom(o,G){
     case 'point':{
       if(o.kind==='free'||o.kind==='coord')return{kind:'point',x:o.x,y:o.y};
       if(o.kind==='on'){const base=G[o.parents[0]];const p=base?pointAt(base,o.t):null;return p?{kind:'point',x:p.x,y:p.y}:null;}
+      if(o.kind==='pole'){ // 지구본 극점: 중심에서 반지름만큼, 기울어진 자전축 방향 끝점
+        const c=G[o.parents[0]],rp=G[o.parents[1]];if(!c||!rp||c.x==null||rp.x==null)return null;
+        const R=V.len(V.sub(rp,c));const tp=o.tiltParam?byId(o.tiltParam):null;
+        const tr=((tp&&tp.type==='param'?tp.value:0))*RAD;const s=o.poleSign||1;
+        return{kind:'point',x:c.x+s*R*Math.sin(tr),y:c.y+s*R*Math.cos(tr)};
+      }
       if(o.kind==='midpoint'){
         if(o.parents.length===1){const g=G[o.parents[0]];if(!g)return null;return{kind:'point',x:(g.a.x+g.b.x)/2,y:(g.a.y+g.b.y)/2};}
         const a=G[o.parents[0]],b=G[o.parents[1]];if(!a||!b)return null;
@@ -894,18 +900,24 @@ function computeGeom(o,G){
         a1:Math.atan2(s.y-c.y,s.x-c.x),a2:Math.atan2(e.y-c.y,e.x-c.x)};
     }
     case 'gellipse':{
-      // 지구본 타원: parents [중심점, 반지름점], 매개변수 t(도)에 종속
+      // 지구본 타원: parents [중심점, 반지름점], 매개변수 t(도, 자전)와 기울기(도, 자전축 기울기)에 종속
+      // 축 정렬 좌표계에서 자오선·위선을 계산한 뒤 전체를 기울기만큼 회전시켜 렌더링한다 (rot = SVG 회전각).
       const c=G[o.parents[0]],rp=G[o.parents[1]];
       if(!c||!rp||c.x==null||rp.x==null)return null;
       const R=V.len(V.sub(rp,c));
+      const tpo=o.tiltParam?byId(o.tiltParam):null;
+      const tilt=(tpo&&tpo.type==='param'?tpo.value:0);
+      const tr=tilt*RAD;
+      const ax={x:Math.sin(tr),y:Math.cos(tr)}; // 기울어진 자전축 방향 (수직에서 +x 쪽으로 tilt만큼)
       if(o.role==='meridian'){
         const tp=o.tParam?byId(o.tParam):null;
         const t=(tp&&tp.type==='param'?tp.value:0)*RAD;
         const cs=Math.cos((o.lam||0)*RAD+t);
-        return{kind:'gellipse',cx:c.x,cy:c.y,rx:R*cs,ry:R,back:cs<0};
+        return{kind:'gellipse',cx:c.x,cy:c.y,rx:R*cs,ry:R,rot:tilt,back:cs<0};
       }
       const ph=(o.phi||0)*RAD;
-      return{kind:'gellipse',cx:c.x,cy:c.y+R*Math.sin(ph),rx:R*Math.cos(ph),ry:R*Math.cos(ph)*Math.sin(20*RAD),back:false};
+      const off=R*Math.sin(ph);
+      return{kind:'gellipse',cx:c.x+ax.x*off,cy:c.y+ax.y*off,rx:R*Math.cos(ph),ry:R*Math.cos(ph)*Math.sin(20*RAD),rot:tilt,back:false};
     }
     case 'text':return{kind:'text',x:o.x,y:o.y};
     case 'freehand':return{kind:'freehand',pts:o.pts||[]};
@@ -1278,6 +1290,7 @@ function drawObject(o,g){
       const attrs=strokeAttrs(o);
       if(g.back){attrs['stroke-dasharray']='5 4';attrs['stroke-opacity']=0.45;}
       attrs['stroke-width']=o.width+(sel?1.2:0);
+      if(g.rot)attrs.transform='rotate('+g.rot+' '+c.x+' '+c.y+')'; // 자전축 기울기만큼 전체 투영 회전
       el('ellipse',Object.assign(attrs,{cx:c.x,cy:c.y,rx:rx,ry:ry}),grp);
       break;
     }
@@ -1352,6 +1365,7 @@ function defOf(o){
       if(o.kind==='coord')return '좌표로 찍은 점';
       if(o.kind==='regvert')return '정'+(o.n||5)+'각형의 꼭짓점';
       if(o.kind==='on')return nm(o.parents[0])+' 위의 점';
+      if(o.kind==='pole')return '지구본 '+(o.poleSign<0?'남극':'북극')+'점 — 기울어진 자전축의 끝점 (기울기 '+(o.tiltParam?nm(o.tiltParam):'0°')+')';
       if(o.kind==='midpoint')return o.parents.length===1?nm(o.parents[0])+'의 중점':nm(o.parents[0])+nm(o.parents[1])+'의 중점';
       if(o.kind==='intersect')return nm(o.parents[0])+'와(과) '+nm(o.parents[1])+'의 교점';
       return '점';
@@ -1380,7 +1394,7 @@ function defOf(o){
     case 'param':return '매개변수 ('+fmt(o.min)+' ~ '+fmt(o.max)+')';
     case 'locus':return nm(o.parents[1])+'의 자취 ('+nm(o.parents[0])+' 이동)';
     case 'iterate':return '반복: '+o.pre.map((p,i)=>nm(p)+'→'+nm(o.img[i])).join(', ');
-    case 'gellipse':return o.role==='meridian'?('지구본 자오선 λ='+o.lam+'° — 가로 반축이 cos(λ+t)로 변하는 타원'):('지구본 위선 φ='+(o.phi>0?'+':'')+o.phi+'° — 기울기 20° 정사영 타원');
+    case 'gellipse':return o.role==='meridian'?('지구본 자오선 λ='+o.lam+'° — 기울어진 자전축 기준 정사영 타원 (가로 반축이 cos(λ+t)로 변함)'):('지구본 위선 φ='+(o.phi>0?'+':'')+o.phi+'° — 기울어진 자전축에 수직인 정사영 타원');
   }
   return o.type;
 }
@@ -1626,7 +1640,7 @@ function dlgInfo(){
     '<p>점·선·원을 작도하고 자유점을 끌어 움직이면, 교점·중점·수선·측정값이 의존 관계를 따라 실시간으로 함께 움직입니다. 매개변수 슬라이더, 함수 그래프, 변환, 자취, 애니메이션을 지원합니다.</p>'+
     '<p>데스모스·알지오매스·지오지브라의 장점을 더했습니다: 미지수→슬라이더 자동 제안, 스냅샷 공유 링크와 버전 기록, 함수 오디오 트레이스, 블록코딩 작도, 문서(활동지) 모드, 작도 단계 재생과 대수창 양방향 편집.</p>'+
     '<p style="color:var(--ink2);">Geometer\'s Sketchpad 5.03의 화면 구성에서 영감을 받은 웹 재현입니다.</p>'+
-    '<p style="color:var(--ink2);">빌드 2026-10-20 14:12 · 예제 메뉴 11종 추가(회전하는 지구본 포함)</p>');
+    '<p style="color:var(--ink2);">빌드 2026-10-20 14:38 · 지구본 기울어진 축 회전(23.5°) + GSP 변환 예제 5종</p>');
 }
 function dlgShortcuts(){
   const rows=[['Ctrl+1 ~ 15','도구 선택 (1 이동·2 점·3 원·4 선분·5 다각형·6 글·7 정보·8 사용자 도구·9 벡터·0 세 점 원, 11~15는 Ctrl+1 뒤 숫자: 각·정다각형·펜·슬라이더·지우개)'],
@@ -3035,19 +3049,20 @@ function buildExGlobe(){
   const O=addPoint('free',{x:0,y:0});O.name='O';O.color=PALETTE[1];
   const circ=addObj('circle',{mode:'pts',parents:[O.id,A.id]});circ.width=2;
   const t=addObj('param',{name:'t',value:0,min:0,max:360,step:1,unit:'°',color:PALETTE[6]});
+  const tilt=addObj('param',{name:'기울기',value:23.5,min:0,max:45,step:0.5,unit:'°',color:PALETTE[4]});
   [0,30,60,90,120,150].forEach(lam=>{
-    const mer=addObj('gellipse',{role:'meridian',lam:lam,tParam:t.id,parents:[O.id,A.id],name:'자오선 '+lam+'°'});
+    const mer=addObj('gellipse',{role:'meridian',lam:lam,tParam:t.id,tiltParam:tilt.id,parents:[O.id,A.id],name:'자오선 '+lam+'°'});
     mer.color=PALETTE[2];mer.width=1.2;mer.label=false;
   });
   [-60,-30,0,30,60].forEach(phi=>{
-    const par=addObj('gellipse',{role:'parallel',phi:phi,tParam:t.id,parents:[O.id,A.id],name:'위선 '+(phi>0?'+':'')+phi+'°'});
+    const par=addObj('gellipse',{role:'parallel',phi:phi,tParam:t.id,tiltParam:tilt.id,parents:[O.id,A.id],name:'위선 '+(phi>0?'+':'')+phi+'°'});
     par.color=PALETTE[2];par.width=phi===0?2.4:1.2;par.label=false;
   });
-  const N=addPoint('on',{parents:[circ.id],t:Math.PI/2});N.name='N';N.color=PALETTE[1];
-  const S=addPoint('on',{parents:[circ.id],t:-Math.PI/2});S.name='S';S.color=PALETTE[1];
+  const N=addPoint('pole',{parents:[O.id,A.id],poleSign:1,tiltParam:tilt.id});N.name='N';N.color=PALETTE[1];
+  const S=addPoint('pole',{parents:[O.id,A.id],poleSign:-1,tiltParam:tilt.id});S.name='S';S.color=PALETTE[1];
   const axis=addObj('segment',{mode:'pts',parents:[N.id,S.id]});axis.dash='dash';axis.color='#9a958a';axis.label=false;
-  addObj('text',{x:-4.7,y:-4.15,text:'원리: 지구본은 3D가 아니라 정사영입니다.',fontSize:12.5,color:'#1c1c1e'});
-  addObj('text',{x:-4.7,y:-4.8,text:'자오선을 가로 반축이 cos(λ+t)로 변하는 타원으로 그리면 회전하는 것처럼 보입니다.',fontSize:12.5,color:'#1c1c1e'});
+  addObj('text',{x:-4.7,y:-4.15,text:'지구의 자전축은 23.5° 기울어 있습니다.',fontSize:12.5,color:'#1c1c1e'});
+  addObj('text',{x:-4.7,y:-4.8,text:'이 예제는 기울어진 축을 중심으로 자오선(타원)이 회전하는 정사영입니다.',fontSize:12.5,color:'#1c1c1e'});
   state.sel=[];
   render();renderAlgebra();
   const sp=$('#animSpeed');if(sp)sp.value='0.35';
@@ -3065,7 +3080,90 @@ const EXAMPLES=[
  {title:'회전·확대 화살표 데모',desc:'사각형과 변형의 중심 O가 지정되어 있고, 회전 화살표가 선택된 상태입니다. 사각형을 끌면 O를 중심으로 회전하고, 확대·축소 화살표로 바꾸면 중심에서 멀고 가까움에 따라 크기가 변합니다.',build:buildExTransformDemo},
  {title:'반복 깊이 조절',desc:'시에르핀스키 삼각형과 같은 대응 규칙이지만 반복 깊이가 매개변수 a에 연결된 버전입니다. 대수창에서 a 슬라이더를 움직이면 프랙탈이 자라거나 줄어듭니다.',build:buildExIterParam},
  {title:'정다각형과 각도',desc:'정육각형과 한 꼭짓점의 내각 측정입니다. 내각이 120°로 표시되는지 확인해 보세요. 중심이나 기준점을 끌면 정육각형 전체가 따라 움직입니다.',build:buildExHexagon},
- {title:'회전하는 지구본',desc:'3D가 아니라 2D 정사영(orthographic projection) 트릭으로 회전하는 지구본입니다. 매개변수 t가 자동으로 재생되고, 중심 O와 반지름 점 A를 끌면 지구본 전체가 따라 움직입니다. 자오선은 가로 반축이 cos(λ+t)로 변하는 타원이라 t가 변하면 뒤집혀 보이며 회전감을 만듭니다.',build:buildExGlobe},
+ {title:'회전하는 지구본',desc:'실제 지구처럼 자전축이 23.5° 기울어진 채로 회전하는 지구본입니다. 3D가 아니라 2D 정사영(orthographic projection) 트릭으로, 매개변수 t가 자동 재생되어 자오선(가로 반축이 cos(λ+t)로 변하는 타원)이 기울어진 축을 중심으로 돕니다. 대수창의 기울기 슬라이더(0~45°)로 축을 세우거나(0°면 기존 수직 회전과 동일) 더 기울일 수 있고, 중심 O와 반지름 점 A를 끌면 지구본 전체가 따라 움직입니다.',build:buildExGlobe},
+];
+
+
+/* ═══════════════ GSP 파일 변환 예제 (upload.gsp 쪽 1~5) ═══════════════
+   변환 규칙: 문서 좌표 → 앱 좌표 x'=(x−cx)/20.13, y'=−(y−cy)/20.13 (cx,cy = 페이지 자유점 바운딩 박스 중심).
+   경로 위의 점(1,10)의 파라미터는 원본 파일의 2003 블록을 +4 오프셋으로 다시 읽어 추출했다
+   (원 부모: (cosθ, sinθ), 직선류 부모: 정의 방향 벡터에 대한 비율 t — 위치는 문서 좌표로 환산해 tx,ty에 보관).
+   교점(1,45)도 문서 좌표 위치(tx,ty)를 보관하고, 불러올 때 앱 기하에서 가장 가까운 후보를 idx로 고른다.
+   (2,12)=직선·(2,13)=반직선 배정은 잠정(미확정)이다. */
+const GSP_PAGES=[{"cx":263.5,"cy":244.0,"objs":[{"i":1,"t":1,"c":4,"par":[],"x":62.0,"y":63.0},{"i":2,"t":1,"c":4,"par":[],"x":69.0,"y":162.0},{"i":3,"t":1,"c":4,"par":[],"x":351.0,"y":254.0},{"i":4,"t":1,"c":4,"par":[],"x":465.0,"y":425.0},{"i":5,"t":2,"c":13,"par":[3,4]},{"i":6,"t":2,"c":14,"par":[1,2]},{"i":7,"t":3,"c":28,"par":[3,6]},{"i":8,"t":1,"c":45,"par":[5,7],"tx":406.0524,"ty":336.5786},{"i":9,"t":2,"c":47,"par":[8,5]},{"i":10,"t":3,"c":28,"par":[4,8]},{"i":11,"t":1,"c":10,"par":[10],"tx":510.1815,"ty":521.1862},{"i":12,"t":2,"c":12,"par":[4,11]},{"i":13,"t":2,"c":14,"par":[11,4]},{"i":14,"t":2,"c":47,"par":[11,13]},{"i":15,"t":1,"c":45,"par":[9,14],"tx":-779.7097,"ty":1127.0867},{"i":16,"t":2,"c":14,"par":[3,15]},{"i":17,"t":1,"c":11,"par":[16]},{"i":18,"t":3,"c":28,"par":[17,3]},{"i":19,"t":1,"c":45,"par":[18,7],"tx":285.0327,"ty":179.8494,"ncand":2},{"i":20,"t":2,"c":12,"par":[19,3]},{"i":21,"t":1,"c":45,"par":[12,20],"tx":422.3479,"ty":334.1986},{"i":22,"t":3,"c":28,"par":[21,19]}]},{"cx":304.0,"cy":295.5,"objs":[{"i":1,"t":1,"c":4,"par":[],"x":140.0,"y":350.0},{"i":2,"t":1,"c":4,"par":[],"x":468.0,"y":350.0},{"i":3,"t":2,"c":14,"par":[1,2]},{"i":4,"t":1,"c":4,"par":[],"x":232.0,"y":241.0},{"i":5,"t":2,"c":46,"par":[4,3]},{"i":6,"t":1,"c":10,"par":[5],"tx":486.0,"ty":241.0},{"i":7,"t":2,"c":14,"par":[4,6]},{"i":8,"t":1,"c":11,"par":[7]},{"i":9,"t":2,"c":47,"par":[8,7]},{"i":10,"t":1,"c":45,"par":[9,3],"tx":359.0,"ty":350.0},{"i":11,"t":2,"c":14,"par":[10,4]},{"i":12,"t":1,"c":11,"par":[11]},{"i":13,"t":2,"c":47,"par":[12,11]},{"i":14,"t":1,"c":45,"par":[9,13],"tx":359.0,"ty":221.5138},{"i":15,"t":3,"c":28,"par":[14,10]}]},{"cx":545.5,"cy":329.0,"objs":[{"i":1,"t":1,"c":4,"par":[],"label":"X","x":201.0,"y":435.0},{"i":2,"t":1,"c":4,"par":[],"label":"Y","x":890.0,"y":420.0},{"i":3,"t":2,"c":14,"par":[1,2]},{"i":4,"t":1,"c":4,"par":[],"label":"A","x":363.0,"y":223.0},{"i":5,"t":1,"c":4,"par":[],"label":"B","x":407.0,"y":358.0},{"i":6,"t":2,"c":12,"par":[5,4]},{"i":7,"t":1,"c":45,"par":[3,6],"label":"O","tx":430.4681,"ty":430.0043},{"i":8,"t":2,"c":14,"par":[4,5]},{"i":9,"t":1,"c":11,"par":[8]},{"i":10,"t":3,"c":28,"par":[9,5]},{"i":11,"t":2,"c":14,"par":[9,7]},{"i":12,"t":1,"c":11,"par":[11]},{"i":13,"t":3,"c":28,"par":[12,7]},{"i":14,"t":1,"c":45,"par":[13,10],"label":"K","tx":454.7173,"ty":303.907,"ncand":2},{"i":15,"t":3,"c":28,"par":[7,14]},{"i":16,"t":1,"c":45,"par":[3,15],"label":"C","tx":302.0907,"ty":432.7992,"ncand":2},{"i":17,"t":1,"c":45,"par":[3,15],"label":"C","tx":558.8454,"ty":427.2095,"ncand":2},{"i":18,"t":2,"c":47,"par":[9,8]},{"i":19,"t":2,"c":14,"par":[5,17]},{"i":20,"t":1,"c":11,"par":[19]},{"i":21,"t":2,"c":47,"par":[20,19]},{"i":22,"t":1,"c":45,"par":[18,21],"tx":554.6653,"ty":235.2017},{"i":23,"t":3,"c":28,"par":[22,4]},{"i":24,"t":2,"c":14,"par":[5,16]},{"i":25,"t":1,"c":11,"par":[24]},{"i":26,"t":2,"c":47,"par":[25,24]},{"i":27,"t":1,"c":45,"par":[18,26],"tx":299.5988,"ty":318.3345},{"i":28,"t":3,"c":28,"par":[27,16]}]},{"cx":365.5,"cy":260.0,"objs":[{"i":1,"t":1,"c":4,"par":[],"label":"A","x":397.0,"y":177.0},{"i":2,"t":1,"c":4,"par":[],"label":"B","x":546.0,"y":292.0},{"i":3,"t":1,"c":4,"par":[],"label":"C","x":274.0,"y":343.0},{"i":4,"t":1,"c":4,"par":[],"label":"D","x":185.0,"y":276.0},{"i":5,"t":3,"c":28,"par":[3,4],"label":"c[1]"},{"i":6,"t":2,"c":14,"par":[1,2]},{"i":7,"t":1,"c":11,"par":[6]},{"i":8,"t":2,"c":47,"par":[7,6]},{"i":9,"t":1,"c":10,"par":[8],"tx":385.2098,"ty":346.3021},{"i":10,"t":3,"c":28,"par":[9,1]},{"i":11,"t":1,"c":45,"par":[10,5],"label":"E","tx":259.233,"ty":232.5829,"ncand":2},{"i":12,"t":1,"c":45,"par":[10,5],"label":"F","tx":252.7077,"ty":452.3464,"ncand":2},{"i":13,"t":2,"c":12,"par":[11,12]},{"i":14,"t":2,"c":12,"par":[1,2]},{"i":15,"t":1,"c":45,"par":[13,14],"label":"G","tx":263.9329,"ty":74.2972},{"i":16,"t":2,"c":14,"par":[15,3]},{"i":17,"t":1,"c":11,"par":[16]},{"i":18,"t":3,"c":28,"par":[17,15]},{"i":19,"t":1,"c":45,"par":[18,5],"label":"H","tx":170.9531,"ty":300.6759,"ncand":2},{"i":20,"t":1,"c":45,"par":[18,5],"label":"I","tx":373.5911,"ty":293.0839,"ncand":2},{"i":21,"t":2,"c":14,"par":[19,20]},{"i":22,"t":2,"c":14,"par":[20,15]},{"i":23,"t":2,"c":14,"par":[15,19]},{"i":24,"t":2,"c":14,"par":[19,1]},{"i":25,"t":1,"c":11,"par":[24]},{"i":26,"t":2,"c":47,"par":[25,24]},{"i":27,"t":2,"c":14,"par":[19,2]},{"i":28,"t":1,"c":11,"par":[27]},{"i":29,"t":2,"c":47,"par":[28,27]},{"i":30,"t":1,"c":45,"par":[8,29],"tx":360.3766,"ty":378.4772},{"i":31,"t":3,"c":28,"par":[30,1]}]},{"cx":276.0,"cy":286.0,"objs":[{"i":1,"t":1,"c":4,"par":[],"label":"C","x":361.0,"y":187.0},{"i":2,"t":1,"c":4,"par":[],"label":"A","x":132.0,"y":385.0},{"i":3,"t":1,"c":4,"par":[],"x":251.0,"y":336.0},{"i":4,"t":3,"c":28,"par":[2,3]},{"i":5,"t":1,"c":4,"par":[],"label":"B","x":336.0,"y":385.0},{"i":6,"t":1,"c":4,"par":[],"x":420.0,"y":320.0},{"i":7,"t":3,"c":28,"par":[5,6]},{"i":8,"t":1,"c":10,"par":[4],"tx":56.8484,"ty":280.5288},{"i":9,"t":2,"c":14,"par":[8,2]},{"i":10,"t":2,"c":46,"par":[5,9]},{"i":11,"t":1,"c":45,"par":[10,7],"tx":273.9766,"ty":298.7788,"ncand":2},{"i":12,"t":2,"c":14,"par":[11,5]},{"i":13,"t":2,"c":13,"par":[2,5]},{"i":14,"t":2,"c":13,"par":[8,11]},{"i":15,"t":1,"c":45,"par":[14,13],"label":"O","caption":"O (외분점 원A의 반지름 : 원 B의 반지름)","tx":1299.7868,"ty":385.0},{"i":16,"t":2,"c":14,"par":[5,2]},{"i":17,"t":1,"c":45,"par":[16,4],"label":"K","tx":260.6934,"ty":385.0},{"i":18,"t":1,"c":45,"par":[16,7],"label":"L","tx":229.7879,"ty":385.0},{"i":19,"t":2,"c":14,"par":[1,17]},{"i":20,"t":1,"c":11,"par":[19]},{"i":21,"t":2,"c":47,"par":[20,19]},{"i":22,"t":2,"c":14,"par":[17,18]},{"i":23,"t":1,"c":11,"par":[22]},{"i":24,"t":2,"c":47,"par":[23,22]},{"i":25,"t":1,"c":45,"par":[21,24],"tx":245.2407,"ty":252.7641},{"i":26,"t":3,"c":28,"par":[25,17]},{"i":27,"t":2,"c":12,"par":[1,15]},{"i":28,"t":1,"c":45,"par":[27,26],"label":"C'","tx":165.9007,"ty":145.8515,"ncand":2}]}];
+function buildGspPage(pg){
+  const S=20.13,cxp=pg.cx,cyp=pg.cy;
+  const conv=(x,y)=>({x:(x-cxp)/S,y:-(y-cyp)/S});
+  const map={};
+  const reserved=new Set(),used=new Set();
+  pg.objs.forEach(o=>{if(o.label)reserved.add(o.label);});
+  function ptName(){
+    const L='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    for(const c of L)if(!used.has(c)&&!reserved.has(c))return c;
+    for(let i=1;i<30;i++)for(const c of L){const n=c+i;if(!used.has(n)&&!reserved.has(n))return n;}
+    return 'P'+Object.keys(map).length;
+  }
+  let captionObj=null,captionText=null;
+  for(const o of pg.objs){
+    const P=o.par.map(id=>map[id]);
+    let created=null;
+    if(o.t===1&&o.c===4){const p=conv(o.x,o.y);created=addPoint('free',{x:p.x,y:p.y});}
+    else if(o.t===1&&o.c===11){created=addPoint('midpoint',{parents:[P[0].id]});}
+    else if(o.t===1&&o.c===10){
+      recompute();const g=GEOM[P[0].id];const tp=conv(o.tx,o.ty);
+      const tt=(g&&g.kind==='circle')?Math.atan2(tp.y-g.c.y,tp.x-g.c.x):projectT(g,tp);
+      created=addPoint('on',{parents:[P[0].id],t:tt});
+    }
+    else if(o.t===1&&o.c===45){
+      recompute();const target=conv(o.tx,o.ty);
+      const cands=intersectGeoms(GEOM[P[0].id],GEOM[P[1].id]);
+      let idx=0,bd=Infinity;
+      cands.forEach((cp,i)=>{const d=(cp.x-target.x)*(cp.x-target.x)+(cp.y-target.y)*(cp.y-target.y);if(d<bd){bd=d;idx=i;}});
+      created=addPoint('intersect',{parents:[P[0].id,P[1].id],idx:idx});
+    }
+    else if(o.t===2&&o.c===14){created=addObj('segment',{mode:'pts',parents:[P[0].id,P[1].id]});}
+    else if(o.t===2&&o.c===12){created=addObj('line',{mode:'pts',parents:[P[0].id,P[1].id]});} // (2,12)=직선 배정 (잠정)
+    else if(o.t===2&&o.c===13){created=addObj('ray',{mode:'pts',parents:[P[0].id,P[1].id]});} // (2,13)=반직선 배정 (잠정)
+    else if(o.t===2&&o.c===47){created=addObj('line',{mode:'perp',parents:[P[0].id,P[1].id]});}
+    else if(o.t===2&&o.c===46){created=addObj('line',{mode:'parallel',parents:[P[0].id,P[1].id]});}
+    else if(o.t===3&&o.c===28){created=addObj('circle',{mode:P[1].type==='point'?'pts':'radiusSeg',parents:[P[0].id,P[1].id]});}
+    if(!created)continue;
+    map[o.i]=created;
+    if(o.label){
+      if(created.type==='point'&&used.has(o.label)){created.name=o.label+"'";used.add(created.name);}
+      else{created.name=o.label;used.add(o.label);}
+    }else if(created.type==='point'){created.name=ptName();used.add(created.name);}
+    if(o.caption){captionObj=created;captionText=o.caption;}
+  }
+  if(captionObj&&captionText){
+    recompute();const g=GEOM[captionObj.id];
+    if(g&&g.x!=null)addObj('text',{x:g.x-15,y:g.y-2.4,text:captionText,fontSize:12.5,color:'#1c1c1e'});
+  }
+  state.sel=[];
+  // 화면 맞춤 (zoom fit): 자유점 바운딩 박스 중심에서 너무 먼 보조 개체(거의 평행한 두 수선의 교점 등)는 맞춤 범위에서 제외
+  recompute();
+  const freePts=pg.objs.filter(o=>o.t===1&&o.c===4).map(o=>conv(o.x,o.y));
+  let fx0=Infinity,fx1=-Infinity,fy0=Infinity,fy1=-Infinity;
+  freePts.forEach(p=>{fx0=Math.min(fx0,p.x);fx1=Math.max(fx1,p.x);fy0=Math.min(fy0,p.y);fy1=Math.max(fy1,p.y);});
+  const fc={x:(fx0+fx1)/2,y:(fy0+fy1)/2};
+  const lim=1.6*Math.max(Math.hypot(fx1-fx0,fy1-fy0),0.5);
+  let x0=fx0,x1=fx1,y0=fy0,y1=fy1;
+  const grow=(x,y)=>{x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y);};
+  for(const o of state.objects){
+    const g=GEOM[o.id];if(!g)continue;
+    if(g.kind==='point'&&g.x!=null){if(Math.hypot(g.x-fc.x,g.y-fc.y)<=lim||(captionObj&&o.id===captionObj.id))grow(g.x,g.y);}
+    else if(g.kind==='circle'){if(Math.hypot(g.c.x-fc.x,g.c.y-fc.y)<=lim&&g.r<=lim){grow(g.c.x-g.r,g.c.y-g.r);grow(g.c.x+g.r,g.c.y+g.r);}}
+  }
+  const bw=(x1-x0)+1.8,bh=(y1-y0)+1.8;
+  state.view.scale=clamp(Math.min(W()/bw,H()/bh),6,600);
+  state.view.cx=(x0+x1)/2;state.view.cy=(y0+y1)/2;
+}
+const GSP_EXAMPLES=[
+ {title:'GSP 변환 1',desc:'업로드한 GSP 파일의 1쪽을 변환한 작도입니다. 점·선분·원·수선·교점이 의존 그래프 그대로 들어 있어, 자유점을 끌면 종속 개체 전체가 따라 움직입니다.',build:()=>buildGspPage(GSP_PAGES[0])},
+ {title:'GSP 변환 2',desc:'업로드한 GSP 파일의 2쪽을 변환한 작도입니다. 평행선·중점·수선을 이어 원의 중심을 찾는 구성으로, 자유점을 끌면 종속 개체 전체가 따라 움직입니다.',build:()=>buildGspPage(GSP_PAGES[1])},
+ {title:'GSP 변환 3',desc:'업로드한 GSP 파일의 3쪽을 변환한 작도입니다. 두 점 X·Y를 잇는 직선과 점 A·B에서 출발한 원·교점 작도로, 자유점을 끌면 종속 개체 전체가 따라 움직입니다.',build:()=>buildGspPage(GSP_PAGES[2])},
+ {title:'GSP 변환 4',desc:'업로드한 GSP 파일의 4쪽을 변환한 작도입니다. 두 원의 교점 E·F와 그 직선이 만드는 점 G를 되풀이하는 구성으로, 자유점을 끌면 종속 개체 전체가 따라 움직입니다.',build:()=>buildGspPage(GSP_PAGES[3])},
+ {title:'GSP 변환 5 (두 원의 외분점)',desc:'업로드한 GSP 파일의 5쪽을 변환한 작도입니다. 두 원의 외분점 O(닮음의 외부 중심)를 구하는 구성으로, 원본 파일의 캡션을 점 O 옆에 함께 옮겼습니다. 자유점을 끌면 종속 개체 전체가 따라 움직입니다.',build:()=>buildGspPage(GSP_PAGES[4])},
 ];
 
 /* ═══════════════ 수 · 그래프 · 창 · 도움말 ═══════════════ */
@@ -3201,7 +3299,7 @@ MENUS.push(
       toast('전체 화면 프레젠테이션 모드 — Esc를 누르면 종료됩니다.');}},
    {label:'작도 단계 전부 보기',action:()=>{state.proto=null;render();renderAlgebra();}},
  ]},
- {label:'예제',items:()=>EXAMPLES.map(ex=>({label:ex.title,action:()=>confirmExample(ex)}))},
+ {label:'예제',items:()=>EXAMPLES.map(ex=>({label:ex.title,action:()=>confirmExample(ex)})).concat(['-',{label:'GSP에서 변환',enabled:()=>false}],GSP_EXAMPLES.map(ex=>({label:ex.title,action:()=>confirmExample(ex)})))},
  {label:'도움말',items:()=>[
    {label:'단축키 안내',shortcut:'F1',action:dlgShortcuts},
    {label:'사용법',action:()=>openDialog('사용법',
