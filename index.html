@@ -3368,6 +3368,7 @@
       if(thumb.dataset.thumbKey===key)return;
       thumb.dataset.thumbKey=key;
       if(useCache){
+        cache.lastUsed=++layerCacheClock;
         var ratio=Math.min(2,window.devicePixelRatio||1);
         thumb.width=Math.round(LAYER_THUMB_W*ratio); thumb.height=Math.round(LAYER_THUMB_H*ratio);
         var tctx=thumb.getContext('2d');
@@ -3648,7 +3649,7 @@
       cssW=w; cssH=h; dpr=d;
       canvas.width=Math.round(cssW*dpr); canvas.height=Math.round(cssH*dpr); canvas.style.width=cssW+'px'; canvas.style.height=cssH+'px';
       ctx.setTransform(dpr,0,0,dpr,0,0);
-      expressions.forEach(function(item){item._layerCache=null;item._fillCache=null;});
+      expressions.forEach(function(item){item._layerCache=null;item._fillCache=null;item._cacheEvicted=false;});
       // With many layers a resize (or rotation) would otherwise re-render
       // everything in one synchronous draw; let the chunked job rebuild it.
       if(expressions.length>12&&!interactionActive)beginProgressiveRefinement();
@@ -3680,6 +3681,7 @@
       if(incremental)schedule();
       function runChunk(){
         if(!refinementJob||job.token!==refinementToken)return;
+        layerChunkGuard=layerCacheClock;
         if(interactionActive||job.signature!==sceneSignature()||job.cx!==view.cx||job.cy!==view.cy||job.scale!==view.scale){
           refinementJob=null;
           if(!interactionActive)schedule();
@@ -4335,6 +4337,45 @@
       else if(p.kind==='compound')drawCompound(item,p);
       else drawInequality(item,p);
     }
+    // Per-layer bitmaps are full-canvas sized, so a picture example with a
+    // few hundred expressions would otherwise pin over a gigabyte of RAM
+    // and can crash the tab. Two caps keep that in check. A hard cap is
+    // enforced while the chunked refinement job renders (the only path
+    // that builds bitmaps in bulk), evicting least recently used bitmaps
+    // but never the chunk in flight, which is about to blit its own. A
+    // tighter steady-state budget is enforced by trimLayerCaches() at the
+    // end of a draw, once the frame has been composited and stored in the
+    // scene cache. An evicted layer is flagged and fails
+    // needsLayerRefinement() again: composite passes skip it rather than
+    // re-rendering it synchronously (which would freeze a plain draw on
+    // the largest examples), and the chunked refinement path rebuilds it
+    // on demand.
+    var LAYER_CACHE_BUDGET=256*1024*1024;
+    var LAYER_CACHE_HARD_CAP=512*1024*1024;
+    var layerCacheClock=0, layerChunkGuard=0;
+    var passIncomplete=false, forceFullComposite=false;
+    var refinedKey='', cycleKey='', cycleCount=0;
+    function layerCacheBytes(cache){return cache&&cache.canvas?cache.canvas.width*cache.canvas.height*4:0;}
+    function layerCacheTotal(){
+      var total=0;
+      for(var i=0;i<expressions.length;i++)total+=layerCacheBytes(expressions[i]._layerCache);
+      return total;
+    }
+    function evictDownTo(limit,protectedItem,guardStamp){
+      var total=layerCacheTotal();
+      if(total<=limit)return;
+      var cached=expressions.filter(function(item){return item._layerCache&&item._layerCache.canvas;});
+      cached.sort(function(a,b){return (a._layerCache.lastUsed||0)-(b._layerCache.lastUsed||0);});
+      for(var i=0;i<cached.length&&total>limit;i++){
+        var item=cached[i];
+        if(item===protectedItem)continue;
+        if(guardStamp!==null&&(item._layerCache.lastUsed||0)>guardStamp)continue;
+        total-=layerCacheBytes(item._layerCache);
+        item._layerCache=null;
+        item._cacheEvicted=true;
+      }
+    }
+    function trimLayerCaches(){evictDownTo(LAYER_CACHE_BUDGET,null,null);}
     function renderLayerBitmap(item,quality){
       var ratio=1,oldCache=item._layerCache;
       var layer=oldCache&&oldCache.canvas&&oldCache.canvas.width===Math.max(1,Math.round(cssW*ratio))&&oldCache.canvas.height===Math.max(1,Math.round(cssH*ratio))?oldCache.canvas:document.createElement('canvas');
@@ -4344,7 +4385,9 @@
       layerCtx.setTransform(1,0,0,1,0,0);layerCtx.clearRect(0,0,layer.width,layer.height);layerCtx.setTransform(ratio,0,0,ratio,0,0);ctx=layerCtx;
       try{ctx.save();drawLayerContents(item);ctx.restore();}catch(error){try{ctx.restore();}catch(ignore){}}
       ctx=mainCtx;
-      item._layerCache={canvas:layer,key:layerSignature(item),width:cssW,height:cssH,cx:view.cx,cy:view.cy,scale:view.scale,quality:quality};
+      item._layerCache={canvas:layer,key:layerSignature(item),width:cssW,height:cssH,cx:view.cx,cy:view.cy,scale:view.scale,quality:quality,lastUsed:++layerCacheClock};
+      item._cacheEvicted=false;
+      if(refinementJob)evictDownTo(LAYER_CACHE_HARD_CAP,item,layerChunkGuard);
       return item._layerCache;
     }
     function compositeLayer(item){
@@ -4354,6 +4397,12 @@
       // can never turn into a synchronous render of the remaining layers.
       var needsRender=!cache||cache.key!==signature||(!sameCachedView(cache)&&!interactionActive&&!refinementJob)||(sameCachedView(cache)&&!interactionActive&&!refinementJob&&cache.quality<1);
       if(needsRender&&compositeOnlyPass)return;
+      // A layer whose bitmap was evicted for the memory budget is rebuilt
+      // by the chunked refinement path, never synchronously here; the pass
+      // is marked incomplete so draw() queues that refinement instead.
+      // (draw() eventually forces a full composite for a scene whose
+      // bitmaps cannot all fit even under the hard cap.)
+      if((!cache||cache.key!==signature)&&item._cacheEvicted&&animationCount===null&&!forceFullComposite){passIncomplete=true;return;}
       if(!cache||cache.key!==signature){
         item._fillCache=null;
         cache=renderLayerBitmap(item,interactionActive?.55:1);
@@ -4365,6 +4414,7 @@
         cache=renderLayerBitmap(item,1);
       }
       if(!cache)return;
+      cache.lastUsed=++layerCacheClock;
       ctx.save();ctx.globalAlpha=item.opacity;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality=interactionActive?'medium':'high';
       if(sameCachedView(cache))ctx.drawImage(cache.canvas,0,0,cssW,cssH);
       else {
@@ -4474,8 +4524,15 @@
       ctx.restore();
     }
     function draw() {
-      raf=0;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,cssW,cssH);
+      raf=0;passIncomplete=false;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,cssW,cssH);
       var signature=sceneSignature();
+      var keyNow=signature+'@'+view.cx+','+view.cy+','+view.scale;
+      // After two chunked rebuild cycles for the same scene state, stop
+      // skipping evicted layers and composite everything synchronously:
+      // that is the only way a scene whose bitmaps exceed even the hard
+      // cap can reach a complete final frame, and it terminates because
+      // the completed draw below records the state as refined.
+      forceFullComposite=cycleCount>=2&&cycleKey===keyNow;
       // A refinement progress tick asks for one composite from the per-layer
       // caches (refined layers sharp, the rest still preview bitmaps) instead
       // of the frozen whole-scene cache; compositing itself never re-renders
@@ -4490,13 +4547,30 @@
         if(!interactionActive)refreshLayerThumbnails();
         return;
       }
+      // A scene already refined for exactly this state is stored whole in
+      // the scene cache; its per-layer bitmaps may since have been trimmed
+      // for the memory budget, so blit the scene cache instead of
+      // compositing layers that are no longer all present.
+      if(!progressTick&&!interactionActive&&!refinementJob&&refinedKey===keyNow&&sceneCache&&sceneCache.key===signature&&!sceneCache.preview&&sceneCache.cx===view.cx&&sceneCache.cy===view.cy&&sceneCache.scale===view.scale&&sceneCache.width===cssW&&sceneCache.height===cssH){
+        drawCachedScene();
+        refreshLayerThumbnails();
+        trimLayerCaches();
+        return;
+      }
       drawGrid();
       expressions.forEach(function(item,index){
         if(!itemShown(item)||!item.parsed||(animationCount!==null&&index>=animationCount))return;
         compositeLayer(item);
       });
-      if(!interactionActive){drawIntegral();drawTablePoint();drawIntersections();drawTangent();if(!refinementJob)cacheScene(signature);}
+      if(!interactionActive){drawIntegral();drawTablePoint();drawIntersections();drawTangent();if(!refinementJob&&!passIncomplete)cacheScene(signature);}
       else cacheScene(signature,true);
+      if(!interactionActive&&!refinementJob){
+        if(passIncomplete){
+          if(keyNow!==cycleKey){cycleKey=keyNow;cycleCount=0;}
+          if(cycleCount<2){cycleCount++;queueRefinement(60);}
+        }else refinedKey=keyNow;
+        trimLayerCaches();
+      }
       if(!interactionActive&&!progressTick)refreshLayerThumbnails();
     }
 
@@ -4537,7 +4611,7 @@
       bgColor=(typeof value==='string'&&/^#[0-9a-f]{6}$/i.test(value))?value.toLowerCase():null;
       shell.style.background=bgColor||'';
       sceneCache=null;
-      expressions.forEach(function(item){item._layerCache=null;item._fillCache=null;});
+      expressions.forEach(function(item){item._layerCache=null;item._fillCache=null;item._cacheEvicted=false;});
       invalidatePictureThumbnails();
       syncBgPanel();
       schedule();
@@ -8027,7 +8101,7 @@
     }
 
     /*** 서버 순위 연동 (닷홈 /api/rank.php) ***/
-    var RANK_API_URL = '/api/rank.php';
+    var RANK_API_URL = 'https://jhmath.dothome.co.kr/api/rank.php';
 
     function submitScore(username, score, problemCount) {
       return fetch(RANK_API_URL, {
