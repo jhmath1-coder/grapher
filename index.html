@@ -5426,8 +5426,16 @@
     // 기둥보다 한참 위에 떠 있게 된다(각뿔 밑면 약 -0.25, 원뿔 밑면 약 -0.02).
     // 밑면이 각기둥 밑면과 같은 높이에 오도록 도형 전체를 그만큼 아래로 내린 뒤,
     // 도형의 세로 전체 높이의 25%만큼 다시 위로 올려 밑면이 떠 보이게 한다.
-    var PRISM_BASE_Y = -1.2 / Math.sqrt(1 + 1.2 * 1.2); // 각기둥(H=2.4, 밑면 반지름 1)을 정규화한 뒤의 밑면 y ≈ -0.768
+    var PRISM_BASE_Y = -1.2 * 0.9 / Math.sqrt(1 + 1.2 * 1.2); // 각기둥(H=2.4, 밑면 반지름 1)을 정규화하고 0.9배로 줄인 뒤의 밑면 y ≈ -0.691
     var PYRAMID_LIFT = 0.25; // 뿔 밑면을 전체 높이 대비 이 비율만큼 위로 올린다
+    // 도형 전체(꼭짓점·면 중심·모서리 길이)를 s배로 균일 확대/축소한다
+    function scaleSolidInPlace(solid, s) {
+      if (s === 1) return solid;
+      solid.V.forEach(function (p) { p[0] *= s; p[1] *= s; p[2] *= s; });
+      solid.C.forEach(function (p) { p[0] *= s; p[1] *= s; p[2] *= s; });
+      if (solid.edgeLen) solid.edgeLen *= s;
+      return solid;
+    }
     function groundToPrismBase(solid) {
       var minY = Infinity, maxY = -Infinity;
       solid.V.forEach(function (p) { if (p[1] < minY) minY = p[1]; if (p[1] > maxY) maxY = p[1]; });
@@ -5448,7 +5456,8 @@
       for (k = 0; k < nn; k++) { ang = 2 * Math.PI * k / nn; V.push([Math.cos(ang), -H / 2, Math.sin(ang)]); bot.push(2 * nn - 1 - k); }
       F.push(top); F.push(bot);
       for (k = 0; k < nn; k++) F.push([k, (k + 1) % nn, nn + (k + 1) % nn, nn + k]);
-      return explicitSolid(V, F);
+      // 각기둥 전체를 현재 크기에서 10% 줄인다 (PRISM_BASE_Y도 같은 0.9배 기준으로 맞춤)
+      return scaleSolidInPlace(explicitSolid(V, F), 0.9);
     }
     function pyramidSolid(nn) {
       // 높이를 밑면 지름(2)의 약 0.85배로 낮춰, 너무 높고 뾰족해 보이지 않고
@@ -5459,8 +5468,8 @@
       V.push([0, h, 0]);
       F.push(base);
       for (k = 0; k < nn; k++) F.push([k, (k + 1) % nn, nn]);
-      // 밑면을 기둥 밑면 높이에 맞춘 뒤 전체 높이의 25%만큼 위로 올린다
-      return groundToPrismBase(explicitSolid(V, F));
+      // 각뿔 전체를 현재 크기에서 10% 키운 뒤, 밑면을 기둥 밑면 높이에 맞추고 전체 높이의 25%만큼 위로 올린다
+      return groundToPrismBase(scaleSolidInPlace(explicitSolid(V, F), 1.1));
     }
     function coneSolid() {
       // 원뿔: 밑면의 원을 48개 점으로 나누어 옆면을 삼각형 48개로 근사한다.
@@ -5477,8 +5486,8 @@
       var V = raw.map(function (p) { return vsub(p, cen); });
       var maxR = 0;
       V.forEach(function (p) { maxR = Math.max(maxR, vlen(p)); });
-      // 원뿔 전체를 10% 크게 키운다 (정규화 배율에 1.1을 곱함)
-      V = V.map(function (p) { return vscale(p, 1.1 / maxR); });
+      // 원뿔 전체를 현재 크기에서 10% 더 키운다 (정규화 배율 1.1 → 1.21)
+      V = V.map(function (p) { return vscale(p, 1.21 / maxR); });
       var apex = N;
       var F = [];
       for (k = 0; k < N; k++) F.push([k, (k + 1) % N, apex]);
@@ -5588,8 +5597,14 @@
       { group: '쌍각뿔', name: '오각 쌍뿔', build: function () { return bipyramidSolid(5); } }
     ];
     var builtCache = {};
+    var GROUP_SCALE = { '정다면체': 0.9, '아르키메데스': 0.9 }; // 그룹별 표시 크기 배율: 정다면체·아르키메데스를 현재 크기에서 10% 줄임
     function getSolid(idx) {
-      if (!builtCache[idx]) builtCache[idx] = DEFS[idx].build ? DEFS[idx].build() : buildSolid(DEFS[idx].make());
+      if (!builtCache[idx]) {
+        var solid = DEFS[idx].build ? DEFS[idx].build() : buildSolid(DEFS[idx].make());
+        var gs = GROUP_SCALE[DEFS[idx].group];
+        if (gs) scaleSolidInPlace(solid, gs);
+        builtCache[idx] = solid;
+      }
       return builtCache[idx];
     }
 
