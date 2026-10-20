@@ -314,7 +314,7 @@
   <div id="titlebar">
     <svg class="appmark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="15" r="6.5" fill="none" stroke="#2f6fb2" stroke-width="2"/><path d="M4 20 L20 4" stroke="#b3352c" stroke-width="2"/><circle cx="20" cy="4" r="2.2" fill="#b3352c"/></svg>
     <span id="docTitle">제목 없음 - 동적 기하 스케치</span>
-    <span id="buildTag">빌드 2026-10-20 13:07 · 회전·확대 변형 드래그 동작 수정</span>
+    <span id="buildTag">빌드 2026-10-20 14:02 · 좌측 도구 7종 추가(벡터·세 점 원·각·정다각형·펜·슬라이더·지우개)</span>
     <button class="tb-btn" id="shareBtn" type="button">공유</button>
     <button class="tb-btn" id="blockBtn" type="button">블록코딩</button>
     <button class="tb-btn" id="docBtn" type="button">문서 모드</button>
@@ -524,12 +524,13 @@ function evalAst(n,scope){
 const PALETTE=['#1c1c1e','#b3352c','#2f6fb2','#1e8a4c','#e07b00','#7a3ea1','#0e8a8a','#d63384','#5a4632','#4361ee'];
 const state={
   objects:[], sel:[], uid:0,
-  counters:{line:0,ray:0,circle:0,polygon:0,arc:0,sector:0,measure:0,func:0,text:0},
+  counters:{line:0,ray:0,circle:0,polygon:0,arc:0,sector:0,measure:0,func:0,text:0,vector:0,freehand:0},
   funcNames:['f','g','h','p','q'],
   view:{cx:0,cy:0.3,scale:52},
   grid:{show:true,type:'square',dots:false,snap:false},
   axes:true, labels:true,
   marked:{vector:null,center:null,axis:null,angle:60,ratio:2},
+  iterMax:2000,
   proto:null, traces:[], docName:'제목 없음',
   pointR:4, customTools:[],
   tool:'move', toolVariant:{arrow:'move',circle:'pts',line:'segment',polygon:'fillstroke'},
@@ -569,6 +570,8 @@ function addObj(type,params){
     else if(type==='measure')o.name='m'+(++state.counters.measure);
     else if(type==='function'){const av=state.funcNames.filter(n=>!state.objects.some(x=>x.type==='function'&&x.name===n));o.name=av[0]||('f'+(++state.counters.func));}
     else if(type==='text')o.name='글'+(++state.counters.text);
+    else if(type==='vector')o.name='벡터'+(++state.counters.vector);
+    else if(type==='freehand')o.name='곡선'+(++state.counters.freehand);
     else if(type==='param')o.name='a';
   }
   state.objects.push(o);
@@ -614,14 +617,14 @@ function inDomain(g,pt){
   if(g.kind==='line')return true;
   const d=g.d;const L=g.len;if(L<1e-12)return false;
   const s=V.dot(V.sub(pt,g.a),d)/L; // 길이 단위
-  if(g.kind==='segment')return s>=-1e-9&&s<=L+1e-9;
+  if(g.kind==='segment'||g.kind==='vector')return s>=-1e-9&&s<=L+1e-9;
   if(g.kind==='ray')return s>=-1e-9;
   return true;
 }
 function intersectGeoms(g1,g2){
   if(!g1||!g2)return[];
   const K1=g1.kind,K2=g2.kind;
-  const lineLike=k=>k==='segment'||k==='ray'||k==='line';
+  const lineLike=k=>k==='segment'||k==='ray'||k==='line'||k==='vector';
   const edges=g=>g.kind==='polygon'?g.pts.map((p,i)=>lineGeom(p,g.pts[(i+1)%g.pts.length],'segment')):[];
   if(K1==='polygon'&&K2==='point')return[];
   if(K1==='polygon'||K2==='polygon'){
@@ -684,8 +687,16 @@ function intersectGeoms(g1,g2){
 }
 function pointAt(g,t){
   if(!g)return null;
-  if(g.kind==='segment'||g.kind==='ray'||g.kind==='line'){
+  if(g.kind==='segment'||g.kind==='ray'||g.kind==='line'||g.kind==='vector'){
     const u=V.unit(g.d);return V.add(g.a,V.mul(u,t));
+  }
+  if(g.kind==='freehand'){
+    const pts=g.pts;if(!pts||pts.length<2)return pts?{x:pts[0].x,y:pts[0].y}:null;
+    let per=0;const lens=[];
+    for(let i=0;i<pts.length-1;i++){const l=V.len(V.sub(pts[i+1],pts[i]));lens.push(l);per+=l;}
+    let tt=clamp(t,0,per);
+    for(let i=0;i<lens.length;i++){if(tt<=lens[i]+1e-12){const u=lens[i]?tt/lens[i]:0;return{x:pts[i].x+(pts[i+1].x-pts[i].x)*u,y:pts[i].y+(pts[i+1].y-pts[i].y)*u};}tt-=lens[i];}
+    return{x:pts[pts.length-1].x,y:pts[pts.length-1].y};
   }
   if(g.kind==='circle')return{x:g.c.x+g.r*Math.cos(t),y:g.c.y+g.r*Math.sin(t)};
   if(g.kind==='arc'||g.kind==='sector')return{x:g.c.x+g.r*Math.cos(t),y:g.c.y+g.r*Math.sin(t)};
@@ -701,11 +712,22 @@ function pointAt(g,t){
 }
 function projectT(g,pt){
   if(!g)return 0;
-  if(g.kind==='segment'||g.kind==='ray'||g.kind==='line'){
+  if(g.kind==='segment'||g.kind==='ray'||g.kind==='line'||g.kind==='vector'){
     const u=V.unit(g.d);let t=V.dot(V.sub(pt,g.a),u);
-    if(g.kind==='segment')t=clamp(t,0,g.len);
+    if(g.kind==='segment'||g.kind==='vector')t=clamp(t,0,g.len);
     if(g.kind==='ray')t=Math.max(0,t);
     return t;
+  }
+  if(g.kind==='freehand'){
+    const pts=g.pts;let best=1e18,bt=0,acc=0;
+    for(let i=0;i<pts.length-1;i++){
+      const a=pts[i],b=pts[i+1];const d=V.sub(b,a);const L=V.len(d);
+      const s=L?clamp(V.dot(V.sub(pt,a),d)/(L*L),0,1):0;
+      const q=V.add(a,V.mul(d,s));const dd=V.len(V.sub(pt,q));
+      if(dd<best){best=dd;bt=acc+L*s;}
+      acc+=L;
+    }
+    return bt;
   }
   if(g.kind==='circle'||g.kind==='arc'||g.kind==='sector')return Math.atan2(pt.y-g.c.y,pt.x-g.c.x);
   if(g.kind==='polygon'){
@@ -733,7 +755,8 @@ function applyXform(g,xf,G){
   if(!g)return null;
   const P=pt=>applyXformPt(pt,xf,G);
   if(g.kind==='point')return{kind:'point',x:P(g).x,y:P(g).y};
-  if(g.kind==='segment'||g.kind==='ray'||g.kind==='line')return lineGeom(P(g.a),P(g.b),g.kind);
+  if(g.kind==='segment'||g.kind==='ray'||g.kind==='line'||g.kind==='vector')return lineGeom(P(g.a),P(g.b),g.kind);
+  if(g.kind==='freehand')return{kind:'freehand',pts:g.pts.map(P)};
   if(g.kind==='circle'){const c=P(g.c);const r=g.r*(xf.kind==='dilate'?Math.abs(xf.ratio):1);return{kind:'circle',c:c,r:r};}
   if(g.kind==='polygon')return{kind:'polygon',pts:g.pts.map(P)};
   if(g.kind==='arc'||g.kind==='sector'){
@@ -748,8 +771,61 @@ function applyXform(g,xf,G){
 }
 function polyArea(pts){let s=0;for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];s+=a.x*b.y-b.x*a.y;}return Math.abs(s/2);}
 function polyPerim(pts){let s=0;for(let i=0;i<pts.length;i++)s+=V.len(V.sub(pts[(i+1)%pts.length],pts[i]));return s;}
+function freehandLen(g){if(!g||!g.pts)return 0;let s=0;for(let i=1;i<g.pts.length;i++)s+=V.len(V.sub(g.pts[i],g.pts[i-1]));return s;}
 
+function applyAffine(A,p){return{x:A.a*p.x+A.b*p.y+A.tx,y:A.c*p.x+A.d*p.y+A.ty};}
+function affineFrom(P,Q){
+  // 앞의 세 쌍 P[i]→Q[i] 로 아핀 변환 산출
+  const p1=P[0],p2=P[1],p3=P[2],q1=Q[0],q2=Q[1],q3=Q[2];
+  if(!p1||!p2||!p3||!q1||!q2||!q3)return null;
+  const ex=p2.x-p1.x,ey=p2.y-p1.y,fx=p3.x-p1.x,fy=p3.y-p1.y;
+  const det=ex*fy-fx*ey;
+  if(Math.abs(det)<1e-12)return null;
+  const gx=q2.x-q1.x,gy=q2.y-q1.y,hx=q3.x-q1.x,hy=q3.y-q1.y;
+  const A={a:(gx*fy-hx*ey)/det,b:(hx*ex-gx*fx)/det,c:(gy*fy-hy*ey)/det,d:(hy*ex-gy*fx)/det,tx:0,ty:0};
+  A.tx=q1.x-(A.a*p1.x+A.b*p1.y);A.ty=q1.y-(A.c*p1.x+A.d*p1.y);
+  return A;
+}
 function computeGeom(o,G){
+  if(o.type==='iterate'){
+    if(G===GEOM){ // 본 계산 패스에서만 아핀 변환 갱신 (자취 샘플링 패스 제외)
+      const P=o.pre.map(id=>G[id]),Q=o.img.map(id=>G[id]);
+      if(P.length>=3&&P.every(p=>p&&p.kind==='point')&&Q.every(p=>p&&p.kind==='point')){
+        const A=affineFrom(P,Q);
+        if(A)o._aff=A;
+      }
+    }
+    return{kind:'iterate'};
+  }
+  if(o._genIter){
+    const it=byId(o._genIter);
+    if(it&&it._aff){
+      const A=it._aff;
+      if(o.type==='point'&&(o.kind==='free'||o.kind==='coord')){
+        const pg=G[o._dynPrev];if(!pg||pg.x==null)return null;
+        const p=applyAffine(A,pg);return{kind:'point',x:p.x,y:p.y};
+      }
+      if(o.type==='text'){
+        const pg=G[o._dynPrev];if(!pg)return null;
+        const p=applyAffine(A,pg);return{kind:'text',x:p.x,y:p.y};
+      }
+      if(o.type==='measure'){
+        const pg=G[o._dynPrev];if(!pg)return null;
+        const p=applyAffine(A,pg);const v=measureValue(o,G);
+        return{kind:'measure',x:p.x,y:p.y,value:v.value,text:v.text};
+      }
+      if(o.type==='point'&&o.kind==='on'&&it.pointPos==='random'&&o._dynT!=null){
+        const base=G[o.parents[0]];const p=base?pointAt(base,o._dynT):null;
+        return p?{kind:'point',x:p.x,y:p.y}:null;
+      }
+      if(o.type==='circle'&&o.mode==='radiusVal'&&!o.rParam){
+        const c=G[o.parents[0]];if(!c)return null;
+        const detA=Math.abs(A.a*A.d-A.b*A.c);
+        const s=Math.pow(detA>0?detA:1,(o._genLevel||1)/2);
+        return{kind:'circle',c:{x:c.x,y:c.y},r:o.r*s};
+      }
+    }
+  }
   if(o.xform){
     const src=G[o.xform.source];
     return applyXform(src,o.xform,G);
@@ -767,9 +843,15 @@ function computeGeom(o,G){
         const ints=intersectGeoms(G[o.parents[0]],G[o.parents[1]]);
         const p=ints[o.idx||0];return p?{kind:'point',x:p.x,y:p.y}:null;
       }
+      if(o.kind==='regvert'){
+        const c=G[o.parents[0]],d=G[o.parents[1]];if(!c||!d)return null;
+        const base=Math.atan2(d.y-c.y,d.x-c.x),r=V.len(V.sub(d,c));
+        const ang=base+(o.idx||0)*2*Math.PI/(o.n||5);
+        return{kind:'point',x:c.x+r*Math.cos(ang),y:c.y+r*Math.sin(ang)};
+      }
       return null;
     }
-    case 'segment':case 'ray':case 'line':{
+    case 'segment':case 'ray':case 'line':case 'vector':{
       if(o.mode==='pts'){const a=G[o.parents[0]],b=G[o.parents[1]];if(!a||!b)return null;return lineGeom(a,b,o.type);}
       if(o.mode==='parallel'||o.mode==='perp'){
         const p=G[o.parents[0]],l=G[o.parents[1]];if(!p||!l||!l.d)return null;
@@ -786,6 +868,16 @@ function computeGeom(o,G){
     }
     case 'circle':{
       const c=G[o.parents[0]];if(!c)return null;
+      if(o.mode==='pts3'){
+        const p1=G[o.parents[0]],p2=G[o.parents[1]],p3=G[o.parents[2]];
+        if(!p1||!p2||!p3)return null;
+        const dd=2*(p1.x*(p2.y-p3.y)+p2.x*(p3.y-p1.y)+p3.x*(p1.y-p2.y));
+        if(Math.abs(dd)<1e-9)return null; // 세 점이 공선이면 외접원 없음
+        const s1=p1.x*p1.x+p1.y*p1.y,s2=p2.x*p2.x+p2.y*p2.y,s3=p3.x*p3.x+p3.y*p3.y;
+        const cc={x:(s1*(p2.y-p3.y)+s2*(p3.y-p1.y)+s3*(p1.y-p2.y))/dd,
+                  y:(s1*(p3.x-p2.x)+s2*(p1.x-p3.x)+s3*(p2.x-p1.x))/dd};
+        return{kind:'circle',c:cc,r:V.len(V.sub(p1,cc))};
+      }
       if(o.mode==='pts'){const p=G[o.parents[1]];if(!p)return null;return{kind:'circle',c:{x:c.x,y:c.y},r:V.len(V.sub(p,c))};}
       if(o.mode==='radiusSeg'){const s=G[o.parents[1]];if(!s)return null;return{kind:'circle',c:{x:c.x,y:c.y},r:s.len};}
       if(o.mode==='radiusVal'){let r=o.r;if(o.rParam){const po=byId(o.rParam);r=po?po.value:NaN;}return{kind:'circle',c:{x:c.x,y:c.y},r:r};}
@@ -802,6 +894,7 @@ function computeGeom(o,G){
         a1:Math.atan2(s.y-c.y,s.x-c.x),a2:Math.atan2(e.y-c.y,e.x-c.x)};
     }
     case 'text':return{kind:'text',x:o.x,y:o.y};
+    case 'freehand':return{kind:'freehand',pts:o.pts||[]};
     case 'measure':{
       const v=measureValue(o,G);
       return{kind:'measure',x:o.x,y:o.y,value:v.value,text:v.text};
@@ -826,6 +919,8 @@ function measureValue(o,G){
       case 'length':{
         if(o.refs.length===1){const g=R(o.refs[0]);if(!g)return num(NaN);
           if(g.kind==='segment')return num(g.len);
+          if(g.kind==='vector')return num(g.len);
+          if(g.kind==='freehand')return num(freehandLen(g));
           if(g.kind==='circle')return num(2*Math.PI*g.r);
           if(g.kind==='polygon')return num(polyPerim(g.pts));
           if(g.kind==='arc'){let sw=g.a2-g.a1;while(sw<0)sw+=2*Math.PI;return num(g.r*sw);}
@@ -928,7 +1023,7 @@ function clipLine(g){
   const r=visibleRange();const pad=2;
   const x0=r.x0-pad,x1=r.x1+pad,y0=r.y0-pad,y1=r.y1+pad;
   let tmin=-1e9,tmax=1e9;
-  if(g.kind==='segment'){tmin=0;tmax=1;}
+  if(g.kind==='segment'||g.kind==='vector'){tmin=0;tmax=1;}
   if(g.kind==='ray'){tmin=0;}
   const d=g.d,a=g.a;
   if(Math.abs(d.x)>1e-12){let t1=(x0-a.x)/d.x,t2=(x1-a.x)/d.x;if(t1>t2)[t1,t2]=[t2,t1];tmin=Math.max(tmin,t1);tmax=Math.min(tmax,t2);}
@@ -941,7 +1036,7 @@ function clipLine(g){
 let interestPts=[]; // {a,b,idx,x,y}
 function computeInterest(){
   interestPts=[];
-  const vis=state.objects.filter(o=>!o.hidden&&visibleObj(o)&&['segment','ray','line','circle','polygon'].includes(o.type));
+  const vis=state.objects.filter(o=>!o.hidden&&visibleObj(o)&&['segment','ray','line','circle','polygon','vector'].includes(o.type));
   const existing=state.objects.filter(o=>o.type==='point');
   for(let i=0;i<vis.length;i++)for(let j=i+1;j<vis.length;j++){
     const ints=intersectGeoms(GEOM[vis[i].id],GEOM[vis[j].id]);
@@ -1092,6 +1187,27 @@ function drawObject(o,g){
       el('path',Object.assign(attrs,{d:d}),grp);
       break;
     }
+    case 'vector':{
+      const seg=clipLine(g);if(!seg)break;
+      const a=P(seg[0]),b=P(seg[1]);
+      el('line',Object.assign(strokeAttrs(o),{x1:a.x,y1:a.y,x2:b.x,y2:b.y,'stroke-width':o.width+(sel?1.2:0)}),grp);
+      const dx=b.x-a.x,dy=b.y-a.y,L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L;
+      const hs=11,hw=4.6,bx=b.x-ux*hs,by=b.y-uy*hs;
+      el('polygon',{points:b.x+','+b.y+' '+(bx-uy*hw)+','+(by+ux*hw)+' '+(bx+uy*hw)+','+(by-ux*hw),fill:o.color},grp);
+      el('line',{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:'transparent','stroke-width':11,'data-hit':'1'},grp);
+      labelFor(o,{x:(a.x+b.x)/2+7,y:(a.y+b.y)/2-5},o.name,11.5);
+      break;
+    }
+    case 'freehand':{
+      if(g.pts&&g.pts.length>1){
+        const dAttr=g.pts.map((p,i)=>{const q=P(p);return(i?'L':'M')+q.x.toFixed(1)+' '+q.y.toFixed(1);}).join(' ');
+        el('path',Object.assign(strokeAttrs(o),{d:dAttr,'stroke-width':o.width+(sel?1.2:0)}),grp);
+        el('path',{d:dAttr,fill:'none',stroke:'transparent','stroke-width':11,'data-hit':'1'},grp);
+        const mid=P(g.pts[Math.floor(g.pts.length/2)]);
+        labelFor(o,{x:mid.x+6,y:mid.y-6},o.name,11.5);
+      }
+      break;
+    }
     case 'text':{
       const p=P(g);
       const t=el('text',{x:p.x,y:p.y,'font-size':o.fontSize||14,fill:o.color,
@@ -1101,6 +1217,21 @@ function drawObject(o,g){
     }
     case 'measure':{
       const p=P(g);
+      if(o.mtype==='angle'){
+        const A=GEOM[o.refs[0]],B=GEOM[o.refs[1]],C=GEOM[o.refs[2]];
+        if(A&&B&&C&&A.x!=null&&B.x!=null&&C.x!=null){
+          const bp=P(B);const R=30;
+          const a1=Math.atan2(-(A.y-B.y),A.x-B.x),a2=Math.atan2(-(C.y-B.y),C.x-B.x);
+          let diff=a2-a1;while(diff>Math.PI)diff-=2*Math.PI;while(diff<-Math.PI)diff+=2*Math.PI;
+          const p1={x:bp.x+R*Math.cos(a1),y:bp.y+R*Math.sin(a1)};
+          const p2={x:bp.x+R*Math.cos(a2),y:bp.y+R*Math.sin(a2)};
+          el('path',{d:'M '+p1.x.toFixed(1)+' '+p1.y.toFixed(1)+' A '+R+' '+R+' 0 0 '+(diff>=0?1:0)+' '+p2.x.toFixed(1)+' '+p2.y.toFixed(1),fill:'none',stroke:o.color,'stroke-width':1.6},grp);
+          if(Math.abs(Math.abs(diff)-Math.PI/2)<0.02){
+            const r2=13,ux1=Math.cos(a1),uy1=Math.sin(a1),ux2=Math.cos(a2),uy2=Math.sin(a2);
+            el('path',{d:'M '+(bp.x+ux1*r2)+' '+(bp.y+uy1*r2)+' L '+(bp.x+(ux1+ux2)*r2)+' '+(bp.y+(uy1+uy2)*r2)+' L '+(bp.x+ux2*r2)+' '+(bp.y+uy2*r2),fill:'none',stroke:o.color,'stroke-width':1.3},grp);
+          }
+        }
+      }
       el('rect',{x:p.x-3,y:p.y-13,width:Math.max(30,g.text.length*7.4+8),height:18,fill:'transparent','data-hit':'1'},grp);
       const t=el('text',{x:p.x,y:p.y+1,'font-size':12.5,fill:'#333','paint-order':'stroke',stroke:'#fff','stroke-width':3},grp);
       t.textContent=o.prefix?o.prefix+' = '+g.text:g.text;
@@ -1137,6 +1268,7 @@ function drawObject(o,g){
   }
 }
 function render(){
+  refreshAllIterations();
   recompute();
   computeInterest();
   while(svg.firstChild)svg.removeChild(svg.firstChild);
@@ -1195,6 +1327,7 @@ function defOf(o){
     case 'point':
       if(o.kind==='free')return '자유점';
       if(o.kind==='coord')return '좌표로 찍은 점';
+      if(o.kind==='regvert')return '정'+(o.n||5)+'각형의 꼭짓점';
       if(o.kind==='on')return nm(o.parents[0])+' 위의 점';
       if(o.kind==='midpoint')return o.parents.length===1?nm(o.parents[0])+'의 중점':nm(o.parents[0])+nm(o.parents[1])+'의 중점';
       if(o.kind==='intersect')return nm(o.parents[0])+'와(과) '+nm(o.parents[1])+'의 교점';
@@ -1207,7 +1340,10 @@ function defOf(o){
       if(o.mode==='bisector')return '∠'+nm(o.parents[0])+nm(o.parents[1])+nm(o.parents[2])+'의 이등분선';
       return t;
     }
+    case 'vector':return nm(o.parents[0])+'에서 '+nm(o.parents[1])+'(으)로 가는 벡터';
+    case 'freehand':return '펜으로 그린 자유 곡선';
     case 'circle':
+      if(o.mode==='pts3')return '세 점 '+nm(o.parents[0])+', '+nm(o.parents[1])+', '+nm(o.parents[2])+'를 지나는 원';
       if(o.mode==='pts')return '중심 '+nm(o.parents[0])+', '+nm(o.parents[1])+'를 지나는 원';
       if(o.mode==='radiusSeg')return '중심 '+nm(o.parents[0])+', 반지름 '+nm(o.parents[1])+'인 원';
       if(o.mode==='radiusVal')return '중심 '+nm(o.parents[0])+', 반지름 '+(o.rParam?nm(o.rParam):fmt(o.r))+'인 원';
@@ -1220,6 +1356,7 @@ function defOf(o){
     case 'function':return o.derivOf?nm(o.derivOf)+'(x)의 도함수 그래프':'함수 그래프';
     case 'param':return '매개변수 ('+fmt(o.min)+' ~ '+fmt(o.max)+')';
     case 'locus':return nm(o.parents[1])+'의 자취 ('+nm(o.parents[0])+' 이동)';
+    case 'iterate':return '반복: '+o.pre.map((p,i)=>nm(p)+'→'+nm(o.img[i])).join(', ');
   }
   return o.type;
 }
@@ -1229,6 +1366,8 @@ function valueOf(o){
   switch(o.type){
     case 'point':return fmtPt(g);
     case 'segment':return '길이 '+fmt(g.len);
+    case 'vector':{const d=V.sub(g.b,g.a);return '성분 ('+fmt(d.x)+', '+fmt(d.y)+') · 길이 '+fmt(g.len);}
+    case 'freehand':return '길이 '+fmt(freehandLen(g));
     case 'ray':case 'line':return Math.abs(g.d.x)<1e-12?'수직선':'기울기 '+fmt(g.d.y/g.d.x);
     case 'circle':return '반지름 '+fmt(g.r)+' · 넓이 '+fmt(Math.PI*g.r*g.r);
     case 'polygon':return '넓이 '+fmt(polyArea(g.pts))+' · 둘레 '+fmt(polyPerim(g.pts));
@@ -1239,6 +1378,11 @@ function valueOf(o){
     case 'param':return fmt(o.value);
     case 'text':return o.text;
     case 'locus':return '자취';
+    case 'iterate':{
+      const d=iterDepth(o),eff=iterEffDepth(o);
+      const cnt=state.objects.filter(x=>x._genIter===o.id).length;
+      return '깊이 '+(o.depthParam?nm(o.depthParam)+' = '+d:d)+(eff<d?' (개수 제한으로 '+eff+'까지)':'')+' · 개체 '+cnt+'개';
+    }
   }
   return '';
 }
@@ -1268,6 +1412,7 @@ function renderAlgebra(){
     main.querySelector('.alg-val').textContent=valueOf(o);
     const valEl=main.querySelector('.alg-val');
     if(o.type==='param'){valEl.title='클릭하면 매개변수 값을 편집합니다';valEl.style.cursor='pointer';valEl.addEventListener('click',ev=>{ev.stopPropagation();paramDlg(o);});}
+    else if(o.type==='iterate'){valEl.title='클릭하면 반복 깊이를 정하거나 매개변수에 연결합니다';valEl.style.cursor='pointer';valEl.addEventListener('click',ev=>{ev.stopPropagation();iterateDepthDlg(o);});}
     else if(o.type==='measure'&&o.mtype==='calc'){valEl.title='클릭하면 계산식을 편집합니다';valEl.style.cursor='pointer';valEl.addEventListener('click',ev=>{ev.stopPropagation();calcDlg(o);});}
     else if(o.type==='point'&&(o.kind==='free'||o.kind==='coord')){valEl.title='클릭하면 좌표를 편집합니다';valEl.style.cursor='pointer';valEl.addEventListener('click',ev=>{ev.stopPropagation();pointCoordEditDlg(o);});}
     row.appendChild(dot);row.appendChild(eye);row.appendChild(main);
@@ -1313,6 +1458,13 @@ function updateStatus(){
     segment:'두 점을 클릭하면 '+(state.toolVariant.line==='segment'?'선분':state.toolVariant.line==='ray'?'반직선':'직선')+'을 만듭니다.',
     line:'두 점을 클릭하면 '+(state.toolVariant.line==='segment'?'선분':state.toolVariant.line==='ray'?'반직선':'직선')+'을 만듭니다.',
     polygon:'꼭짓점을 차례로 클릭하고, 처음 점을 다시 클릭하거나 Enter를 누르면 다각형이 완성됩니다.',
+    vector:'벡터를 만듭니다. 시작점과 끝점을 차례로 클릭하세요. 변환 메뉴에서 벡터로 지정해 평행이동에 쓸 수 있습니다.',
+    circle3:'세 점을 지나는 원을 만듭니다. 세 점을 차례로 클릭하세요.',
+    angle:'각의 크기를 잽니다. 한 변의 점, 꼭짓점, 다른 변의 점을 차례로 클릭하세요.',
+    regpoly:'정다각형을 만듭니다. 중심과 첫 꼭짓점을 차례로 클릭한 뒤, 변의 개수를 입력하세요.',
+    pen:'자유 곡선을 그립니다. 누른 채 끌다가 손을 떼면 곡선 개체가 됩니다.',
+    slider:'매개변수 슬라이더를 만듭니다. 클릭하면 새 매개변수 창이 바로 열립니다.',
+    eraser:'개체를 지웁니다. 클릭한 개체와 그에 딸린 종속 개체가 함께 지워지고, 실행 취소로 되돌릴 수 있습니다.',
     text:'글을 넣을 위치를 클릭하세요.',
     info:'개체를 클릭하면 그 개체의 정보를 보여줍니다.',
     custom:'사용자 도구를 선택하세요. (버튼을 길게 누르면 새 도구를 만들 수 있습니다)',
@@ -1322,7 +1474,7 @@ function updateStatus(){
   if(!selObjs.length)$('#statusSel').textContent='';
   else{
     const cnt={};
-    selObjs.forEach(o=>{const k={point:'점',segment:'선분',ray:'반직선',line:'직선',circle:'원',polygon:'다각형',arc:'호',sector:'부채꼴',text:'글',measure:'측정',function:'함수',param:'매개변수',locus:'자취'}[o.type]||o.type;cnt[k]=(cnt[k]||0)+1;});
+    selObjs.forEach(o=>{const k={point:'점',segment:'선분',ray:'반직선',line:'직선',circle:'원',polygon:'다각형',arc:'호',sector:'부채꼴',text:'글',measure:'측정',function:'함수',param:'매개변수',locus:'자취',iterate:'반복',vector:'벡터',freehand:'자유 곡선'}[o.type]||o.type;cnt[k]=(cnt[k]||0)+1;});
     $('#statusSel').textContent='선택된 개체: '+Object.keys(cnt).map(k=>cnt[k]+'개의 '+k).join(', ');
   }
 }
@@ -1335,11 +1487,13 @@ function selectOnly(id,additive){
 }
 function clearSel(){state.sel=[];}
 let past=[],future=[];
-function snapshot(){return JSON.stringify({objects:state.objects,uid:state.uid,counters:state.counters,view:state.view,grid:state.grid,docName:state.docName,marked:state.marked});}
+function snapshot(){return JSON.stringify({objects:state.objects,uid:state.uid,counters:state.counters,view:state.view,grid:state.grid,docName:state.docName,marked:state.marked,iterMax:state.iterMax});}
 function beginAction(){past.push(snapshot());if(past.length>120)past.shift();future=[];scheduleVersionSave();}
 function restore(json){
   const s=JSON.parse(json);
-  state.objects=s.objects;state.uid=s.uid;state.counters=s.counters;state.view=s.view;state.grid=s.grid;state.docName=s.docName;state.marked=s.marked;
+  state.objects=s.objects;state.uid=s.uid;state.counters=Object.assign({line:0,ray:0,circle:0,polygon:0,arc:0,sector:0,measure:0,func:0,text:0,vector:0,freehand:0},s.counters);state.view=s.view;state.grid=s.grid;state.docName=s.docName;state.marked=s.marked;
+  if(s.iterMax)state.iterMax=s.iterMax;
+  state.objects.forEach(o=>{if(o.type==='iterate')o._sig=null;});
   state.sel=[];state.proto=null;
   state.objects.forEach(o=>{if(o.type==='locus')o._geomCache=null;});
   document.title=state.docName+' - 동적 기하 스케치';
@@ -1366,7 +1520,8 @@ function descendantsOf(id){
   const out=new Set([id]);let grew=true;
   while(grew){grew=false;for(const o of state.objects){
     if(out.has(o.id))continue;
-    const deps=o.parents.concat(o.xform?[o.xform.source,o.xform.vector,o.xform.center,o.xform.axis].filter(Boolean):[]);
+    const deps=o.parents.concat(o.xform?[o.xform.source,o.xform.vector,o.xform.center,o.xform.axis].filter(Boolean):[])
+      .concat(o._genIter?[o._genIter]:[]).concat(o._dynPrev?[o._dynPrev]:[]);
     if(deps.some(d=>out.has(d))){out.add(o.id);grew=true;}
   }}
   return out;
@@ -1446,10 +1601,10 @@ function dlgInfo(){
     '<p>점·선·원을 작도하고 자유점을 끌어 움직이면, 교점·중점·수선·측정값이 의존 관계를 따라 실시간으로 함께 움직입니다. 매개변수 슬라이더, 함수 그래프, 변환, 자취, 애니메이션을 지원합니다.</p>'+
     '<p>데스모스·알지오매스·지오지브라의 장점을 더했습니다: 미지수→슬라이더 자동 제안, 스냅샷 공유 링크와 버전 기록, 함수 오디오 트레이스, 블록코딩 작도, 문서(활동지) 모드, 작도 단계 재생과 대수창 양방향 편집.</p>'+
     '<p style="color:var(--ink2);">Geometer\'s Sketchpad 5.03의 화면 구성에서 영감을 받은 웹 재현입니다.</p>'+
-    '<p style="color:var(--ink2);">빌드 2026-10-20 13:07 · 회전·확대 변형 드래그 동작 수정</p>');
+    '<p style="color:var(--ink2);">빌드 2026-10-20 14:02 · 좌측 도구 7종 추가(벡터·세 점 원·각·정다각형·펜·슬라이더·지우개)</p>');
 }
 function dlgShortcuts(){
-  const rows=[['Ctrl+1 ~ 8','도구 선택 (이동·점·원·선분·다각형·글·정보·사용자 도구)'],
+  const rows=[['Ctrl+1 ~ 15','도구 선택 (1 이동·2 점·3 원·4 선분·5 다각형·6 글·7 정보·8 사용자 도구·9 벡터·0 세 점 원, 11~15는 Ctrl+1 뒤 숫자: 각·정다각형·펜·슬라이더·지우개)'],
     ['Ctrl+Z / Ctrl+Y','실행 취소 / 다시 실행'],['Ctrl+X / C / V','잘라내기 / 복사 / 붙여넣기'],
     ['Ctrl+N / O / S / P','새 문서 / 열기 / 저장 / 인쇄'],['Ctrl+B / I / U','굵게 / 기울임 / 밑줄 (글 개체)'],
     ['Delete','선택한 개체 지우기 (종속 개체도 함께)'],['Esc','작업 취소 · 선택 해제'],['Enter','다각형 완성'],
@@ -1459,6 +1614,7 @@ function dlgShortcuts(){
 
 /* ═══════════════ 도구 · 포인터 상호작용 ═══════════════ */
 let pending=[]; // 현재 도구에서 클릭한 점 id들
+let toolKeyBuf=false; // Ctrl+1 직후 숫자 입력으로 11~15번 도구를 고르기 위한 버퍼
 let drag=null;    // {mode:'point'|'text'|'marquee'|'pan'|'rotate'|'scale', ...}
 let mouseMath={x:0,y:0}, mousePx={x:0,y:0};
 const pendingHint=$('#pendingHint');
@@ -1480,8 +1636,9 @@ function hitTest(m){
     const o=objs[i];if(o.type==='point')continue;
     const g=GEOM[o.id];if(!g)continue;
     const tol=7/state.view.scale;
-    if(o.type==='segment'||o.type==='ray'||o.type==='line'){
-      const u=V.unit(g.d);const t=clamp(V.dot(V.sub(m,g.a),u),o.type==='segment'?0:-1e9,o.type==='segment'?g.len:1e9);
+    if(o.type==='segment'||o.type==='ray'||o.type==='line'||o.type==='vector'){
+      const bounded=o.type==='segment'||o.type==='vector';
+      const u=V.unit(g.d);const t=clamp(V.dot(V.sub(m,g.a),u),bounded?0:-1e9,bounded?g.len:1e9);
       const q=V.add(g.a,V.mul(u,Math.max(0,t)));const tt=V.dot(V.sub(m,g.a),u);
       const qq=o.type==='line'?V.add(g.a,V.mul(u,tt)):q;
       if(V.len(V.sub(m,qq))<tol)return o;
@@ -1517,6 +1674,13 @@ function hitTest(m){
     }
     else if(o.type==='locus'){
       if(g.pts&&g.pts.some(p=>V.len(V.sub(m,p))<tol))return o;
+    }
+    else if(o.type==='freehand'){
+      if(g.pts){for(let i=0;i<g.pts.length-1;i++){
+        const A=g.pts[i],Bp=g.pts[i+1];const d=V.sub(Bp,A);const L=V.len(d);
+        const s=clamp(V.dot(V.sub(m,A),d)/(L*L||1),0,1);const q=V.add(A,V.mul(d,s));
+        if(V.len(V.sub(m,q))<tol)return o;
+      }}
     }
   }
   return null;
@@ -1616,6 +1780,9 @@ svg.addEventListener('pointerdown',e=>{
         if(o.kind==='free'||o.kind==='coord'){beginAction();drag={mode:'point',id:o.id};}
         else if(o.kind==='on'){beginAction();drag={mode:'onpoint',id:o.id};}
         selectOnly(o.id,e.shiftKey);render();renderAlgebra();
+      }else if(hit.type==='freehand'){
+        beginAction();drag={mode:'freehand',id:hit.id,lx:mouseMath.x,ly:mouseMath.y};
+        selectOnly(hit.id,e.shiftKey);render();renderAlgebra();
       }else if(hit.type==='text'||hit.type==='measure'){
         beginAction();drag={mode:'text',id:hit.id,dx:mouseMath.x-GEOM[hit.id].x,dy:mouseMath.y-GEOM[hit.id].y};
         selectOnly(hit.id,e.shiftKey);render();renderAlgebra();
@@ -1661,6 +1828,81 @@ svg.addEventListener('pointerdown',e=>{
       pending=[];setPendingHint('');
       state.sel=[circ.id];render();renderAlgebra();
     }
+    return;
+  }
+  if(tool==='vector'){
+    beginAction();
+    const p=obtainPoint(mouseMath,e);
+    pending.push(p.id);
+    if(pending.length===1)setPendingHint('시작점 '+p.name+' — 벡터의 끝점을 클릭하세요.');
+    else finishTwoPoint((a,b)=>{const v=addObj('vector',{mode:'pts',parents:[a,b]});v.color=PALETTE[5];return v;});
+    render();renderAlgebra();
+    return;
+  }
+  if(tool==='circle3'){
+    beginAction();
+    const p=obtainPoint(mouseMath,e);
+    pending.push(p.id);
+    if(pending.length===1)setPendingHint('첫 번째 점 '+p.name+' — 원이 지날 두 번째 점을 클릭하세요.');
+    else if(pending.length===2)setPendingHint('두 번째 점 '+p.name+' — 원이 지날 세 번째 점을 클릭하세요.');
+    else{
+      const circ=addObj('circle',{mode:'pts3',parents:pending.slice()});
+      circ.color=PALETTE[2];
+      pending=[];setPendingHint('');
+      recompute();
+      if(!GEOM[circ.id]){
+        state.objects=state.objects.filter(o=>o.id!==circ.id);
+        toast('세 점이 한 직선 위에 있어 원을 만들 수 없습니다.');
+      }else state.sel=[circ.id];
+      render();renderAlgebra();
+    }
+    return;
+  }
+  if(tool==='angle'){
+    beginAction();
+    const p=obtainPoint(mouseMath,e);
+    pending.push(p.id);
+    if(pending.length===1)setPendingHint('한 변의 점 '+p.name+' — 각의 꼭짓점을 클릭하세요.');
+    else if(pending.length===2)setPendingHint('꼭짓점 '+p.name+' — 다른 변의 점을 클릭하세요.');
+    else{
+      const m=mkMeasure('angle',[pending[0],pending[1],pending[2]],byId(pending[1]));
+      pending=[];setPendingHint('');
+      commit(m);
+    }
+    render();renderAlgebra();
+    return;
+  }
+  if(tool==='regpoly'){
+    beginAction();
+    const p=obtainPoint(mouseMath,e);
+    pending.push(p.id);
+    if(pending.length===1){setPendingHint('중심 '+p.name+' — 첫 꼭짓점이 될 점을 클릭하세요.');render();renderAlgebra();}
+    else{
+      const c=pending[0],d=pending[1];pending=[];setPendingHint('');
+      render();renderAlgebra();
+      regPolyDlg(c,d);
+    }
+    return;
+  }
+  if(tool==='pen'){
+    drag={mode:'pen',pts:[{x:mouseMath.x,y:mouseMath.y}]};
+    return;
+  }
+  if(tool==='slider'){
+    paramDlg(null);
+    return;
+  }
+  if(tool==='eraser'){
+    const hit=hitTest(mouseMath);
+    if(hit){
+      beginAction();
+      const before=state.objects.length;
+      deleteObjects([hit.id]);
+      const n=before-state.objects.length;
+      state.sel=[];
+      render();renderAlgebra();
+      toast(n+'개 개체를 삭제했습니다. 실행 취소(Ctrl+Z)로 되돌릴 수 있습니다.');
+    }else toast('지울 개체가 없습니다. 삭제할 개체를 클릭하세요.');
     return;
   }
   if(tool==='segment'||tool==='line'){
@@ -1733,6 +1975,23 @@ svg.addEventListener('pointermove',e=>{
     if(base)o.t=projectT(base,mouseMath);
     afterDragMove(o);render();return;
   }
+  if(drag.mode==='pen'){
+    const last=drag.pts[drag.pts.length-1];
+    if(Math.hypot(mouseMath.x-last.x,mouseMath.y-last.y)>0.07)drag.pts.push({x:mouseMath.x,y:mouseMath.y});
+    render();
+    if(drag.pts.length>1){
+      const dAttr=drag.pts.map((p,i)=>{const q=toPx(p);return(i?'L':'M')+q.x.toFixed(1)+' '+q.y.toFixed(1);}).join(' ');
+      el('path',{d:dAttr,fill:'none',stroke:'#1c1c1e','stroke-width':1.8,'stroke-linecap':'round','stroke-linejoin':'round'},svg);
+    }
+    return;
+  }
+  if(drag.mode==='freehand'){
+    const o=byId(drag.id);if(!o)return;
+    const dx=mouseMath.x-drag.lx,dy=mouseMath.y-drag.ly;
+    o.pts=o.pts.map(p=>({x:p.x+dx,y:p.y+dy}));
+    drag.lx=mouseMath.x;drag.ly=mouseMath.y;
+    render();return;
+  }
   if(drag.mode==='rotate'||drag.mode==='scale'){
     const c={x:drag.cx,y:drag.cy};
     const apply=drag.mode==='rotate'
@@ -1777,6 +2036,17 @@ function drawMarquee(){
   el('rect',{x:x,y:y,width:Math.abs(drag.cx-drag.sx),height:Math.abs(drag.cy-drag.sy),fill:'rgba(47,111,178,0.10)',stroke:'#2f6fb2','stroke-dasharray':'4 3'},svg);
 }
 svg.addEventListener('pointerup',e=>{
+  if(drag&&drag.mode==='pen'){
+    const pts=drag.pts;drag=null;
+    if(pts.length>=3){
+      beginAction();
+      const fh=addObj('freehand',{pts:pts});
+      state.sel=[fh.id];
+      toast('자유 곡선을 만들었습니다. 이동 도구로 끌면 위치를 옮길 수 있고, 측정 메뉴로 길이를 잴 수 있습니다.');
+    }
+    render();renderAlgebra();
+    return;
+  }
   if(drag&&drag.mode==='marquee'&&drag.moved){
     const x0=Math.min(drag.sx,drag.cx),x1=Math.max(drag.sx,drag.cx);
     const y0=Math.min(drag.sy,drag.cy),y1=Math.max(drag.sy,drag.cy);
@@ -1807,26 +2077,33 @@ $('#zoomFit').addEventListener('click',()=>{state.view={cx:0,cy:0.3,scale:52};re
 
 /* ═══════════════ 툴박스 ═══════════════ */
 const TOOL_DEFS=[
-  {id:'move',label:'이동 화살표 도구',hint:'이동 화살표',variants:[['move','이동 화살표'],['rotate','회전 화살표'],['scale','확대·축소 화살표']],vgroup:'arrow',
+  {id:'move',num:1,label:'이동 화살표 도구',hint:'이동 화살표',variants:[['move','이동 화살표'],['rotate','회전 화살표'],['scale','확대·축소 화살표']],vgroup:'arrow',
    icon:'<path d="M6 3 L19 12 L13 13.5 L16.5 21 L13.8 22.4 L10.4 15 L6.5 18.5 Z" fill="#2f6fb2"/>'},
-  {id:'point',label:'점 도구',hint:'점',icon:'<circle cx="12" cy="12" r="4" fill="#b3352c"/><circle cx="12" cy="12" r="8.5" fill="none" stroke="#b3352c" stroke-width="1.4"/>'},
-  {id:'circle',label:'원 도구',hint:'원',variants:[['pts','중심과 원주 위의 점으로 원'],['radius','중심과 반지름으로 원']],vgroup:'circle',
+  {id:'point',num:2,label:'점 도구',hint:'점',icon:'<circle cx="12" cy="12" r="4" fill="#b3352c"/><circle cx="12" cy="12" r="8.5" fill="none" stroke="#b3352c" stroke-width="1.4"/>'},
+  {id:'circle',num:3,label:'원 도구',hint:'원',variants:[['pts','중심과 원주 위의 점으로 원'],['radius','중심과 반지름으로 원']],vgroup:'circle',
    icon:'<circle cx="12" cy="12" r="8" fill="none" stroke="#1c1c1e" stroke-width="1.8"/><circle cx="12" cy="12" r="1.8" fill="#1c1c1e"/>'},
-  {id:'segment',label:'선분 도구',hint:'선분',variants:[['segment','선분'],['ray','반직선'],['line','직선']],vgroup:'line',
+  {id:'vector',num:9,label:'벡터 도구',hint:'벡터',icon:'<line x1="4.5" y1="19.5" x2="17" y2="7" stroke="#7a3ea1" stroke-width="1.9"/><path d="M12.6 4.6 L20.2 3.8 L19.4 11.4 Z" fill="#7a3ea1"/><circle cx="4.5" cy="19.5" r="2.3" fill="#7a3ea1"/>'},
+  {id:'circle3',num:10,label:'세 점으로 원 도구',hint:'세 점을 지나는 원',icon:'<circle cx="12" cy="12" r="8.2" fill="none" stroke="#0e8a8a" stroke-width="1.7" stroke-dasharray="3.5 2.5"/><circle cx="12" cy="3.8" r="2.3" fill="#b3352c"/><circle cx="19.5" cy="16.5" r="2.3" fill="#b3352c"/><circle cx="4.5" cy="16.5" r="2.3" fill="#b3352c"/>'},
+  {id:'segment',num:4,label:'선분 도구',hint:'선분',variants:[['segment','선분'],['ray','반직선'],['line','직선']],vgroup:'line',
    icon:'<line x1="4" y1="19" x2="20" y2="5" stroke="#1c1c1e" stroke-width="1.8"/><circle cx="4" cy="19" r="2.4" fill="#b3352c"/><circle cx="20" cy="5" r="2.4" fill="#b3352c"/>'},
-  {id:'polygon',label:'다각형 도구',hint:'다각형',variants:[['stroke','다각형 (변만)'],['fillstroke','다각형 (내부 및 변)'],['fill','다각형 (내부만)']],vgroup:'polygon',
+  {id:'angle',num:11,label:'각 도구',hint:'각의 크기',icon:'<line x1="4" y1="20" x2="20" y2="20" stroke="#1c1c1e" stroke-width="1.8"/><line x1="4" y1="20" x2="16" y2="5" stroke="#1c1c1e" stroke-width="1.8"/><path d="M13 20 A9 9 0 0 0 10.8 12.9" fill="none" stroke="#d63384" stroke-width="1.8"/><circle cx="4" cy="20" r="2.2" fill="#d63384"/>'},
+  {id:'polygon',num:5,label:'다각형 도구',hint:'다각형',variants:[['stroke','다각형 (변만)'],['fillstroke','다각형 (내부 및 변)'],['fill','다각형 (내부만)']],vgroup:'polygon',
    icon:'<polygon points="12,3.5 21,19 3,19" fill="rgba(30,138,76,0.25)" stroke="#1e8a4c" stroke-width="1.8"/><circle cx="12" cy="3.5" r="2" fill="#1e8a4c"/><circle cx="21" cy="19" r="2" fill="#1e8a4c"/><circle cx="3" cy="19" r="2" fill="#1e8a4c"/>'},
-  {id:'text',label:'글 도구',hint:'글',icon:'<text x="12" y="18" text-anchor="middle" font-size="17" font-weight="700" fill="#1c1c1e" font-family="Georgia,serif">T</text>'},
-  {id:'info',label:'정보 도구',hint:'정보',icon:'<circle cx="12" cy="12" r="9" fill="none" stroke="#2f6fb2" stroke-width="1.8"/><text x="12" y="17.5" text-anchor="middle" font-size="13" font-weight="700" fill="#2f6fb2" font-family="Georgia,serif">i</text>'},
-  {id:'custom',label:'사용자 도구',hint:'사용자 도구',icon:'<path d="M12 3 L14.2 9.2 L20.8 9.4 L15.6 13.4 L17.4 19.8 L12 16.2 L6.6 19.8 L8.4 13.4 L3.2 9.4 L9.8 9.2 Z" fill="#e07b00"/>'},
+  {id:'regpoly',num:12,label:'정다각형 도구',hint:'정다각형',icon:'<polygon points="12,3 20.6,9.2 17.3,19.3 6.7,19.3 3.4,9.2" fill="rgba(14,138,138,0.22)" stroke="#0e8a8a" stroke-width="1.8"/><circle cx="12" cy="12" r="1.7" fill="#0e8a8a"/>'},
+  {id:'pen',num:13,label:'펜 도구',hint:'자유 곡선',icon:'<path d="M3 17 C7 6, 11 20, 15 9 C17 4, 20 6, 21 5" fill="none" stroke="#1c1c1e" stroke-width="1.9" stroke-linecap="round"/><circle cx="3" cy="17" r="2" fill="#b3352c"/>'},
+  {id:'text',num:6,label:'글 도구',hint:'글',icon:'<text x="12" y="18" text-anchor="middle" font-size="17" font-weight="700" fill="#1c1c1e" font-family="Georgia,serif">T</text>'},
+  {id:'info',num:7,label:'정보 도구',hint:'정보',icon:'<circle cx="12" cy="12" r="9" fill="none" stroke="#2f6fb2" stroke-width="1.8"/><text x="12" y="17.5" text-anchor="middle" font-size="13" font-weight="700" fill="#2f6fb2" font-family="Georgia,serif">i</text>'},
+  {id:'custom',num:8,label:'사용자 도구',hint:'사용자 도구',icon:'<path d="M12 3 L14.2 9.2 L20.8 9.4 L15.6 13.4 L17.4 19.8 L12 16.2 L6.6 19.8 L8.4 13.4 L3.2 9.4 L9.8 9.2 Z" fill="#e07b00"/>'},
+  {id:'slider',num:14,label:'슬라이더 도구',hint:'매개변수 슬라이더',icon:'<line x1="3" y1="12" x2="21" y2="12" stroke="#5a4632" stroke-width="2.2" stroke-linecap="round"/><circle cx="15" cy="12" r="4.4" fill="#fbf9f4" stroke="#5a4632" stroke-width="1.9"/>'},
+  {id:'eraser',num:15,label:'지우개 도구',hint:'지우개',icon:'<path d="M20 5 L13.5 3.5 L5 12 L9 19.5 L20.5 19.5 L20.5 15.5 L11 15.5 L17 9.5 Z" fill="rgba(214,51,132,0.25)" stroke="#b3352c" stroke-width="1.6" stroke-linejoin="round"/><line x1="3" y1="21" x2="21" y2="21" stroke="#b3352c" stroke-width="1.6" stroke-linecap="round"/>'},
 ];
 let curToolBtn={};
 function buildToolbox(){
   const tb=$('#toolbox');tb.innerHTML='';
   TOOL_DEFS.forEach((td,idx)=>{
-    if(idx===6){const s=document.createElement('div');s.className='tool-sep';tb.appendChild(s);}
+    if(idx===11){const s=document.createElement('div');s.className='tool-sep';tb.appendChild(s);}
     const b=document.createElement('button');b.className='tool';b.type='button';
-    b.title=td.label+' (Ctrl+'+(idx+1)+') — '+td.hint;
+    b.title=td.label+' (Ctrl+'+td.num+') — '+td.hint;
     b.innerHTML='<svg viewBox="0 0 24 24">'+td.icon+'</svg>'+(td.variants?'<span class="tri"></span>':'');
     b.setAttribute('data-tool',td.id);
     let pressTimer=null;
@@ -1928,7 +2205,7 @@ document.addEventListener('pointerdown',e=>{
 /* ═══════════════ 메뉴 정의 ═══════════════ */
 function selObjs(){return state.sel.map(byId).filter(Boolean);}
 function selPoints(){return selObjs().filter(o=>o.type==='point');}
-function selLines(){return selObjs().filter(o=>['segment','ray','line'].includes(o.type));}
+function selLines(){return selObjs().filter(o=>['segment','ray','line','vector'].includes(o.type));}
 function hasSel(){return state.sel.length>0;}
 const MENUS=[
  {label:'파일',items:()=>[
@@ -1936,6 +2213,8 @@ const MENUS=[
    {label:'열기…',shortcut:'Ctrl+O',action:()=>$('#fileOpen').click()},
    {label:'저장',shortcut:'Ctrl+S',action:saveDocument},
    {label:'다른 이름으로 저장…',action:saveAsDocument},
+   '-',
+   {label:'예시: 시에르핀스키 삼각형 (반복)…',action:loadSierpinski},
    '-',
    {label:'공유 링크 복사 (스냅샷)…',action:shareSnapshot},
    {label:'버전 기록…',action:versionDlg},
@@ -2054,8 +2333,8 @@ function cloneWithMap(objs,map,offset){
     }
     if(src.type==='segment'&&src.mode==='pts'){/* 이름은 표시 시 자동 */}
     if(src.type==='text'||src.type==='measure'){c.x=src.x+offset.x;c.y=src.y+offset.y;}
-    if(['line','ray','circle','polygon','arc','sector','measure','text'].includes(src.type)){
-      const counters={line:'line',ray:'ray',circle:'circle',polygon:'polygon',arc:'arc',sector:'sector',measure:'measure',text:'text'};
+    if(['line','ray','circle','polygon','arc','sector','measure','text','vector'].includes(src.type)){
+      const counters={line:'line',ray:'ray',circle:'circle',polygon:'polygon',arc:'arc',sector:'sector',measure:'measure',text:'text',vector:'vector'};
       if(counters[src.type]){state.counters[counters[src.type]]++;c.name=src.name.replace(/[0-9]+$/,state.counters[counters[src.type]]);}
     }
     if(src.type==='function'){c.name=uniqueName(src.name);}
@@ -2095,12 +2374,12 @@ MENUS.push(
    const circ=objs.find(o=>o.type==='circle');
    const poly=objs.find(o=>o.type==='polygon');
    return [
-   {label:'도형 위의 점',enabled:()=>objs.some(o=>['segment','ray','line','circle','polygon','function','arc'].includes(o.type)),action:()=>{
-      const t=objs.find(o=>['segment','ray','line','circle','polygon','function','arc'].includes(o.type));
+   {label:'도형 위의 점',enabled:()=>objs.some(o=>['segment','ray','line','circle','polygon','function','arc','vector','freehand'].includes(o.type)),action:()=>{
+      const t=objs.find(o=>['segment','ray','line','circle','polygon','function','arc','vector','freehand'].includes(o.type));
       beginAction();const g=GEOM[t.id];const mid=pointAt(g,t.type==='circle'||t.type==='arc'?Math.PI/4:(t.type==='segment'?g.len/2:1));
       const p=addPoint('on',{parents:[t.id],t:t.type==='circle'||t.type==='arc'?Math.PI/4:(t.type==='segment'?g.len/2:1)});p.color=PALETTE[2];commit(p);}},
-   {label:'교점',enabled:()=>objs.filter(o=>['segment','ray','line','circle','polygon','function'].includes(o.type)).length>=2,action:()=>{
-      const cand=objs.filter(o=>['segment','ray','line','circle','polygon','function'].includes(o.type));
+   {label:'교점',enabled:()=>objs.filter(o=>['segment','ray','line','circle','polygon','function','vector'].includes(o.type)).length>=2,action:()=>{
+      const cand=objs.filter(o=>['segment','ray','line','circle','polygon','function','vector'].includes(o.type));
       recompute();const ints=intersectGeoms(GEOM[cand[0].id],GEOM[cand[1].id]);
       if(!ints.length){toast('교점이 없습니다.');return;}
       beginAction();
@@ -2141,7 +2420,7 @@ MENUS.push(
    {label:'좌표를 입력하여 점 찍기…',action:coordPointDlg},
    ];}},
  {label:'변환',items:()=>{
-   const objs=selObjs().filter(o=>['point','segment','ray','line','circle','polygon','arc','sector'].includes(o.type));
+   const objs=selObjs().filter(o=>['point','segment','ray','line','circle','polygon','arc','sector','vector'].includes(o.type));
    const can=objs.length>0;
    const applyX=(kind)=>{
      if(!can)return;
@@ -2159,8 +2438,8 @@ MENUS.push(
      toast(made.length+'개 개체를 변환했습니다. 원본을 끌면 따라 움직입니다.');
    };
    return [
-   {label:()=>'벡터 지정'+(state.marked.vector?' ✓ ('+nm(state.marked.vector)+')':''),enabled:()=>!!selObjs().find(o=>o.type==='segment'),action:()=>{
-      state.marked.vector=selObjs().find(o=>o.type==='segment').id;toast('벡터를 지정했습니다: '+nm(state.marked.vector));}},
+   {label:()=>'벡터 지정'+(state.marked.vector?' ✓ ('+nm(state.marked.vector)+')':''),enabled:()=>!!selObjs().find(o=>o.type==='segment'||o.type==='vector'),action:()=>{
+      state.marked.vector=selObjs().find(o=>o.type==='segment'||o.type==='vector').id;toast('벡터를 지정했습니다: '+nm(state.marked.vector));}},
    {label:()=>'중심 지정'+(state.marked.center?' ✓ ('+nm(state.marked.center)+')':''),enabled:()=>selPoints().length>=1,action:()=>{
       state.marked.center=selPoints()[0].id;toast('중심을 지정했습니다: '+nm(state.marked.center));}},
    {label:()=>'대칭축 지정'+(state.marked.axis?' ✓ ('+nm(state.marked.axis)+')':''),enabled:()=>selLines().length>=1,action:()=>{
@@ -2184,9 +2463,11 @@ MENUS.push(
          line=objs.find(o=>['segment','ray','line'].includes(o.type));
    const M=(mtype,refs,anchor)=>()=>{beginAction();commit(mkMeasure(mtype,refs,anchor));};
    return [
-   {label:'길이 · 거리',enabled:()=>!!seg||pts.length===2||!!circ,action:()=>{
+   {label:'길이 · 거리',enabled:()=>!!seg||pts.length===2||!!circ||!!objs.find(o=>o.type==='vector'||o.type==='freehand'),action:()=>{
       beginAction();
-      if(seg)commit(mkMeasure('length',[seg.id],seg));
+      const fh=objs.find(o=>o.type==='vector'||o.type==='freehand');
+      if(fh)commit(mkMeasure('length',[fh.id],fh));
+      else if(seg)commit(mkMeasure('length',[seg.id],seg));
       else if(circ)commit(mkMeasure('length',[circ.id],circ));
       else commit(mkMeasure('length',[pts[0].id,pts[1].id],pts[0]));}},
    {label:'각의 크기',enabled:()=>pts.length===3,action:M('angle',[pts[0].id,pts[1].id,pts[2].id],pts[1])},
@@ -2204,6 +2485,22 @@ MENUS.push(
    {label:'계산…',action:calcDlg},
    ];}},
 );
+function regPolyDlg(centerId,dirId){
+  openDialog('정다각형 만들기',
+    '<label>변의 개수 (3~12)</label><input type="number" id="rpN" value="5" min="3" max="12" step="1" />'+
+    '<p style="color:var(--ink2);font-size:12px;">중심에서 두 번째 점까지의 거리가 외접원 반지름이 되고, 두 번째 점이 첫 꼭짓점이 됩니다. 중심이나 기준점을 끌면 정다각형 전체가 따라 움직입니다.</p>',
+    [{label:'취소'},{label:'만들기',primary:true,onClick:()=>{
+      const n=parseInt($('#rpN').value,10);
+      if(!isFinite(n)||n<3||n>12){toast('변의 개수는 3~12 사이로 입력하세요.');return false;}
+      beginAction();
+      const verts=[];
+      for(let i=0;i<n;i++){const v=addPoint('regvert',{parents:[centerId,dirId],idx:i,n:n});v.label=false;verts.push(v);}
+      const poly=addObj('polygon',{parents:verts.map(v=>v.id),fillMode:state.toolVariant.polygon});
+      poly.color=PALETTE[3];
+      state.sel=[poly.id];render();renderAlgebra();
+      toast('정'+n+'각형을 만들었습니다.');
+    }}]);
+}
 function coordPointDlg(){
   openDialog('좌표를 입력하여 점 찍기',
     '<div class="grid2"><div><label>x 좌표</label><input type="number" id="cpX" value="2" step="0.5" /></div>'+
@@ -2241,6 +2538,332 @@ function calcDlg(editObj){
         const inp=$('#calcExpr');inp.value+=b.getAttribute('data-ins');inp.focus();
       }));
     });
+}
+
+/* ═══════════════ 반복 (GSP Iterate) ═══════════════ */
+function hashStr(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function mulberry32(seed){let a=seed>>>0;return function(){a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function iterAncestors(id){
+  const out=new Set();const stack=[id];
+  while(stack.length){
+    const cur=stack.pop();const co=byId(cur);if(!co)continue;
+    (co.parents||[]).forEach(p=>{if(!out.has(p)){out.add(p);stack.push(p);}});
+    if(co.xform)[co.xform.source,co.xform.vector,co.xform.center,co.xform.axis].forEach(p=>{if(p&&!out.has(p)){out.add(p);stack.push(p);}});
+    if(co._genIter){out.add(co._genIter);}
+  }
+  return out;
+}
+function analyzeIterSelection(){
+  const sel=selObjs().filter(o=>!o._genIter);
+  const selIds=new Set(sel.map(o=>o.id));
+  const pts=sel.filter(o=>o.type==='point');
+  const pre=[],img=[];
+  pts.forEach(p=>{
+    const anc=iterAncestors(p.id);
+    if([...anc].some(a=>selIds.has(a)&&a!==p.id))img.push(p);else pre.push(p);
+  });
+  return{sel:sel,pts:pts,pre:pre,img:img};
+}
+function iterDepth(o){
+  let d=o.depth;
+  if(o.depthParam){const po=byId(o.depthParam);if(po&&po.type==='param')d=Math.round(po.value);}
+  if(!isFinite(d))d=0;
+  return clamp(Math.round(d),0,10);
+}
+function iterEffDepth(o){
+  const cap=state.iterMax||2000;
+  const gen=state.objects.reduce((n,x)=>n+(x._genIter===o.id?1:0),0);
+  const others=state.objects.length-gen;
+  const per=Math.max(1,o.copies.length);
+  const maxLv=Math.max(0,Math.floor((cap-others)/per));
+  const d=iterDepth(o);
+  o._capped=d>maxLv;
+  return Math.min(d,maxLv);
+}
+function iterSig(o,eff){
+  return eff+'|'+iterDepth(o)+'|'+o.showMode+'|'+o.pointPos+'|'+(o.randStamp||0)+'|'+o.copies.join(',')+'|'+
+    o.copies.map(id=>{const s=byId(id);return s?(s.hidden?'1':'0'):'';}).join('');
+}
+function refreshAllIterations(){
+  state.objects.filter(o=>o.type==='iterate').forEach(refreshIteration);
+}
+function refreshIteration(o){
+  const eff=iterEffDepth(o);
+  const sig=iterSig(o,eff);
+  if(o._sig===sig)return;
+  o._sig=sig;
+  // 필요한 (원본, 단계) 집합
+  const needed=new Set();
+  for(let lv=1;lv<=eff;lv++)for(const srcId of o.copies)needed.add(srcId+'@'+lv);
+  // 넘치는 복사본 제거
+  const removed=new Set();
+  state.objects=state.objects.filter(x=>{
+    if(x._genIter!==o.id)return true;
+    if(needed.has(x._genSrc+'@'+x._genLevel))return true;
+    removed.add(x.id);return false;
+  });
+  if(removed.size)state.sel=state.sel.filter(id=>!removed.has(id));
+  // 기존 단계 지도 복원
+  const maps={}; // lv -> {srcId: cloneId}
+  state.objects.forEach(x=>{
+    if(x._genIter===o.id){(maps[x._genLevel]=maps[x._genLevel]||{})[x._genSrc]=x.id;
+      x.hidden=!!x._srcHidden||(o.showMode==='last'&&x._genLevel<eff);}
+  });
+  // 무작위 위치 모드: 기존 복사본의 경로 위 점에도 시드 기반 위치 부여 (모드 전환·재추첨 반영)
+  if(o.pointPos==='random'){
+    state.objects.forEach(x=>{
+      if(x._genIter!==o.id)return;
+      const src=byId(x._genSrc);
+      if(!src||src.type!=='point'||src.kind!=='on')return;
+      const pg=GEOM[x.parents[0]]||GEOM[src.parents[0]];if(!pg)return;
+      let r0=0,r1=1;
+      if(pg.kind==='segment')r1=pg.len;
+      else if(pg.kind==='circle')r1=Math.PI*2;
+      else if(pg.kind==='polygon')r1=polyPerim(pg.pts);
+      else if(pg.kind==='ray'){r0=0;r1=10;}
+      else if(pg.kind==='line'){r0=-10;r1=10;}
+      else if(pg.kind==='function'){r0=state.view.cx-8;r1=state.view.cx+8;}
+      else if(pg.kind==='arc'||pg.kind==='sector'){r0=pg.a1;r1=pg.a1+Math.PI*2;}
+      else return;
+      const rnd=mulberry32(hashStr(o.id+':'+x._genSrc+':'+x._genLevel+':'+(o.randStamp||0)));
+      x._dynT=r0+rnd()*(r1-r0);
+    });
+  }
+  const preIdx={};o.pre.forEach((id,i)=>preIdx[id]=i);
+  for(let lv=1;lv<=eff;lv++){
+    if(maps[lv]&&o.copies.every(s=>maps[lv][s]))continue;
+    const prevMap=lv===1?null:maps[lv-1];
+    const curMap=maps[lv]||(maps[lv]={});
+    const R=id=>{
+      if(preIdx[id]!=null)return lv===1?o.img[preIdx[id]]:(prevMap?prevMap[o.img[preIdx[id]]]:id);
+      if(curMap[id])return curMap[id];
+      return id;
+    };
+    for(const srcId of o.copies){
+      if(curMap[srcId])continue;
+      const src=byId(srcId);if(!src)continue;
+      const c=JSON.parse(JSON.stringify(src));
+      delete c._geomCache;delete c._aff;delete c._sig;delete c._capped;
+      c.id='o'+(++state.uid);
+      c.parents=(src.parents||[]).map(R);
+      if(src.xform){['source','vector','center','axis'].forEach(k=>{if(c.xform[k])c.xform[k]=R(c.xform[k]);});}
+      if(src.type==='circle'&&src.rParam&&curMap[src.rParam])c.rParam=curMap[src.rParam];
+      c._genIter=o.id;c._genSrc=srcId;c._genLevel=lv;
+      c._dynPrev=lv===1?srcId:(prevMap?prevMap[srcId]:srcId);
+      c._srcHidden=!!src.hidden;
+      c.hidden=!!src.hidden||(o.showMode==='last'&&lv<eff);
+      if(src.type==='point'){
+        let nmv=src.name+'′'.repeat(Math.min(lv,3))+(lv>3?'('+lv+')':'');
+        c.name=nmv;
+      }
+      if(src.type==='point'&&src.kind==='on'&&o.pointPos==='random'){
+        const pg=GEOM[R(src.parents[0])]||GEOM[src.parents[0]];
+        let r0=0,r1=1;
+        if(pg){
+          if(pg.kind==='segment')r1=pg.len;
+          else if(pg.kind==='circle')r1=Math.PI*2;
+          else if(pg.kind==='polygon')r1=polyPerim(pg.pts);
+          else if(pg.kind==='ray'){r0=0;r1=10;}
+          else if(pg.kind==='line'){r0=-10;r1=10;}
+          else if(pg.kind==='function'){r0=state.view.cx-8;r1=state.view.cx+8;}
+          else if(pg.kind==='arc'||pg.kind==='sector'){r0=pg.a1;r1=pg.a1+Math.PI*2;}
+        }
+        const rnd=mulberry32(hashStr(o.id+':'+srcId+':'+lv+':'+(o.randStamp||0)));
+        c._dynT=r0+rnd()*(r1-r0);
+      }
+      state.objects.push(c);
+      curMap[srcId]=c.id;
+    }
+  }
+}
+function selIterate(){
+  const direct=selObjs().find(o=>o.type==='iterate');
+  if(direct)return direct;
+  const gen=selObjs().find(o=>o._genIter);
+  return gen?byId(gen._genIter):null;
+}
+function bumpIterDepth(delta){
+  const o=selIterate();if(!o)return;
+  if(o.depthParam){toast('이 반복의 깊이는 다른 값(매개변수 '+nm(o.depthParam)+')에 따라 정해지므로 여기서 바꿀 수 없습니다.');return;}
+  beginAction();
+  o.depth=clamp(iterDepth(o)+delta,0,10);
+  render();renderAlgebra();
+  toast('반복 깊이: '+o.depth);
+}
+function createIteration(preIds,imgIds,depth,opts,skipSel){
+  const sel=skipSel?selObjs().filter(o=>!o._genIter):analyzeIterSelection().sel;
+  const copies=sel.filter(o=>!preIds.includes(o.id)).map(o=>o.id);
+  if(!copies.length){toast('반복할 개체(선분·원 등)를 원상·상 점과 함께 선택하세요.');return null;}
+  recompute();
+  // 비공선인 세 쌍을 앞으로 (아핀 대응 산출용)
+  const pairs=preIds.map((p,i)=>({pre:p,img:imgIds[i]}));
+  let best=null,bestArea=1e-9;
+  for(let i=0;i<pairs.length;i++)for(let j=i+1;j<pairs.length;j++)for(let k=j+1;k<pairs.length;k++){
+    const A=GEOM[pairs[i].pre],B=GEOM[pairs[j].pre],C=GEOM[pairs[k].pre];
+    if(!A||!B||!C)continue;
+    const ar=Math.abs(V.cross(V.sub(B,A),V.sub(C,A)))/2;
+    if(ar>bestArea){bestArea=ar;best=[i,j,k];}
+  }
+  if(!best){toast('대응하는 점 쌍 중 한 직선 위에 있지 않은 세 쌍이 필요합니다.');return null;}
+  const head=best.map(i=>pairs[i]);const rest=pairs.filter((p,i)=>!best.includes(i));
+  const ordered=head.concat(rest);
+  state.counters.iterate=(state.counters.iterate||0)+1;
+  const it=addObj('iterate',{
+    pre:ordered.map(p=>p.pre),img:ordered.map(p=>p.img),copies:copies,
+    depth:clamp(Math.round(depth)||0,0,10),depthParam:null,
+    showMode:(opts&&opts.showMode)||'all',pointPos:'relative',randStamp:0,
+    name:'반복'+state.counters.iterate,
+  });
+  it.parents=[...new Set([...it.pre,...it.img,...copies])];
+  it.color=PALETTE[5];
+  state.sel=[it.id];
+  refreshIteration(it);
+  render();renderAlgebra();
+  if(it._capped)toast('반복으로 생길 도형의 개수의 최댓값('+(state.iterMax||2000)+'개) 때문에 깊이를 '+iterEffDepth(it)+'로 제한했습니다.');
+  else toast('반복된 상을 만들었습니다. 깊이 '+iterDepth(it)+', 개체 '+state.objects.filter(x=>x._genIter===it.id).length+'개 생성.');
+  return it;
+}
+function iterateCheckSelection(){
+  const a=analyzeIterSelection();
+  if(!a.img.length){toast('반복을 하려면 선택된 점들을 가지고 만들어진 다른 점들이 있어야 합니다.');return null;}
+  if(a.pre.length<3){toast('반복을 하려면 원상이 될 점이 최소 3개 필요합니다. (점에 대응 규칙을 정해야 합니다)');return null;}
+  const bad=a.pre.find(p=>p.kind==='on'&&a.sel.some(o=>o.id===p.parents[0]));
+  if(bad){toast('어떤 개체와 그 위의 점을 동시에 반복의 원래 개체로 사용할 수 없습니다.');return null;}
+  if(a.img.length<a.pre.length){toast('상의 점이 원상의 점보다 적습니다. 대응 쌍을 맞출 수 없습니다.');return null;}
+  return a;
+}
+function iterateHelp(){
+  openDialog('반복 도움말',
+    '<p style="margin-top:0;"><b>반복</b>은 선택된 개체들에 대응 규칙을 반복 적용하여 다른 개체들을 만듭니다.</p>'+
+    '<p>1) 원래 점들(원상)과, 그 점들로부터 작도해 만든 점들(상)을 함께 선택합니다. 예: 삼각형 ABC와 각 변의 중점 D, E, F.</p>'+
+    '<p>2) 반복 다이얼로그에서 원상 → 상 대응을 확인하고 깊이를 정하면, 선택한 개체들의 복사본에 그 대응이 깊이만큼 거듭 적용된 <b>반복된 상</b>이 만들어집니다.</p>'+
+    '<p>3) 원상·상을 끌면 반복 결과 전체가 실시간으로 따라 움직입니다. 깊이는 매개변수에 연결해 슬라이더로 조절할 수도 있습니다.</p>'+
+    '<p>시에르핀스키 삼각형처럼 자기 닮음 도형(프랙탈)을 만들 때 핵심이 되는 기능입니다.</p>',
+    [{label:'닫기',primary:true}]);
+}
+function iterateDlg(depthOnly){
+  const a=iterateCheckSelection();if(!a)return;
+  if(depthOnly){
+    openDialog('주어진 깊이로 반복',
+      '<p style="margin-top:0;">대응: '+a.pre.map((p,i)=>p.name+'→'+a.img[i].name).join(', ')+'</p>'+
+      '<label>반복 깊이 (0 ~ 10)</label><input type="number" id="itDepth" value="3" min="0" max="10" step="1" />'+
+      '<label>반복으로 생길 도형의 개수의 최댓값</label><input type="number" id="itMax" value="'+(state.iterMax||2000)+'" min="50" step="50" />',
+      [{label:'취소'},{label:'반복 실행',primary:true,onClick:()=>{
+        const d=parseFloat($('#itDepth').value);if(!isFinite(d))return false;
+        const mx=parseFloat($('#itMax').value);if(isFinite(mx)&&mx>=50)state.iterMax=Math.round(mx);
+        beginAction();
+        createIteration(a.pre.map(p=>p.id),a.pre.map((p,i)=>a.img[i].id),d);
+      }}]);
+    return;
+  }
+  const rows=a.pre.map((p,i)=>
+    '<div class="grid2" style="align-items:end;"><div><label>원상</label><input type="text" value="'+p.name+'" disabled /></div>'+
+    '<div><label>→ 상</label><select id="itImg'+i+'">'+a.img.map(im=>'<option value="'+im.id+'"'+(a.img[i]&&im.id===a.img[i].id?' selected':'')+'>'+im.name+'</option>').join('')+'</select></div></div>'
+  ).join('');
+  openDialog('반복',
+    '<p style="margin-top:0;color:var(--ink2);font-size:12px;">선택된 점들의 대응 규칙을 정하고, 선택한 개체들의 복사본에 그 규칙을 반복 적용합니다.</p>'+
+    rows+
+    '<div class="grid2"><div><label>깊이 (0 ~ 10)</label><input type="number" id="itDepth" value="3" min="0" max="10" step="1" /></div>'+
+    '<div><label>반복으로 생길 도형의 개수의 최댓값</label><input type="number" id="itMax" value="'+(state.iterMax||2000)+'" min="50" step="50" /></div></div>'+
+    '<p style="color:var(--ink2);font-size:12px;">반복할 개체: '+a.sel.filter(o=>!a.pre.includes(o)).map(displayName).join(', ')+'</p>',
+    [{label:'취소'},{label:'도움말',onClick:()=>{iterateHelp();}},
+     {label:'규칙(S) 자동 맞춤',onClick:()=>{
+        const used=new Set();
+        a.pre.forEach((p,i)=>{
+          let pick=a.img.find(im=>!used.has(im.id)&&iterAncestors(im.id).has(p.id))||a.img.find(im=>!used.has(im.id));
+          if(pick){used.add(pick.id);const s=$('#itImg'+i);if(s)s.value=pick.id;}
+        });
+        toast('의존 관계로 대응을 다시 맞췄습니다.');
+        return false;
+      }},
+     {label:'실행',primary:true,onClick:()=>{
+        const imgIds=a.pre.map((p,i)=>$('#itImg'+i).value);
+        if(new Set(imgIds).size!==imgIds.length){toast('서로 다른 상의 점을 대응시켜야 합니다.');return false;}
+        const d=parseFloat($('#itDepth').value);if(!isFinite(d))return false;
+        const mx=parseFloat($('#itMax').value);if(isFinite(mx)&&mx>=50)state.iterMax=Math.round(mx);
+        beginAction();
+        if(!createIteration(a.pre.map(p=>p.id),imgIds,d))return false;
+      }}]);
+}
+function iterateDepthDlg(o){
+  const params=state.objects.filter(x=>x.type==='param');
+  const linked=o.depthParam?byId(o.depthParam):null;
+  openDialog('반복 깊이 — '+o.name,
+    (linked
+      ?'<p style="margin-top:0;">이 반복의 깊이는 매개변수 <b>'+linked.name+'</b> 값('+fmt(linked.value)+')에 따라 정해지므로 여기서 직접 바꿀 수 없습니다. 대수창의 슬라이더로 조절하세요.</p>'
+      :'<label>깊이 (0 ~ 10)</label><input type="number" id="itdVal" value="'+iterDepth(o)+'" min="0" max="10" step="1" />')+
+    '<label>깊이를 매개변수에 연결</label><select id="itdParam"><option value="">연결 안 함 (직접 값)</option>'+
+      params.map(p=>'<option value="'+p.id+'"'+(o.depthParam===p.id?' selected':'')+'>'+p.name+' = '+fmt(p.value)+'</option>').join('')+'</select>'+
+    (params.length?'':'<p style="color:var(--ink2);font-size:12px;">연결할 매개변수가 없습니다. 수 &gt; 새 매개변수로 먼저 만드세요.</p>'),
+    [{label:'취소'},{label:'적용',primary:true,onClick:()=>{
+      beginAction();
+      const pid=$('#itdParam').value||null;
+      o.depthParam=pid;
+      if(!pid){const v=parseFloat($('#itdVal')?$('#itdVal').value:o.depth);if(isFinite(v))o.depth=clamp(Math.round(v),0,10);}
+      o._sig=null;refreshIteration(o);
+      render();renderAlgebra();
+      toast(pid?'깊이를 매개변수 '+nm(pid)+'에 연결했습니다.':'깊이 '+iterDepth(o)+'로 정했습니다.');
+    }}]);
+}
+function iteratePropsDlg(o){
+  const linked=o.depthParam?byId(o.depthParam):null;
+  openDialog('반복 속성 — '+o.name,
+    '<table><tr><th style="text-align:left;">대응 규칙</th><td style="text-align:left;">'+o.pre.map((p,i)=>nm(p)+' → '+nm(o.img[i])).join(', ')+'</td></tr>'+
+    '<tr><th style="text-align:left;">반복할 개체</th><td style="text-align:left;">'+o.copies.map(nm).join(', ')+'</td></tr></table>'+
+    '<label>반복의 깊이'+(linked?' (매개변수 '+linked.name+' = '+fmt(linked.value)+' 에 연결됨 — 직접 수정 불가)':'')+'</label>'+
+    '<input type="number" id="itpDepth" value="'+iterDepth(o)+'" min="0" max="10" step="1" '+(linked?'disabled':'')+' />'+
+    '<label>나타내기</label>'+
+    '<label style="color:var(--ink);font-size:13px;"><input type="radio" name="itpShow" value="all" style="width:auto;" '+(o.showMode!=='last'?'checked':'')+' /> 모든 단계의 개체</label>'+
+    '<label style="color:var(--ink);font-size:13px;"><input type="radio" name="itpShow" value="last" style="width:auto;" '+(o.showMode==='last'?'checked':'')+' /> 마지막 단계의 개체만</label>'+
+    '<label>경로 위의 점일 경우의 위치</label>'+
+    '<label style="color:var(--ink);font-size:13px;"><input type="radio" name="itpPos" value="relative" style="width:auto;" '+(o.pointPos!=='random'?'checked':'')+' /> 원래 도형의 상대적 위치와 같게</label>'+
+    '<label style="color:var(--ink);font-size:13px;"><input type="radio" name="itpPos" value="random" style="width:auto;" '+(o.pointPos==='random'?'checked':'')+' /> 반복으로 만들어진 경로 위에서 무작위로</label>'+
+    '<p><button type="button" id="itpReroll" style="border:1px solid var(--line2);background:var(--btn);border-radius:5px;padding:5px 12px;cursor:pointer;">지금 다시 무작위 위치로</button></p>'+
+    '<label>반복으로 생길 도형의 개수의 최댓값</label><input type="number" id="itpMax" value="'+(state.iterMax||2000)+'" min="50" step="50" />',
+    [{label:'취소'},{label:'적용',primary:true,onClick:()=>{
+      beginAction();
+      if(!linked){const v=parseFloat($('#itpDepth').value);if(isFinite(v))o.depth=clamp(Math.round(v),0,10);}
+      const sh=document.querySelector('input[name="itpShow"]:checked');if(sh)o.showMode=sh.value;
+      const ps=document.querySelector('input[name="itpPos"]:checked');if(ps)o.pointPos=ps.value;
+      const mx=parseFloat($('#itpMax').value);if(isFinite(mx)&&mx>=50)state.iterMax=Math.round(mx);
+      o._sig=null;refreshIteration(o);
+      render();renderAlgebra();
+    }}],
+    body=>{
+      const rb=body.querySelector('#itpReroll');
+      if(rb)rb.addEventListener('click',()=>{
+        beginAction();o.randStamp=(o.randStamp||0)+1;o._sig=null;refreshIteration(o);
+        render();renderAlgebra();
+        toast('경로 위의 점들을 새 무작위 위치로 옮겼습니다. (위치 방식이 "무작위"일 때 반영됩니다)');
+      });
+    });
+}
+function loadSierpinski(){
+  openDialog('시에르핀스키 삼각형 (반복 예시)',
+    '<p style="margin-top:0;">지금 문서를 지우고 반복 예시를 불러올까요?</p>'+
+    '<p>삼각형 ABC와 각 변의 중점 D, E, F를 만들고, 대응 A→D, B→E, C→F를 깊이 4까지 반복한 <b>시에르핀스키 삼각형</b>입니다. 꼭짓점 A, B, C를 끌면 프랙탈 전체가 따라 변합니다.</p>',
+    [{label:'취소'},{label:'불러오기',primary:true,onClick:()=>{
+      past=[];future=[];
+      state.objects=[];state.sel=[];state.uid=0;state.proto=null;state.traces=[];
+      state.counters={line:0,ray:0,circle:0,polygon:0,arc:0,sector:0,measure:0,func:0,text:0};
+      state.marked={vector:null,center:null,axis:null,angle:60,ratio:2};
+      state.docName='시에르핀스키 삼각형';
+      document.title=state.docName+' - 동적 기하 스케치';$('#docTitle').textContent=state.docName+' - 동적 기하 스케치';
+      const A=addPoint('free',{x:-3.4,y:-2.6});
+      const B=addPoint('free',{x:3.4,y:-2.6});
+      const C=addPoint('free',{x:0,y:3.3});
+      const AB=addObj('segment',{mode:'pts',parents:[A.id,B.id]});
+      const BC=addObj('segment',{mode:'pts',parents:[B.id,C.id]});
+      const CA=addObj('segment',{mode:'pts',parents:[C.id,A.id]});
+      const tri=addObj('polygon',{parents:[A.id,B.id,C.id],fillMode:'fillstroke'});
+      tri.color=PALETTE[3];
+      const D=addPoint('midpoint',{parents:[AB.id]});D.color=PALETTE[4];
+      const E=addPoint('midpoint',{parents:[BC.id]});E.color=PALETTE[4];
+      const F=addPoint('midpoint',{parents:[CA.id]});F.color=PALETTE[4];
+      state.sel=[AB.id,BC.id,CA.id,D.id,E.id,F.id,A.id,B.id,C.id];
+      createIteration([A.id,B.id,C.id],[D.id,E.id,F.id],4,{showMode:'last'},true);
+      render();renderAlgebra();
+    }}]);
 }
 
 /* ═══════════════ 수 · 그래프 · 창 · 도움말 ═══════════════ */
@@ -2342,6 +2965,11 @@ MENUS.push(
    '-',
    {label:'표 만들기…',action:tableDlg},
    '-',
+   {label:'반복(&I)…',action:()=>iterateDlg(false)},
+   {label:'주어진 깊이로 반복(&I)…',action:()=>iterateDlg(true)},
+   {label:'반복 깊이 증가',enabled:()=>!!selIterate(),action:()=>bumpIterDepth(1)},
+   {label:'반복 깊이 감소',enabled:()=>!!selIterate(),action:()=>bumpIterDepth(-1)},
+   '-',
    {label:'함수 소리로 듣기 (오디오 트레이스)…',enabled:()=>state.objects.some(o=>o.type==='function'),action:openAudioTrace},
    ];}},
  {label:'그래프',items:()=>[
@@ -2377,7 +3005,8 @@ MENUS.push(
      '<p style="margin-top:0;"><b>기본 흐름</b> — 왼쪽 도구로 점·원·선분을 그리고, <b>이동 화살표</b>로 자유점을 끌어 보세요. 종속 개체(교점·중점·수선·측정값)가 실시간으로 따라 움직입니다.</p>'+
      '<p><b>선택 후 작도</b> — 개체를 클릭해 선택한 뒤 <b>작도</b> 메뉴에서 중점·수선·평행선·교점·각의 이등분선·자취를 만들 수 있습니다. 두 도형이 만나는 곳에는 반투명 마커가 나타나고, 클릭하면 교점이 됩니다.</p>'+
      '<p><b>변환</b> — 먼저 벡터(선분)·중심(점)·대칭축(직선)을 지정한 뒤 평행이동·회전이동·닮음변환·선대칭이동을 적용합니다.</p>'+
-     '<p><b>매개변수</b> — 수 &gt; 새 매개변수로 슬라이더를 만들고 함수식이나 원의 반지름에 연결해 탐구할 수 있습니다.</p>')},
+     '<p><b>매개변수</b> — 수 &gt; 새 매개변수로 슬라이더를 만들고 함수식이나 원의 반지름에 연결해 탐구할 수 있습니다.</p>'+
+     '<p><b>반복</b> — 원상 점들과 그 점들로 작도한 상의 점들을 함께 선택한 뒤 수 &gt; 반복에서 대응 규칙과 깊이를 정하면, 선택한 개체들의 반복된 상이 만들어집니다. 시에르핀스키 삼각형 같은 프랙탈 작도의 핵심 기능이며, 파일 메뉴에 예시가 있습니다.</p>')},
    '-',
    {label:'동적 기하 스케치 정보…',action:dlgInfo},
  ]},
@@ -2393,6 +3022,7 @@ function renameDlg(id){
 }
 function openProps(id,infoOnly){
   const o=byId(id);if(!o)return;
+  if(o.type==='iterate'&&!infoOnly){iteratePropsDlg(o);return;}
   recompute();
   const parents=o.parents.map(nm).join(', ')||'없음';
   const children=state.objects.filter(x=>x.parents.includes(id)).map(x=>displayName(x)).join(', ')||'없음';
@@ -2400,7 +3030,7 @@ function openProps(id,infoOnly){
   if(o.type==='function'&&!o.derivOf)extra='<p><button type="button" id="ppEditFn" style="border:1px solid var(--line2);background:var(--btn);border-radius:5px;padding:5px 12px;cursor:pointer;">함수식 편집…</button></p>';
   if(o.type==='param')extra='<p><button type="button" id="ppEditPm" style="border:1px solid var(--line2);background:var(--btn);border-radius:5px;padding:5px 12px;cursor:pointer;">매개변수 편집…</button></p>';
   openDialog((infoOnly?'정보 — ':'속성 — ')+displayName(o),
-    '<table><tr><th style="text-align:left;">종류</th><td style="text-align:left;">'+({point:'점',segment:'선분',ray:'반직선',line:'직선',circle:'원',polygon:'다각형',arc:'호',sector:'부채꼴',text:'글',measure:'측정',function:'함수',param:'매개변수',locus:'자취'}[o.type]||o.type)+'</td></tr>'+
+    '<table><tr><th style="text-align:left;">종류</th><td style="text-align:left;">'+({point:'점',segment:'선분',ray:'반직선',line:'직선',circle:'원',polygon:'다각형',arc:'호',sector:'부채꼴',text:'글',measure:'측정',function:'함수',param:'매개변수',locus:'자취',iterate:'반복'}[o.type]||o.type)+'</td></tr>'+
     '<tr><th style="text-align:left;">정의</th><td style="text-align:left;">'+defOf(o)+'</td></tr>'+
     '<tr><th style="text-align:left;">현재 값</th><td style="text-align:left;">'+valueOf(o)+'</td></tr>'+
     '<tr><th style="text-align:left;">상위 개체</th><td style="text-align:left;">'+parents+'</td></tr>'+
@@ -2543,7 +3173,7 @@ function newDocument(){
     }}]);
 }
 function saveDocument(){
-  const data=JSON.stringify({app:'dynamic-geometry-sketch',version:1,docName:state.docName,objects:state.objects,uid:state.uid,counters:state.counters,view:state.view,grid:state.grid,marked:state.marked},null,1);
+  const data=JSON.stringify({app:'dynamic-geometry-sketch',version:1,docName:state.docName,objects:state.objects,uid:state.uid,counters:state.counters,view:state.view,grid:state.grid,marked:state.marked,iterMax:state.iterMax},null,1);
   download(state.docName+'.json',new Blob([data],{type:'application/json'}));
   toast('문서를 저장했습니다 (JSON).');
 }
@@ -2662,7 +3292,15 @@ document.addEventListener('keydown',e=>{
   const mod=e.ctrlKey||e.metaKey;
   if(mod){
     const k=e.key.toLowerCase();
-    if(k>='1'&&k<='8'){e.preventDefault();setTool(TOOL_DEFS[parseInt(k,10)-1].id);return;}
+    if(k>='0'&&k<='9'){
+      const num=k==='0'?10:parseInt(k,10);
+      if(toolKeyBuf&&num>=1&&num<=5){ // Ctrl+1 직후 숫자 → 11~15번 도구
+        const t2=TOOL_DEFS.find(t=>t.num===10+num);toolKeyBuf=false;
+        if(t2){e.preventDefault();setTool(t2.id);return;}
+      }
+      const td=TOOL_DEFS.find(t=>t.num===num);
+      if(td){e.preventDefault();setTool(td.id);toolKeyBuf=(num===1);if(num===1)setTimeout(()=>{toolKeyBuf=false;},600);return;}
+    }
     switch(k){
       case 'z':e.preventDefault();undo();return;
       case 'y':e.preventDefault();redo();return;
@@ -2710,12 +3348,14 @@ function loadExample(){
 /* ═══════════════ 공유 스냅샷 · 버전 기록 (데스모스식) ═══════════════ */
 function snapshotData(){
   return {app:'dynamic-geometry-sketch',version:1,docName:state.docName,objects:state.objects,
-    uid:state.uid,counters:state.counters,view:state.view,grid:state.grid,marked:state.marked};
+    uid:state.uid,counters:state.counters,view:state.view,grid:state.grid,marked:state.marked,iterMax:state.iterMax};
 }
 function applyData(s){
   state.objects=s.objects;state.uid=s.uid||state.objects.length;
-  state.counters=s.counters||state.counters;state.view=s.view||state.view;
+  state.counters=Object.assign({line:0,ray:0,circle:0,polygon:0,arc:0,sector:0,measure:0,func:0,text:0,vector:0,freehand:0},s.counters||{});state.view=s.view||state.view;
   state.grid=s.grid||state.grid;state.marked=s.marked||state.marked;
+  if(s.iterMax)state.iterMax=s.iterMax;
+  state.objects.forEach(o=>{if(o.type==='iterate')o._sig=null;});
   state.docName=s.docName||'제목 없음';
   state.sel=[];state.proto=null;state.traces=[];
   state.objects.forEach(o=>{if(o.type==='locus')o._geomCache=null;});
