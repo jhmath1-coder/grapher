@@ -1,0 +1,3127 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>제목 없음 - 동적 기하 스케치</title>
+<style>
+  :root{
+    color-scheme: light dark;
+    --chrome:#efece5; --chrome2:#e3ded2; --bar:#f6f3ec; --line:#c8c2b2; --line2:#b3ac99;
+    --ink:#22201b; --ink2:#5c574c; --accent:#2f6fb2; --accent-soft:#d9e7f5;
+    --btn:#fbf9f4; --btn-hover:#eef3fa; --danger:#b3352c;
+    --panel:#f8f6f1; --row-sel:#dcebfb; --shadow:0 10px 34px rgba(30,25,10,.28);
+    --paper:#ffffff; --grid:#dcdcdc; --gridminor:#eeeeee; --axis:#a8a8a8;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --chrome:#26282d; --chrome2:#1d1f23; --bar:#2c2e33; --line:#45484f; --line2:#5a5e66;
+      --ink:#eceae4; --ink2:#a9a69c; --accent:#6aa6dd; --accent-soft:#31435c;
+      --btn:#33363c; --btn-hover:#3c4656; --panel:#2a2c31; --row-sel:#31435c;
+      --shadow:0 10px 34px rgba(0,0,0,.55);
+      --paper:#ffffff; --grid:#dcdcdc; --gridminor:#eeeeee; --axis:#a8a8a8;
+    }
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    margin:0; font-family:"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR","Segoe UI",sans-serif;
+    color:var(--ink); background:var(--chrome2); display:flex; flex-direction:column; overflow:hidden;
+    font-size:13px;
+  }
+  button{font-family:inherit; font-size:13px; color:var(--ink);}
+  /* ── 타이틀바 ─────────────────────────── */
+  #titlebar{
+    height:32px; flex:0 0 32px; display:flex; align-items:center; gap:8px; padding:0 10px;
+    background:linear-gradient(var(--bar),var(--chrome)); border-bottom:1px solid var(--line);
+    user-select:none;
+  }
+  #titlebar .appmark{width:16px;height:16px;flex:0 0 16px;}
+  #docTitle{font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  #buildTag{
+    margin-left:auto; font-size:11px; color:var(--ink2); white-space:nowrap;
+    border:1px solid var(--line); border-radius:20px; padding:2px 9px; background:var(--btn);
+  }
+  #panelToggle{
+    border:1px solid var(--line); background:var(--btn); border-radius:5px; padding:3px 10px; cursor:pointer; white-space:nowrap;
+  }
+  #panelToggle:hover{background:var(--btn-hover);}
+  /* ── 메뉴바 ─────────────────────────── */
+  #menubar{
+    flex:0 0 auto; display:flex; align-items:stretch; gap:0; padding:0 4px;
+    background:var(--chrome); border-bottom:1px solid var(--line);
+    overflow-x:auto; overflow-y:hidden; scrollbar-width:none; user-select:none; position:relative; z-index:60;
+  }
+  #menubar::-webkit-scrollbar{display:none;}
+  .mb-item{
+    padding:6px 11px; cursor:pointer; white-space:nowrap; border:1px solid transparent; border-bottom:none;
+    background:none; font-size:13px;
+  }
+  .mb-item:hover,.mb-item.open{background:var(--btn-hover); border-color:var(--line);}
+  .menu-pop{
+    position:fixed; z-index:200; min-width:218px; max-width:86vw; max-height:76vh; overflow-y:auto;
+    background:var(--panel); border:1px solid var(--line2); border-radius:7px; box-shadow:var(--shadow); padding:4px;
+  }
+  .mi{
+    display:flex; align-items:center; gap:8px; padding:6px 9px; border-radius:4px; cursor:pointer; white-space:nowrap;
+  }
+  .mi:hover:not(.dis){background:var(--accent-soft);}
+  .mi.dis{opacity:.38; cursor:default;}
+  .mi .chk{width:14px; flex:0 0 14px; text-align:center; color:var(--accent); font-weight:700;}
+  .mi .lbl{flex:1;}
+  .mi .sc{color:var(--ink2); font-size:11px; margin-left:14px;}
+  .mi .arrow{color:var(--ink2); font-size:10px;}
+  .mi-sep{height:1px; background:var(--line); margin:4px 6px;}
+  .mi-swatches{display:flex; gap:5px; padding:5px 9px; flex-wrap:wrap; max-width:230px;}
+  .swatch{width:20px;height:20px;border-radius:4px;border:1px solid rgba(0,0,0,.25);cursor:pointer;padding:0;}
+  .swatch:hover{transform:scale(1.12);}
+  /* ── 메인 영역 ─────────────────────────── */
+  #main{flex:1; display:flex; min-height:0; position:relative;}
+  /* 툴박스 */
+  #toolbox{
+    flex:0 0 52px; display:flex; flex-direction:column; align-items:center; gap:3px; padding:7px 0;
+    background:var(--chrome); border-right:1px solid var(--line); z-index:40; user-select:none;
+  }
+  .tool{
+    position:relative; width:40px; height:40px; border:1px solid transparent; border-radius:7px;
+    background:none; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;
+  }
+  .tool svg{width:24px;height:24px; pointer-events:none;}
+  .tool:hover{background:var(--btn-hover); border-color:var(--line);}
+  .tool.on{background:var(--accent-soft); border-color:var(--accent);}
+  .tool .tri{
+    position:absolute; right:1px; bottom:1px; width:0; height:0; pointer-events:none;
+    border-left:4px solid transparent; border-top:5px solid var(--ink2);
+  }
+  .tool-sep{width:26px; height:1px; background:var(--line); margin:3px 0;}
+  /* 캔버스 */
+  #canvasWrap{flex:1; position:relative; min-width:0; background:var(--paper);}
+  #svg{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none;}
+  #zoomCtl{
+    position:absolute; right:10px; bottom:10px; display:flex; flex-direction:column; gap:4px; z-index:30;
+  }
+  #zoomCtl button{
+    width:32px; height:32px; border-radius:6px; border:1px solid var(--line); background:var(--btn);
+    cursor:pointer; font-size:15px; line-height:1; box-shadow:0 1px 4px rgba(0,0,0,.12);
+  }
+  #zoomCtl button:hover{background:var(--btn-hover);}
+  #pendingHint{
+    position:absolute; left:10px; top:10px; z-index:30; display:none;
+    background:var(--panel); border:1px solid var(--accent); color:var(--ink); border-radius:6px;
+    padding:5px 10px; font-size:12px; box-shadow:0 2px 8px rgba(0,0,0,.15);
+  }
+  /* 오른쪽 패널 */
+  #panel{
+    flex:0 0 292px; width:292px; display:flex; flex-direction:column; min-height:0;
+    background:var(--panel); border-left:1px solid var(--line); z-index:35;
+  }
+  #panel.hidden{display:none;}
+  .psec{display:flex; flex-direction:column; min-height:0;}
+  .psec.grow{flex:1.25;}
+  .psec.shrink{flex:1;}
+  .phead{
+    display:flex; align-items:center; gap:6px; padding:7px 10px; font-weight:700; font-size:12.5px;
+    background:var(--chrome); border-bottom:1px solid var(--line); user-select:none;
+  }
+  .phead .sp{flex:1;}
+  .phead button{
+    border:1px solid var(--line); background:var(--btn); border-radius:4px; padding:2px 8px; cursor:pointer; font-size:11.5px;
+  }
+  .phead button:hover{background:var(--btn-hover);}
+  .plist{overflow-y:auto; padding:4px; min-height:0;}
+  .alg-row{
+    display:flex; align-items:flex-start; gap:7px; padding:5px 6px; border-radius:5px; cursor:pointer;
+  }
+  .alg-row:hover{background:var(--btn-hover);}
+  .alg-row.sel{background:var(--row-sel);}
+  .alg-row.beyond{opacity:.35;}
+  .alg-dot{width:11px;height:11px;border-radius:50%;flex:0 0 11px;margin-top:3px;border:1px solid rgba(0,0,0,.3);}
+  .alg-eye{border:none;background:none;cursor:pointer;padding:0 1px;font-size:12px;line-height:1.4;color:var(--ink2);}
+  .alg-eye.off{opacity:.35;}
+  .alg-main{flex:1; min-width:0;}
+  .alg-name{font-weight:700;}
+  .alg-def{color:var(--ink2); font-size:11.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .alg-val{font-size:12px; color:var(--accent); font-variant-numeric:tabular-nums;}
+  .param-box{flex-basis:100%; padding:4px 2px 2px 18px; width:100%;}
+  .param-box input[type=range]{width:100%; accent-color:var(--accent);}
+  .param-ctl{display:flex; align-items:center; gap:6px;}
+  .param-ctl .pv{font-variant-numeric:tabular-nums; min-width:44px; text-align:right;}
+  .param-ctl button{border:1px solid var(--line); background:var(--btn); border-radius:4px; width:24px; height:22px; cursor:pointer; font-size:11px; padding:0;}
+  .proto-row{
+    display:flex; gap:8px; padding:5px 7px; border-radius:5px; cursor:pointer; align-items:baseline;
+  }
+  .proto-row:hover{background:var(--btn-hover);}
+  .proto-row.cur{background:var(--row-sel);}
+  .proto-row .no{color:var(--ink2); font-size:11px; min-width:20px; text-align:right; font-variant-numeric:tabular-nums;}
+  .empty-note{padding:14px 10px; color:var(--ink2); font-size:12px; text-align:center;}
+  /* 하단바 */
+  #bottombar{
+    flex:0 0 auto; display:flex; align-items:center; gap:0; background:var(--chrome);
+    border-top:1px solid var(--line); user-select:none; min-height:28px;
+  }
+  .pagetab{
+    padding:5px 16px; background:var(--panel); border-right:1px solid var(--line); font-weight:600;
+    border-top:2px solid var(--accent); margin-top:-1px; white-space:nowrap;
+  }
+  #statusbar{
+    flex:1; display:flex; align-items:center; gap:14px; padding:3px 10px; min-width:0;
+    font-size:12px; color:var(--ink2);
+  }
+  #statusHint{flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  #statusSel{white-space:nowrap;}
+  #statusXY{white-space:nowrap; font-variant-numeric:tabular-nums; min-width:86px; text-align:right;}
+  /* 애니메이션 제어판 */
+  #animPanel{
+    position:absolute; left:64px; bottom:14px; z-index:45; width:252px; display:none;
+    background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--shadow); padding:10px 12px;
+  }
+  #animPanel h4{margin:0 0 8px; font-size:12.5px; display:flex; align-items:center;}
+  #animPanel h4 .x{margin-left:auto; border:none; background:none; cursor:pointer; font-size:14px; color:var(--ink2);}
+  #animPanel .row{display:flex; align-items:center; gap:7px; margin-top:7px;}
+  #animPanel button.act{border:1px solid var(--line); background:var(--btn); border-radius:5px; padding:4px 10px; cursor:pointer;}
+  #animPanel select{font-family:inherit; font-size:12px; padding:3px; border:1px solid var(--line); border-radius:4px; background:var(--btn); color:var(--ink);}
+  #animPanel input[type=range]{flex:1; accent-color:var(--accent);}
+  /* 다이얼로그 */
+  #modalWrap{
+    position:fixed; inset:0; z-index:300; display:none; align-items:center; justify-content:center;
+    background:rgba(20,18,12,.38); padding:16px;
+  }
+  #modal{
+    background:var(--panel); border:1px solid var(--line2); border-radius:10px; box-shadow:var(--shadow);
+    width:430px; max-width:100%; max-height:88vh; display:flex; flex-direction:column;
+  }
+  #modalHead{
+    padding:11px 14px; font-weight:700; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:8px;
+  }
+  #modalHead .x{margin-left:auto; border:none; background:none; font-size:16px; cursor:pointer; color:var(--ink2); padding:2px 6px;}
+  #modalBody{padding:13px 14px; overflow-y:auto; line-height:1.55;}
+  #modalBody label{display:block; margin:9px 0 3px; font-size:12px; color:var(--ink2);}
+  #modalBody input[type=text],#modalBody input[type=number],#modalBody select,#modalBody textarea{
+    width:100%; padding:7px 9px; border:1px solid var(--line2); border-radius:5px; font-family:inherit; font-size:13px;
+    background:var(--btn); color:var(--ink);
+  }
+  #modalBody .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  #modalBody table{border-collapse:collapse; width:100%; font-variant-numeric:tabular-nums;}
+  #modalBody th,#modalBody td{border:1px solid var(--line); padding:4px 8px; text-align:right;}
+  #modalBody th{background:var(--chrome); text-align:center;}
+  #modalFoot{padding:10px 14px; border-top:1px solid var(--line); display:flex; justify-content:flex-end; gap:8px;}
+  #modalFoot button{border:1px solid var(--line2); background:var(--btn); border-radius:6px; padding:6px 16px; cursor:pointer;}
+  #modalFoot button.primary{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600;}
+  .ins-list{display:flex; flex-wrap:wrap; gap:5px; margin-top:5px;}
+  .ins-list button{border:1px solid var(--line); background:var(--btn); border-radius:12px; padding:2px 9px; cursor:pointer; font-size:12px;}
+  kbd{
+    background:var(--chrome); border:1px solid var(--line2); border-bottom-width:2px; border-radius:4px;
+    padding:0 5px; font-family:inherit; font-size:11.5px;
+  }
+  #toast{
+    position:fixed; left:50%; bottom:44px; transform:translateX(-50%) translateY(20px); z-index:400;
+    background:#2b2b26; color:#f5f2e8; padding:8px 16px; border-radius:20px; font-size:12.5px;
+    opacity:0; pointer-events:none; transition:.25s;
+  }
+  #toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  /* ── 타이틀바 버튼 · 새 패널들 ─────────────────────────── */
+  .tb-btn{border:1px solid var(--line); background:var(--btn); border-radius:5px; padding:3px 10px; cursor:pointer; white-space:nowrap;}
+  .tb-btn:hover{background:var(--btn-hover);}
+  #audioPanel{
+    position:absolute; right:10px; top:10px; z-index:45; width:268px; max-width:calc(100vw - 20px); display:none;
+    background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--shadow); padding:10px 12px;
+  }
+  #audioPanel h4{margin:0 0 8px; font-size:12.5px; display:flex; align-items:center;}
+  #audioPanel h4 .x{margin-left:auto; border:none; background:none; cursor:pointer; font-size:14px; color:var(--ink2);}
+  #audioPanel .row{display:flex; align-items:center; gap:7px; margin-top:7px;}
+  #audioPanel button.act{border:1px solid var(--line); background:var(--btn); border-radius:5px; padding:4px 10px; cursor:pointer;}
+  #audioInfo{font-size:12px; color:var(--ink2); word-break:break-all;}
+  #audioReadout{font-variant-numeric:tabular-nums; font-size:12.5px; margin-top:7px; color:var(--accent); font-weight:600;}
+  .audio-note{font-size:11.5px; color:var(--ink2); line-height:1.55; margin:8px 0 0;}
+  #blockPanel{
+    position:absolute; left:10px; top:46px; z-index:46; width:312px; max-width:calc(100vw - 20px);
+    max-height:calc(100% - 60px); overflow-y:auto; display:none;
+    background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--shadow); padding:10px 12px;
+  }
+  #blockPanel h4{margin:0 0 8px; font-size:12.5px; display:flex; align-items:center;}
+  #blockPanel h4 .x{margin-left:auto; border:none; background:none; cursor:pointer; font-size:14px; color:var(--ink2);}
+  .blk-pal{display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px;}
+  .blk-pal button{border:1px solid var(--line); background:var(--btn); border-radius:12px; padding:3px 9px; cursor:pointer; font-size:12px;}
+  .blk-pal button:hover{background:var(--btn-hover);}
+  .blk-row{display:flex; align-items:center; gap:5px; padding:4px 6px; border:1px solid var(--line); border-radius:5px; margin-bottom:4px; background:var(--btn);}
+  .blk-lbl{flex:1; font-weight:600; font-size:12px; white-space:nowrap;}
+  .blk-row input[type=number]{width:56px; padding:3px 5px; border:1px solid var(--line2); border-radius:4px; font-family:inherit; font-size:12px; background:var(--panel); color:var(--ink);}
+  .blk-unit{font-size:11.5px; color:var(--ink2); white-space:nowrap;}
+  .blk-row button{border:1px solid var(--line); background:var(--btn); border-radius:4px; width:22px; height:22px; cursor:pointer; font-size:11px; padding:0; flex:0 0 22px;}
+  #blockPanel .row{display:flex; align-items:center; gap:7px; margin-top:8px; flex-wrap:wrap; font-size:12px;}
+  #blockPanel .row button{border:1px solid var(--line); background:var(--btn); border-radius:5px; padding:4px 10px; cursor:pointer;}
+  #blockPanel .row button.primary{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600;}
+  #polyN{width:52px; padding:3px 5px; border:1px solid var(--line2); border-radius:4px; font-family:inherit; font-size:12px; background:var(--btn); color:var(--ink);}
+  .blk-note{font-size:11.5px; color:var(--ink2); line-height:1.55; margin:8px 0 0;}
+  .slider-suggest{margin-top:12px; border:1px solid var(--accent); background:var(--accent-soft); border-radius:7px; padding:10px 12px; font-size:12.5px; line-height:1.5;}
+  .slider-suggest button{border:1px solid var(--line2); background:var(--btn); border-radius:5px; padding:5px 12px; cursor:pointer; color:var(--ink);}
+  .ver-row{display:flex; align-items:center; gap:10px; padding:6px 4px; border-bottom:1px solid var(--line); font-size:12.5px;}
+  .ver-row .vn{flex:1; color:var(--ink2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .ver-row button{border:1px solid var(--line2); background:var(--btn); border-radius:5px; padding:3px 12px; cursor:pointer; flex:0 0 auto;}
+  /* ── 문서(활동지) 모드 ─────────────────────────── */
+  #docMode{position:fixed; inset:0; z-index:250; display:none; flex-direction:column; background:var(--chrome2);}
+  .doc-tools{display:flex; align-items:center; gap:7px; flex-wrap:wrap; padding:9px 12px; background:var(--chrome); border-bottom:1px solid var(--line);}
+  .doc-tools b{margin-right:2px;}
+  .doc-tools button{border:1px solid var(--line); background:var(--btn); border-radius:5px; padding:5px 11px; cursor:pointer;}
+  .doc-tools button:hover{background:var(--btn-hover);}
+  #docPage{flex:1; overflow-y:auto; padding:20px 12px 44px;}
+  .doc-sheet{max-width:760px; margin:0 auto; background:#fff; color:#24231f; padding:30px 34px; border-radius:4px; box-shadow:0 4px 24px rgba(0,0,0,.18);}
+  .doc-sheet h2{margin:0 0 16px; font-size:19px;}
+  .doc-block{border:1px dashed #cfc9ba; border-radius:6px; padding:10px 12px; margin-bottom:14px;}
+  .doc-btools{display:flex; align-items:center; gap:5px; margin-bottom:8px; font-size:11.5px; color:#8a8474;}
+  .doc-btools .sp{flex:1;}
+  .doc-btools button{border:1px solid #d8d2c2; background:#faf8f2; border-radius:4px; width:24px; height:22px; cursor:pointer; font-size:11px; padding:0; color:#444;}
+  .doc-img{width:100%; border:1px solid #e3ded0; border-radius:4px; display:block;}
+  .doc-block input[type=text]{width:100%; border:none; border-bottom:1px solid #ddd6c4; font-family:inherit; font-size:15px; font-weight:700; padding:4px 2px; margin-bottom:6px; background:transparent; color:#24231f;}
+  .doc-block textarea{width:100%; border:none; font-family:inherit; font-size:13.5px; line-height:1.6; resize:vertical; min-height:64px; background:transparent; color:#24231f;}
+  .doc-block input:focus,.doc-block textarea:focus{outline:1px solid #b9cfe4;}
+  @media (max-width:760px){ #blockBtn,#docBtn{display:none;} }
+  @media (max-width:760px){
+    #main{flex-direction:column;}
+    #canvasWrap{order:1; flex:1;}
+    #toolbox{
+      order:2; flex:0 0 50px; flex-direction:row; justify-content:flex-start; overflow-x:auto; overflow-y:hidden;
+      border-right:none; border-top:1px solid var(--line); padding:4px 8px; width:100%;
+    }
+    .tool{flex:0 0 40px;}
+    .tool-sep{width:1px; height:26px; margin:0 3px;}
+    #panel{
+      position:absolute; top:0; right:0; bottom:0; width:min(292px,86vw);
+      box-shadow:-8px 0 24px rgba(0,0,0,.18);
+    }
+    #animPanel{left:10px; bottom:60px;}
+    #buildTag{display:none;}
+    #statusXY{display:none;}
+  }
+  @media (max-width:760px){
+    .mb-item{padding:6px 9px;}
+  }
+  @media print{
+    #titlebar,#menubar,#toolbox,#panel,#bottombar,#zoomCtl,#animPanel,#audioPanel,#blockPanel,#modalWrap,#toast{display:none !important;}
+    body{overflow:visible;}
+    #docMode{position:static !important; overflow:visible !important; background:#fff;}
+    #docMode .doc-tools{display:none !important;}
+    #docPage{overflow:visible !important; padding:0;}
+    .doc-sheet{box-shadow:none !important;}
+    .doc-block{border-color:transparent;}
+    .doc-btools{display:none !important;}
+  }
+</style>
+</head>
+<body>
+  <div id="titlebar">
+    <svg class="appmark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="15" r="6.5" fill="none" stroke="#2f6fb2" stroke-width="2"/><path d="M4 20 L20 4" stroke="#b3352c" stroke-width="2"/><circle cx="20" cy="4" r="2.2" fill="#b3352c"/></svg>
+    <span id="docTitle">제목 없음 - 동적 기하 스케치</span>
+    <span id="buildTag">빌드 2026-10-20 13:07 · 회전·확대 변형 드래그 동작 수정</span>
+    <button class="tb-btn" id="shareBtn" type="button">공유</button>
+    <button class="tb-btn" id="blockBtn" type="button">블록코딩</button>
+    <button class="tb-btn" id="docBtn" type="button">문서 모드</button>
+    <button id="panelToggle" type="button">대수창 · 작도 단계</button>
+  </div>
+
+  <nav id="menubar" aria-label="메뉴"></nav>
+
+  <div id="main">
+    <div id="toolbox" role="toolbar" aria-label="도구 상자"></div>
+
+    <div id="canvasWrap">
+      <svg id="svg" xmlns="http://www.w3.org/2000/svg" aria-label="작도 캔버스"></svg>
+      <div id="pendingHint"></div>
+      <div id="zoomCtl">
+        <button type="button" id="zoomIn" title="확대">+</button>
+        <button type="button" id="zoomFit" title="전체 보기" style="font-size:11px;">전체</button>
+        <button type="button" id="zoomOut" title="축소">−</button>
+      </div>
+      <div id="animPanel">
+        <h4>애니메이션 제어판 <button class="x" type="button" id="animClose" title="닫기">✕</button></h4>
+        <div id="animTarget" style="font-size:12px; color:var(--ink2);">대상 없음</div>
+        <div class="row">
+          <button type="button" class="act" id="animPlay">▶ 재생</button>
+          <select id="animDir" title="방향">
+            <option value="loop">한 방향 반복</option>
+            <option value="bounce">왕복</option>
+          </select>
+        </div>
+        <div class="row">
+          <span style="font-size:12px;">속도</span>
+          <input type="range" id="animSpeed" min="0.2" max="3" step="0.1" value="1" />
+        </div>
+      </div>
+      <div id="audioPanel">
+        <h4>함수 소리로 듣기 (오디오 트레이스) <button class="x" type="button" id="audioClose" title="닫기">✕</button></h4>
+        <div id="audioInfo">함수를 선택하세요.</div>
+        <div class="row">
+          <button type="button" class="act" id="audioPlayBtn">▶ 재생</button>
+          <button type="button" class="act" id="audioStopBtn">■ 처음으로</button>
+        </div>
+        <div id="audioReadout">x — · y —</div>
+        <p class="audio-note">그래프의 높낮이가 음높이로 바뀝니다 (높을수록 높은 음). x축과 만나는 지점과 극대·극소 지점에서는 짧은 '팝' 소리가 납니다. 패널을 연 상태에서 키보드 ←/→를 누르면 한 걸음씩 이동하며 들을 수 있어 눈으로 보기 어려운 학생도 그래프의 모양을 귀로 따라갈 수 있습니다.</p>
+      </div>
+      <div id="blockPanel">
+        <h4>블록코딩 작도 (거북이) <button class="x" type="button" id="blockClose" title="닫기">✕</button></h4>
+        <div class="blk-pal">
+          <button type="button" data-add="forward">+ 전진</button>
+          <button type="button" data-add="turn">+ 회전</button>
+          <button type="button" data-add="point">+ 점 찍기</button>
+          <button type="button" data-add="pendown">+ 펜 내리기</button>
+          <button type="button" data-add="penup">+ 펜 올리기</button>
+          <button type="button" data-add="repeatStart">+ 반복 시작</button>
+          <button type="button" data-add="repeatEnd">+ 반복 끝</button>
+        </div>
+        <div id="blockList"></div>
+        <div class="row">
+          <label>정다각형 예시 <input type="number" id="polyN" value="5" min="3" max="24" /> 각형</label>
+          <button type="button" id="polyPreset">예시 넣기</button>
+        </div>
+        <div class="row">
+          <button type="button" class="primary" id="blockRun">▶ 실행</button>
+          <button type="button" id="blockClear">블록 모두 지우기</button>
+        </div>
+        <p class="blk-note">거북이가 (0, 0)에서 위쪽을 보고 출발합니다. 회전 (+)는 반시계 방향입니다. 실행하면 경로가 실제 점·선분 개체로 만들어져 끌기·측정·변환에 그대로 쓸 수 있습니다. 정다각형은 외각 360÷n 을 이용합니다.</p>
+      </div>
+    </div>
+
+    <aside id="panel">
+      <section class="psec grow">
+        <div class="phead">대수창
+          <span class="sp"></span>
+          <button type="button" id="algAddParam">+ 매개변수</button>
+        </div>
+        <div class="plist" id="algList"></div>
+      </section>
+      <section class="psec shrink" style="border-top:1px solid var(--line);">
+        <div class="phead">작도 단계
+          <span class="sp"></span>
+          <button type="button" id="protoPrev" title="이전 단계만 보기">◀</button>
+          <button type="button" id="protoNext" title="다음 단계까지 보기">▶</button>
+          <button type="button" id="protoPlay">▶ 재생</button>
+          <button type="button" id="protoAll">전부 보기</button>
+        </div>
+        <div class="plist" id="protoList"></div>
+      </section>
+    </aside>
+  </div>
+
+  <div id="bottombar">
+    <div class="pagetab">페이지 1</div>
+    <div id="statusbar">
+      <span id="statusHint">개체를 선택하거나 끌어 옮깁니다.</span>
+      <span id="statusSel"></span>
+      <span id="statusXY"></span>
+    </div>
+  </div>
+
+  <div id="docMode">
+    <div class="doc-tools">
+      <b>문서 (활동지) 모드</b>
+      <button type="button" id="docSnap">스케치 스냅샷 다시 찍기</button>
+      <button type="button" id="docAddText">+ 설명 블록</button>
+      <button type="button" id="docAddProb">+ 문제 블록</button>
+      <button type="button" id="docPrint">인쇄</button>
+      <button type="button" id="docClose">닫기</button>
+    </div>
+    <div id="docPage"></div>
+  </div>
+
+  <div id="modalWrap">
+    <div id="modal" role="dialog" aria-modal="true">
+      <div id="modalHead"><span id="modalTitle"></span><button class="x" type="button" id="modalX">✕</button></div>
+      <div id="modalBody"></div>
+      <div id="modalFoot"></div>
+    </div>
+  </div>
+  <div id="toast"></div>
+  <input type="file" id="fileOpen" accept=".json,.gsp.json,application/json" style="display:none;" />
+
+<script>
+'use strict';
+/* ═══════════════ 유틸 ═══════════════ */
+const $=s=>document.querySelector(s);
+const SVGNS='http://www.w3.org/2000/svg';
+function el(tag,attrs,parent){const n=document.createElementNS(SVGNS,tag);if(attrs)for(const k in attrs)n.setAttribute(k,attrs[k]);if(parent)parent.appendChild(n);return n;}
+function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+function fmt(n,d){if(n==null||!isFinite(n))return '—';const p=(d==null?2:d);let s=Number(n).toFixed(p);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');if(s==='-0')s='0';return s;}
+function fmtPt(p){return '('+fmt(p.x)+', '+fmt(p.y)+')';}
+const V={
+  add:(a,b)=>({x:a.x+b.x,y:a.y+b.y}), sub:(a,b)=>({x:a.x-b.x,y:a.y-b.y}),
+  mul:(a,s)=>({x:a.x*s,y:a.y*s}), dot:(a,b)=>a.x*b.x+a.y*b.y,
+  cross:(a,b)=>a.x*b.y-a.y*b.x, len:a=>Math.hypot(a.x,a.y),
+  unit:a=>{const l=Math.hypot(a.x,a.y)||1;return{x:a.x/l,y:a.y/l};},
+  perp:a=>({x:-a.y,y:a.x}), rot:(a,ang)=>{const c=Math.cos(ang),s=Math.sin(ang);return{x:a.x*c-a.y*s,y:a.x*s+a.y*c};}
+};
+const DEG=180/Math.PI, RAD=Math.PI/180;
+let toastTimer=null;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2400);}
+
+/* ═══════════════ 수식 파서 (함수·계산용) ═══════════════ */
+const FUNCS={sin:Math.sin,cos:Math.cos,tan:Math.tan,asin:Math.asin,acos:Math.acos,atan:Math.atan,
+  sqrt:Math.sqrt,abs:Math.abs,ln:Math.log,log:Math.log10,exp:Math.exp,floor:Math.floor,ceil:Math.ceil,round:Math.round};
+function tokenize(s){
+  const toks=[];let i=0;
+  while(i<s.length){
+    const ch=s[i];
+    if(ch===' '||ch==='\t'){i++;continue;}
+    if(/[0-9.]/.test(ch)){let j=i;while(j<s.length&&/[0-9.]/.test(s[j]))j++;toks.push({t:'num',v:parseFloat(s.slice(i,j))});i=j;continue;}
+    if(/[A-Za-z_가-힣π]/.test(ch)){let j=i;while(j<s.length&&/[A-Za-z0-9_가-힣]/.test(s[j]))j++;toks.push({t:'id',v:s.slice(i,j)});i=j;continue;}
+    if('+-*/^(),'.indexOf(ch)>=0){toks.push({t:ch});i++;continue;}
+    throw new Error('알 수 없는 기호: '+ch);
+  }
+  toks.push({t:'end'});return toks;
+}
+function parseExpr(src){
+  const toks=tokenize(src);let pos=0;
+  const peek=()=>toks[pos], next=()=>toks[pos++];
+  function parseE(){let n=parseT();while(peek().t==='+'||peek().t==='-'){const op=next().t;const r=parseT();n={k:'bin',op,l:n,r};}return n;}
+  function parseT(){
+    let n=parseU();
+    for(;;){
+      const tk=peek();
+      if(tk.t==='*'||tk.t==='/'){next();const r=parseU();n={k:'bin',op:tk.t,l:n,r};}
+      else if(tk.t==='num'||tk.t==='id'||tk.t==='('){const r=parseU();n={k:'bin',op:'*',l:n,r};} // 암시적 곱셈
+      else break;
+    }
+    return n;
+  }
+  function parseU(){if(peek().t==='-'){next();return{k:'neg',a:parseU()};}if(peek().t==='+'){next();return parseU();}return parseP();}
+  function parseP(){let n=parseA();if(peek().t==='^'){next();const r=parseU();n={k:'bin',op:'^',l:n,r};}return n;}
+  function parseA(){
+    const tk=next();
+    if(tk.t==='num')return{k:'num',v:tk.v};
+    if(tk.t==='('){const n=parseE();if(next().t!==')')throw new Error('괄호 오류');return n;}
+    if(tk.t==='id'){
+      if(peek().t==='('&&FUNCS[tk.v]){next();const a=parseE();if(next().t!==')')throw new Error('괄호 오류');return{k:'call',f:tk.v,a};}
+      if(peek().t==='('){return{k:'var',v:tk.v};}
+      return{k:'var',v:tk.v};
+    }
+    throw new Error('수식 오류');
+  }
+  const ast=parseE();
+  if(peek().t!=='end')throw new Error('수식 끝에 오류가 있습니다');
+  return ast;
+}
+function evalAst(n,scope){
+  if(!n)return NaN;
+  switch(n.k){
+    case 'num':return n.v;
+    case 'var':
+      if(n.v==='pi'||n.v==='π')return Math.PI;
+      if(n.v==='e')return Math.E;
+      return (scope&&scope[n.v]!=null)?scope[n.v]:NaN;
+    case 'neg':return -evalAst(n.a,scope);
+    case 'call':return FUNCS[n.f](evalAst(n.a,scope));
+    case 'bin':{
+      const l=evalAst(n.l,scope),r=evalAst(n.r,scope);
+      if(n.op==='+')return l+r; if(n.op==='-')return l-r; if(n.op==='*')return l*r;
+      if(n.op==='/')return l/r; if(n.op==='^')return Math.pow(l,r);
+    }
+  }
+  return NaN;
+}
+
+/* ═══════════════ 상태 ═══════════════ */
+const PALETTE=['#1c1c1e','#b3352c','#2f6fb2','#1e8a4c','#e07b00','#7a3ea1','#0e8a8a','#d63384','#5a4632','#4361ee'];
+const state={
+  objects:[], sel:[], uid:0,
+  counters:{line:0,ray:0,circle:0,polygon:0,arc:0,sector:0,measure:0,func:0,text:0},
+  funcNames:['f','g','h','p','q'],
+  view:{cx:0,cy:0.3,scale:52},
+  grid:{show:true,type:'square',dots:false,snap:false},
+  axes:true, labels:true,
+  marked:{vector:null,center:null,axis:null,angle:60,ratio:2},
+  proto:null, traces:[], docName:'제목 없음',
+  pointR:4, customTools:[],
+  tool:'move', toolVariant:{arrow:'move',circle:'pts',line:'segment',polygon:'fillstroke'},
+};
+let GEOM={};
+const byId=id=>state.objects.find(o=>o.id===id)||null;
+const geom=id=>GEOM[id]||null;
+
+/* ═══════════════ 이름 ═══════════════ */
+function nextPointName(){
+  const used=new Set(state.objects.filter(o=>o.type==='point').map(o=>o.name));
+  const L='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  for(const c of L)if(!used.has(c))return c;
+  for(let i=1;i<30;i++)for(const c of L){const n=c+'\u2081'.replace('₁',String.fromCharCode(0x2080+i));if(!used.has(n))return n;}
+  return 'P'+state.uid;
+}
+function uniqueName(base){
+  const used=new Set(state.objects.map(o=>o.name));
+  if(!used.has(base))return base;
+  let i=2;while(used.has(base+i))i++;
+  return base+i;
+}
+
+/* ═══════════════ 개체 생성 ═══════════════ */
+function addObj(type,params){
+  const o=Object.assign({id:'o'+(++state.uid),type:type,parents:[],hidden:false,
+    color:PALETTE[0],width:1.6,dash:'solid',label:true,trace:false,xform:null},params||{});
+  if(!o.name){
+    if(type==='point')o.name=nextPointName();
+    else if(type==='segment')o.name='';
+    else if(type==='line')o.name='직선'+(++state.counters.line);
+    else if(type==='ray')o.name='반직선'+(++state.counters.ray);
+    else if(type==='circle')o.name='원'+(++state.counters.circle);
+    else if(type==='polygon')o.name='다각형'+(++state.counters.polygon);
+    else if(type==='arc')o.name='호'+(++state.counters.arc);
+    else if(type==='sector')o.name='부채꼴'+(++state.counters.sector);
+    else if(type==='measure')o.name='m'+(++state.counters.measure);
+    else if(type==='function'){const av=state.funcNames.filter(n=>!state.objects.some(x=>x.type==='function'&&x.name===n));o.name=av[0]||('f'+(++state.counters.func));}
+    else if(type==='text')o.name='글'+(++state.counters.text);
+    else if(type==='param')o.name='a';
+  }
+  state.objects.push(o);
+  return o;
+}
+function addPoint(kind,params){
+  return addObj('point',Object.assign({kind:kind},params||{}));
+}
+function displayName(o){
+  if(!o)return '';
+  if(o.type==='segment'){
+    const a=byId(o.parents[0]),b=byId(o.parents[1]);
+    if(o.mode==='pts'&&a&&b)return a.name+b.name;
+  }
+  return o.name||o.type;
+}
+
+/* ═══════════════ 기하 계산 ═══════════════ */
+function paramScope(){
+  const s={};
+  for(const o of state.objects)if(o.type==='param')s[o.name]=o.value;
+  return s;
+}
+function fullScope(){
+  const s=paramScope();
+  for(const o of state.objects){
+    const g=GEOM[o.id];
+    if(o.type==='measure'&&g)s[o.name]=g.value;
+    if(o.type==='segment'&&g)s[displayName(o)]=g.len;
+  }
+  return s;
+}
+function lineGeom(a,b,kind){const d=V.sub(b,a);return{kind:kind,a:{x:a.x,y:a.y},b:{x:b.x,y:b.y},d:d,len:V.len(d)};}
+function circleLineInts(c,r,p,d){
+  // 점 p, 방향 d 직선과 원의 교점 (매개변수 s: p + s*d, d는 단위벡터 아님 가능)
+  const f=V.sub(p,c);const A=V.dot(d,d);if(A===0)return[];
+  const B=2*V.dot(f,d),C=V.dot(f,f)-r*r;const disc=B*B-4*A*C;
+  if(disc<-1e-9)return[];const sq=Math.sqrt(Math.max(0,disc));
+  const out=[];for(const s of [(-B-sq)/(2*A),(-B+sq)/(2*A)])out.push({pt:V.add(p,V.mul(d,s)),s:s});
+  return out;
+}
+function inDomain(g,pt){
+  if(g.kind==='line')return true;
+  const d=g.d;const L=g.len;if(L<1e-12)return false;
+  const s=V.dot(V.sub(pt,g.a),d)/L; // 길이 단위
+  if(g.kind==='segment')return s>=-1e-9&&s<=L+1e-9;
+  if(g.kind==='ray')return s>=-1e-9;
+  return true;
+}
+function intersectGeoms(g1,g2){
+  if(!g1||!g2)return[];
+  const K1=g1.kind,K2=g2.kind;
+  const lineLike=k=>k==='segment'||k==='ray'||k==='line';
+  const edges=g=>g.kind==='polygon'?g.pts.map((p,i)=>lineGeom(p,g.pts[(i+1)%g.pts.length],'segment')):[];
+  if(K1==='polygon'&&K2==='point')return[];
+  if(K1==='polygon'||K2==='polygon'){
+    if(K1==='polygon'&&K2==='polygon'){
+      let out=[];for(const e1 of edges(g1))for(const e2 of edges(g2))out=out.concat(intersectGeoms(e1,e2));return out;
+    }
+    const poly=K1==='polygon'?g1:g2, other=K1==='polygon'?g2:g1;
+    let out=[];for(const e of edges(poly))out=out.concat(intersectGeoms(e,other));return out;
+  }
+  if(lineLike(K1)&&lineLike(K2)){
+    const den=V.cross(g1.d,g2.d);
+    if(Math.abs(den)<1e-12)return[];
+    const t=V.cross(V.sub(g2.a,g1.a),g2.d)/den;
+    const pt=V.add(g1.a,V.mul(g1.d,t));
+    return (inDomain(g1,pt)&&inDomain(g2,pt))?[pt]:[];
+  }
+  if((lineLike(K1)&&K2==='circle')||(K1==='circle'&&lineLike(K2))){
+    const L=lineLike(K1)?g1:g2, C=lineLike(K1)?g2:g1;
+    return circleLineInts(C.c,C.r,L.a,L.d).map(r=>r.pt).filter(pt=>inDomain(L,pt));
+  }
+  if(K1==='circle'&&K2==='circle'){
+    const d=V.sub(g2.c,g1.c);const dist=V.len(d);
+    if(dist<1e-12||dist>g1.r+g2.r+1e-9||dist<Math.abs(g1.r-g2.r)-1e-9)return[];
+    const a=(g1.r*g1.r-g2.r*g2.r+dist*dist)/(2*dist);
+    const h2=g1.r*g1.r-a*a;if(h2<-1e-9)return[];
+    const h=Math.sqrt(Math.max(0,h2));const u=V.unit(d);
+    const base=V.add(g1.c,V.mul(u,a));const off=V.mul(V.perp(u),h);
+    if(h<1e-9)return[base];
+    return[V.add(base,off),V.sub(base,off)];
+  }
+  if(K1==='function'||K2==='function'){
+    const F=K1==='function'?g1:g2, O=K1==='function'?g2:g1;
+    if(lineLike(O.kind)){
+      const out=[];const N=200;
+      const fAt=s=>{
+        const px=O.a.x+O.d.x*s, py=O.a.y+O.d.y*s;
+        const scope=Object.assign(paramScope(),{x:px});
+        let fy;
+        if(F.derivAst){const h=1e-5;fy=(evalAst(F.derivAst,Object.assign(paramScope(),{x:px+h}))-evalAst(F.derivAst,Object.assign(paramScope(),{x:px-h})))/(2*h);}
+        else fy=evalAst(F.ast,scope);
+        return py-fy;
+      };
+      let s0,s1;
+      if(O.kind==='line'){s0=-60;s1=60;}else if(O.kind==='ray'){s0=0;s1=60;}else{s0=0;s1=1;}
+      let prevS=s0,prevV=fAt(s0);
+      for(let i=1;i<=N;i++){
+        const s=s0+(s1-s0)*i/N;const v=fAt(s);
+        if(isFinite(prevV)&&isFinite(v)&&prevV*v<0){
+          let lo=prevS,hi=s,vlo=prevV;
+          for(let k=0;k<32;k++){const mid=(lo+hi)/2;const vm=fAt(mid);if(vlo*vm<=0)hi=mid;else{lo=mid;vlo=vm;}}
+          const sFin=(lo+hi)/2;out.push({x:O.a.x+O.d.x*sFin,y:O.a.y+O.d.y*sFin});
+        }
+        prevS=s;prevV=v;
+      }
+      return out;
+    }
+    return[];
+  }
+  return[];
+}
+function pointAt(g,t){
+  if(!g)return null;
+  if(g.kind==='segment'||g.kind==='ray'||g.kind==='line'){
+    const u=V.unit(g.d);return V.add(g.a,V.mul(u,t));
+  }
+  if(g.kind==='circle')return{x:g.c.x+g.r*Math.cos(t),y:g.c.y+g.r*Math.sin(t)};
+  if(g.kind==='arc'||g.kind==='sector')return{x:g.c.x+g.r*Math.cos(t),y:g.c.y+g.r*Math.sin(t)};
+  if(g.kind==='polygon'){
+    const pts=g.pts;const n=pts.length;let per=0;const lens=[];
+    for(let i=0;i<n;i++){const l=V.len(V.sub(pts[(i+1)%n],pts[i]));lens.push(l);per+=l;}
+    let tt=((t%per)+per)%per;
+    for(let i=0;i<n;i++){if(tt<=lens[i]+1e-12){const u=lens[i]?tt/lens[i]:0;return{x:pts[i].x+(pts[(i+1)%n].x-pts[i].x)*u,y:pts[i].y+(pts[(i+1)%n].y-pts[i].y)*u};}tt-=lens[i];}
+    return{x:pts[0].x,y:pts[0].y};
+  }
+  if(g.kind==='function'){const y=evalAst(g.ast,Object.assign(paramScope(),{x:t}));return{x:t,y:y};}
+  return null;
+}
+function projectT(g,pt){
+  if(!g)return 0;
+  if(g.kind==='segment'||g.kind==='ray'||g.kind==='line'){
+    const u=V.unit(g.d);let t=V.dot(V.sub(pt,g.a),u);
+    if(g.kind==='segment')t=clamp(t,0,g.len);
+    if(g.kind==='ray')t=Math.max(0,t);
+    return t;
+  }
+  if(g.kind==='circle'||g.kind==='arc'||g.kind==='sector')return Math.atan2(pt.y-g.c.y,pt.x-g.c.x);
+  if(g.kind==='polygon'){
+    const pts=g.pts;const n=pts.length;let best=1e18,bt=0,acc=0;
+    for(let i=0;i<n;i++){
+      const a=pts[i],b=pts[(i+1)%n];const d=V.sub(b,a);const L=V.len(d);
+      const s=L?clamp(V.dot(V.sub(pt,a),d)/(L*L),0,1):0;
+      const q=V.add(a,V.mul(d,s));const dd=V.len(V.sub(pt,q));
+      if(dd<best){best=dd;bt=acc+L*s;}
+      acc+=L;
+    }
+    return bt;
+  }
+  if(g.kind==='function')return pt.x;
+  return 0;
+}
+function applyXformPt(p,xf,G){
+  if(xf.kind==='translate'){const v=G[xf.vector];if(!v)return p;return V.add(p,V.sub(v.b,v.a));}
+  if(xf.kind==='rotate'){const c=G[xf.center];if(!c)return p;return V.add(c,V.rot(V.sub(p,c),xf.angle*RAD));}
+  if(xf.kind==='dilate'){const c=G[xf.center];if(!c)return p;return V.add(c,V.mul(V.sub(p,c),xf.ratio));}
+  if(xf.kind==='reflect'){const ax=G[xf.axis];if(!ax)return p;const u=V.unit(ax.d);const proj=V.add(ax.a,V.mul(u,V.dot(V.sub(p,ax.a),u)));return V.sub(V.mul(proj,2),p);}
+  return p;
+}
+function applyXform(g,xf,G){
+  if(!g)return null;
+  const P=pt=>applyXformPt(pt,xf,G);
+  if(g.kind==='point')return{kind:'point',x:P(g).x,y:P(g).y};
+  if(g.kind==='segment'||g.kind==='ray'||g.kind==='line')return lineGeom(P(g.a),P(g.b),g.kind);
+  if(g.kind==='circle'){const c=P(g.c);const r=g.r*(xf.kind==='dilate'?Math.abs(xf.ratio):1);return{kind:'circle',c:c,r:r};}
+  if(g.kind==='polygon')return{kind:'polygon',pts:g.pts.map(P)};
+  if(g.kind==='arc'||g.kind==='sector'){
+    const c=P(g.c);const s=P(pointAt(g,0)||g.c);const sp={x:g.c.x+g.r*Math.cos(g.a1),y:g.c.y+g.r*Math.sin(g.a1)};
+    const ep={x:g.c.x+g.r*Math.cos(g.a2),y:g.c.y+g.r*Math.sin(g.a2)};
+    const nsp=P(sp),nep=P(ep);const r=g.r*(xf.kind==='dilate'?Math.abs(xf.ratio):1);
+    let a1=Math.atan2(nsp.y-c.y,nsp.x-c.x),a2=Math.atan2(nep.y-c.y,nep.x-c.x);
+    if(xf.kind==='reflect'){const tmp=a1;a1=a2;a2=tmp;}
+    return{kind:g.kind,c:c,r:r,a1:a1,a2:a2};
+  }
+  return g;
+}
+function polyArea(pts){let s=0;for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];s+=a.x*b.y-b.x*a.y;}return Math.abs(s/2);}
+function polyPerim(pts){let s=0;for(let i=0;i<pts.length;i++)s+=V.len(V.sub(pts[(i+1)%pts.length],pts[i]));return s;}
+
+function computeGeom(o,G){
+  if(o.xform){
+    const src=G[o.xform.source];
+    return applyXform(src,o.xform,G);
+  }
+  switch(o.type){
+    case 'point':{
+      if(o.kind==='free'||o.kind==='coord')return{kind:'point',x:o.x,y:o.y};
+      if(o.kind==='on'){const base=G[o.parents[0]];const p=base?pointAt(base,o.t):null;return p?{kind:'point',x:p.x,y:p.y}:null;}
+      if(o.kind==='midpoint'){
+        if(o.parents.length===1){const g=G[o.parents[0]];if(!g)return null;return{kind:'point',x:(g.a.x+g.b.x)/2,y:(g.a.y+g.b.y)/2};}
+        const a=G[o.parents[0]],b=G[o.parents[1]];if(!a||!b)return null;
+        return{kind:'point',x:(a.x+b.x)/2,y:(a.y+b.y)/2};
+      }
+      if(o.kind==='intersect'){
+        const ints=intersectGeoms(G[o.parents[0]],G[o.parents[1]]);
+        const p=ints[o.idx||0];return p?{kind:'point',x:p.x,y:p.y}:null;
+      }
+      return null;
+    }
+    case 'segment':case 'ray':case 'line':{
+      if(o.mode==='pts'){const a=G[o.parents[0]],b=G[o.parents[1]];if(!a||!b)return null;return lineGeom(a,b,o.type);}
+      if(o.mode==='parallel'||o.mode==='perp'){
+        const p=G[o.parents[0]],l=G[o.parents[1]];if(!p||!l||!l.d)return null;
+        const dir=o.mode==='parallel'?l.d:V.perp(l.d);
+        return lineGeom(p,V.add(p,dir),o.type);
+      }
+      if(o.mode==='bisector'){
+        const a=G[o.parents[0]],b=G[o.parents[1]],c=G[o.parents[2]];if(!a||!b||!c)return null;
+        const dir=V.add(V.unit(V.sub(a,b)),V.unit(V.sub(c,b)));
+        if(V.len(dir)<1e-9)return null;
+        return lineGeom(b,V.add(b,dir),'ray');
+      }
+      return null;
+    }
+    case 'circle':{
+      const c=G[o.parents[0]];if(!c)return null;
+      if(o.mode==='pts'){const p=G[o.parents[1]];if(!p)return null;return{kind:'circle',c:{x:c.x,y:c.y},r:V.len(V.sub(p,c))};}
+      if(o.mode==='radiusSeg'){const s=G[o.parents[1]];if(!s)return null;return{kind:'circle',c:{x:c.x,y:c.y},r:s.len};}
+      if(o.mode==='radiusVal'){let r=o.r;if(o.rParam){const po=byId(o.rParam);r=po?po.value:NaN;}return{kind:'circle',c:{x:c.x,y:c.y},r:r};}
+      return null;
+    }
+    case 'polygon':{
+      const pts=o.parents.map(id=>G[id]);if(pts.some(p=>!p))return null;
+      return{kind:'polygon',pts:pts.map(p=>({x:p.x,y:p.y}))};
+    }
+    case 'arc':case 'sector':{
+      const c=G[o.parents[0]],s=G[o.parents[1]],e=G[o.parents[2]];
+      if(!c||!s||!e)return null;
+      return{kind:o.type,c:{x:c.x,y:c.y},r:V.len(V.sub(s,c)),
+        a1:Math.atan2(s.y-c.y,s.x-c.x),a2:Math.atan2(e.y-c.y,e.x-c.x)};
+    }
+    case 'text':return{kind:'text',x:o.x,y:o.y};
+    case 'measure':{
+      const v=measureValue(o,G);
+      return{kind:'measure',x:o.x,y:o.y,value:v.value,text:v.text};
+    }
+    case 'function':{
+      if(o.derivOf){
+        const src=byId(o.derivOf);if(!src)return null;
+        return{kind:'function',ast:null,derivAst:src.ast,expr:o.expr};
+      }
+      return{kind:'function',ast:o.ast,expr:o.expr};
+    }
+    case 'param':return{kind:'param',value:o.value};
+    case 'locus':return o._geomCache||null;
+  }
+  return null;
+}
+function measureValue(o,G){
+  const R=id=>G[id];
+  const num=(v,unit)=>({value:v,text:fmt(v)+(unit||'')});
+  try{
+    switch(o.mtype){
+      case 'length':{
+        if(o.refs.length===1){const g=R(o.refs[0]);if(!g)return num(NaN);
+          if(g.kind==='segment')return num(g.len);
+          if(g.kind==='circle')return num(2*Math.PI*g.r);
+          if(g.kind==='polygon')return num(polyPerim(g.pts));
+          if(g.kind==='arc'){let sw=g.a2-g.a1;while(sw<0)sw+=2*Math.PI;return num(g.r*sw);}
+          return num(NaN);}
+        const a=R(o.refs[0]),b=R(o.refs[1]);if(!a||!b)return num(NaN);return num(V.len(V.sub(b,a)));
+      }
+      case 'angle':{
+        const a=R(o.refs[0]),b=R(o.refs[1]),c=R(o.refs[2]);if(!a||!b||!c)return num(NaN);
+        const v1=V.sub(a,b),v2=V.sub(c,b);
+        let ang=Math.acos(clamp(V.dot(v1,v2)/(V.len(v1)*V.len(v2)||1),-1,1))*DEG;
+        return num(ang,'°');
+      }
+      case 'area':{
+        const g=R(o.refs[0]);if(!g)return num(NaN);
+        if(g.kind==='polygon')return num(polyArea(g.pts));
+        if(g.kind==='circle')return num(Math.PI*g.r*g.r);
+        if(g.kind==='sector'){let sw=g.a2-g.a1;while(sw<0)sw+=2*Math.PI;return num(0.5*g.r*g.r*sw);}
+        return num(NaN);
+      }
+      case 'coord':{const p=R(o.refs[0]);if(!p)return{value:NaN,text:'(—, —)'};return{value:p.x,text:fmtPt(p)};}
+      case 'slope':{const g=R(o.refs[0]);if(!g||Math.abs(g.d.x)<1e-12)return{value:NaN,text:'수직'};const v=g.d.y/g.d.x;return num(v);}
+      case 'radius':{const g=R(o.refs[0]);if(!g)return num(NaN);return num(g.r);}
+      case 'ratio':{const a=R(o.refs[0]),b=R(o.refs[1]);if(!a||!b||!b.len)return num(NaN);return num(a.len/b.len);}
+      case 'equation':{
+        const g=R(o.refs[0]);if(!g)return{value:NaN,text:'—'};
+        if(g.kind==='circle')return{value:NaN,text:'(x'+sgn(-g.c.x)+')² + (y'+sgn(-g.c.y)+')² = '+fmt(g.r*g.r)};
+        if(g.d){
+          if(Math.abs(g.d.x)<1e-12)return{value:NaN,text:'x = '+fmt(g.a.x)};
+          const m=g.d.y/g.d.x,b=g.a.y-m*g.a.x;
+          return{value:NaN,text:'y = '+fmt(m)+'x'+sgn(b)};
+        }
+        return{value:NaN,text:'—'};
+      }
+      case 'calc':{
+        const scope=fullScope();const v=evalAst(o.ast,scope);
+        return{value:v,text:fmt(v)};
+      }
+    }
+  }catch(e){return{value:NaN,text:'—'};}
+  return{value:NaN,text:'—'};
+}
+function sgn(v){return(v<0?' − '+fmt(-v):' + '+fmt(v));}
+
+function recompute(){
+  GEOM={};
+  // 자취는 별도 패스로 먼저 계산 (다른 개체가 자취에 의존하지 않는다고 가정)
+  for(const o of state.objects){
+    if(o.type==='locus')continue;
+    GEOM[o.id]=computeGeom(o,GEOM);
+  }
+  for(const o of state.objects){
+    if(o.type!=='locus')continue;
+    GEOM[o.id]=computeLocus(o);
+  }
+  // 측정 'calc'는 fullScope가 GEOM을 참조하므로 한 번 더
+  let dirty=false;
+  for(const o of state.objects){
+    if(o.type==='measure'&&o.mtype==='calc'){GEOM[o.id]=computeGeom(o,GEOM);dirty=true;}
+  }
+  if(dirty)for(const o of state.objects)if(o.type==='measure'&&o.mtype==='calc')GEOM[o.id]=computeGeom(o,GEOM);
+}
+function computeLocus(o){
+  const driver=byId(o.parents[0]),target=byId(o.parents[1]);
+  if(!driver||!target||driver.type!=='point'||driver.kind!=='on')return o._geomCache||null;
+  const baseObj=byId(driver.parents[0]);if(!baseObj)return null;
+  const savedT=driver.t;
+  const N=72;const pts=[];
+  let range=null;
+  const baseGeom=(()=>{const G2={};for(const ob of state.objects){if(ob.type==='locus')continue;G2[ob.id]=computeGeom(ob,G2);}return G2[baseObj.id];})();
+  if(!baseGeom)return null;
+  if(baseGeom.kind==='circle'||baseGeom.kind==='arc'||baseGeom.kind==='sector')range=[0,Math.PI*2];
+  else if(baseGeom.kind==='segment')range=[0,baseGeom.len];
+  else if(baseGeom.kind==='polygon')range=[0,polyPerim(baseGeom.pts)];
+  else if(baseGeom.kind==='function')range=[state.view.cx-8,state.view.cx+8];
+  else range=[-10,10];
+  for(let i=0;i<=N;i++){
+    driver.t=range[0]+(range[1]-range[0])*i/N;
+    const G2={};
+    for(const ob of state.objects){if(ob.type==='locus')continue;G2[ob.id]=computeGeom(ob,G2);}
+    const tg=G2[target.id];
+    if(tg)pts.push({x:tg.x,y:tg.y});
+  }
+  driver.t=savedT;
+  const g={kind:'locus',pts:pts};
+  o._geomCache=g;
+  return g;
+}
+
+/* ═══════════════ 좌표 변환 · 렌더링 ═══════════════ */
+const svg=$('#svg'), wrap=$('#canvasWrap');
+function W(){return wrap.clientWidth;} function H(){return wrap.clientHeight;}
+function toPx(p){return{x:(p.x-state.view.cx)*state.view.scale+W()/2, y:H()/2-(p.y-state.view.cy)*state.view.scale};}
+function toMath(px){return{x:(px.x-W()/2)/state.view.scale+state.view.cx, y:state.view.cy-(px.y-H()/2)/state.view.scale};}
+function visibleRange(){
+  const hw=W()/state.view.scale/2, hh=H()/state.view.scale/2;
+  return{x0:state.view.cx-hw,x1:state.view.cx+hw,y0:state.view.cy-hh,y1:state.view.cy+hh};
+}
+function clipLine(g){
+  // 직선/반직선을 화면 범위로 자른 끝점 쌍 반환
+  const r=visibleRange();const pad=2;
+  const x0=r.x0-pad,x1=r.x1+pad,y0=r.y0-pad,y1=r.y1+pad;
+  let tmin=-1e9,tmax=1e9;
+  if(g.kind==='segment'){tmin=0;tmax=1;}
+  if(g.kind==='ray'){tmin=0;}
+  const d=g.d,a=g.a;
+  if(Math.abs(d.x)>1e-12){let t1=(x0-a.x)/d.x,t2=(x1-a.x)/d.x;if(t1>t2)[t1,t2]=[t2,t1];tmin=Math.max(tmin,t1);tmax=Math.min(tmax,t2);}
+  else if(a.x<x0||a.x>x1)return null;
+  if(Math.abs(d.y)>1e-12){let t1=(y0-a.y)/d.y,t2=(y1-a.y)/d.y;if(t1>t2)[t1,t2]=[t2,t1];tmin=Math.max(tmin,t1);tmax=Math.min(tmax,t2);}
+  else if(a.y<y0||a.y>y1)return null;
+  if(tmax<tmin)return null;
+  return[V.add(a,V.mul(d,tmin)),V.add(a,V.mul(d,tmax))];
+}
+let interestPts=[]; // {a,b,idx,x,y}
+function computeInterest(){
+  interestPts=[];
+  const vis=state.objects.filter(o=>!o.hidden&&visibleObj(o)&&['segment','ray','line','circle','polygon'].includes(o.type));
+  const existing=state.objects.filter(o=>o.type==='point');
+  for(let i=0;i<vis.length;i++)for(let j=i+1;j<vis.length;j++){
+    const ints=intersectGeoms(GEOM[vis[i].id],GEOM[vis[j].id]);
+    ints.forEach((p,idx)=>{
+      const dup=existing.some(ep=>{const g=GEOM[ep.id];return g&&Math.hypot(g.x-p.x,g.y-p.y)<0.02;});
+      if(!dup)interestPts.push({a:vis[i].id,b:vis[j].id,idx:idx,x:p.x,y:p.y});
+    });
+  }
+}
+function visibleObj(o){
+  if(state.proto==null)return true;
+  return state.objects.indexOf(o)<=state.proto;
+}
+function drawGrid(g){
+  const r=visibleRange();
+  if(state.grid.type==='polar'){
+    const maxR=Math.hypot(Math.max(Math.abs(r.x0),Math.abs(r.x1)),Math.max(Math.abs(r.y0),Math.abs(r.y1)));
+    const step=state.view.scale>26?1:2;
+    for(let rad=step;rad<maxR;rad+=step){
+      const c=el('circle',{cx:W()/2-state.view.cx*state.view.scale,cy:H()/2+state.view.cy*state.view.scale,r:rad*state.view.scale,fill:'none',stroke:'var(--grid)','stroke-width':1},g);
+    }
+    for(let k=0;k<24;k++){
+      const ang=k*Math.PI/12;const p1=toPx({x:Math.cos(ang)*maxR,y:Math.sin(ang)*maxR});
+      const o=toPx({x:0,y:0});
+      el('line',{x1:o.x,y1:o.y,x2:p1.x,y2:p1.y,stroke:k%6===0?'var(--axis)':'var(--grid)','stroke-width':1},g);
+    }
+    return;
+  }
+  let stepX=1,stepY=1;
+  if(state.grid.type==='rect'){stepX=2;stepY=1;}
+  if(state.grid.type==='trig'){stepX=Math.PI/2;}
+  const minor=state.view.scale>30;
+  const drawSet=(step,vertical)=>{
+    const from=vertical?Math.floor(r.x0/step)*step:Math.floor(r.y0/step)*step;
+    const to=vertical?r.x1:r.y1;
+    for(let v=from;v<=to+1e-9;v+=step){
+      const isAxis=Math.abs(v)<step*0.01;
+      const p1=vertical?toPx({x:v,y:r.y0}):toPx({x:r.x0,y:v});
+      const p2=vertical?toPx({x:v,y:r.y1}):toPx({x:r.x1,y:v});
+      if(state.grid.dots){
+        const n=vertical?Math.floor(r.y1)-Math.ceil(r.y0):Math.floor(r.x1)-Math.ceil(r.x0);
+        for(let k=0;k<=n;k++){
+          const w=vertical?{x:v,y:Math.ceil(r.y0)+k}:{x:Math.ceil(r.x0)+k,y:v};
+          const pp=toPx(w);el('circle',{cx:pp.x,cy:pp.y,r:1.3,fill:'#bbb'},g);
+        }
+      }else{
+        el('line',{x1:p1.x,y1:p1.y,x2:p2.x,y2:p2.y,stroke:isAxis?'var(--axis)':'var(--grid)','stroke-width':isAxis?1.2:1},g);
+      }
+      if(state.axes&&!state.grid.dots){
+        const lp=vertical?toPx({x:v,y:0}):toPx({x:0,y:v});
+        if(vertical&&Math.abs(v)>1e-9){
+          const t=el('text',{x:lp.x+3,y:H()/2+state.view.cy*state.view.scale+13,'font-size':10,fill:'#888'},g);
+          t.textContent=state.grid.type==='trig'?fmt(v/Math.PI)+'π':fmt(v,0);
+        }
+        if(!vertical&&Math.abs(v)>1e-9){
+          const t=el('text',{x:W()/2-state.view.cx*state.view.scale+4,y:lp.y-3,'font-size':10,fill:'#888'},g);
+          t.textContent=fmt(v,0);
+        }
+      }
+    }
+  };
+  if(minor&&state.grid.type!=='trig'){
+    const s=0.5;const from=Math.floor(r.x0/s)*s;
+    for(let v=from;v<=r.x1;v+=s){const p1=toPx({x:v,y:r.y0}),p2=toPx({x:v,y:r.y1});el('line',{x1:p1.x,y1:p1.y,x2:p2.x,y2:p2.y,stroke:'var(--gridminor)','stroke-width':1},g);}
+    const fromY=Math.floor(r.y0/s)*s;
+    for(let v=fromY;v<=r.y1;v+=s){const p1=toPx({x:r.x0,y:v}),p2=toPx({x:r.x1,y:v});el('line',{x1:p1.x,y1:p1.y,x2:p2.x,y2:p2.y,stroke:'var(--gridminor)','stroke-width':1},g);}
+  }
+  drawSet(stepX,true);drawSet(stepY,false);
+  if(state.axes){
+    const o=toPx({x:0,y:0});
+    const t=el('text',{x:o.x+5,y:o.y+13,'font-size':10,fill:'#888'},g);t.textContent='O';
+    const tx=el('text',{x:W()-14,y:o.y-5,'font-size':10,fill:'#888'},g);tx.textContent='x';
+    const ty=el('text',{x:o.x+5,y:12,'font-size':10,fill:'#888'},g);ty.textContent='y';
+  }
+}
+function strokeAttrs(o,extra){
+  const a=Object.assign({'stroke':o.color,'stroke-width':o.width,'fill':'none','stroke-linecap':'round'},extra||{});
+  if(o.dash==='dot')a['stroke-dasharray']='1.5 4';
+  if(o.dash==='dash')a['stroke-dasharray']='7 4';
+  return a;
+}
+function labelFor(o,anchor,text,size){
+  if(!state.labels||o.label===false)return null;
+  const g=el('text',{x:anchor.x,y:anchor.y,'font-size':size||12.5,fill:o.type==='measure'?'#333':o.color,
+    'font-weight':o.bold?'700':'400','font-style':o.italic?'italic':'normal',
+    'text-decoration':o.underline?'underline':'none','paint-order':'stroke',stroke:'#fff','stroke-width':3,'stroke-linejoin':'round'},renderRoot);
+  g.textContent=text;
+  g.setAttribute('data-oid',o.id);g.style.cursor='pointer';
+  return g;
+}
+let renderRoot=null;
+function drawObject(o,g){
+  const grp=el('g',{},renderRoot);
+  grp.setAttribute('data-oid',o.id);
+  const sel=state.sel.includes(o.id);
+  if(sel&&o.type!=='point')grp.setAttribute('filter','');
+  const P=p=>toPx(p);
+  switch(o.type){
+    case 'point':{
+      const p=P(g);const r=state.pointR+(o.kind==='intersect'?0.5:0);
+      el('circle',{cx:p.x,cy:p.y,r:r+7,fill:'transparent','data-hit':'1'},grp);
+      el('circle',{cx:p.x,cy:p.y,r:r,fill:sel?'#fff':o.color,stroke:o.color,'stroke-width':sel?2.4:1.4},grp);
+      if(o.trace){}
+      labelFor(o,{x:p.x+r+4,y:p.y-r-2},o.name);
+      break;
+    }
+    case 'segment':case 'ray':case 'line':{
+      const seg=clipLine(g);if(!seg)break;
+      const a=P(seg[0]),b=P(seg[1]);
+      el('line',Object.assign(strokeAttrs(o),{x1:a.x,y1:a.y,x2:b.x,y2:b.y,'stroke-width':o.width+ (sel?1.2:0)}),grp);
+      el('line',{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:'transparent','stroke-width':11,'data-hit':'1'},grp);
+      if(o.type==='segment'){
+        const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
+        const dx=b.x-a.x,dy=b.y-a.y,L=Math.hypot(dx,dy)||1;
+        labelFor(o,{x:mx-dy/L*11+3,y:my+dx/L*11-3},displayName(o),11.5);
+      }
+      break;
+    }
+    case 'circle':{
+      const c=P(g.c);
+      el('circle',Object.assign(strokeAttrs(o),{cx:c.x,cy:c.y,r:g.r*state.view.scale,'stroke-width':o.width+(sel?1.2:0)}),grp);
+      el('circle',{cx:c.x,cy:c.y,r:g.r*state.view.scale,fill:'none',stroke:'transparent','stroke-width':11,'data-hit':'1'},grp);
+      labelFor(o,{x:c.x+g.r*state.view.scale*0.72,y:c.y-g.r*state.view.scale*0.72},o.name,11.5);
+      break;
+    }
+    case 'polygon':{
+      const pts=g.pts.map(P);const str=pts.map(p=>p.x+','+p.y).join(' ');
+      const fillMode=o.fillMode||'fillstroke';
+      const attrs=strokeAttrs(o);
+      if(fillMode==='none'){attrs.fill=o.color;attrs['fill-opacity']=0.16;attrs.stroke='none';}
+      else if(fillMode==='fillstroke'){attrs.fill=o.color;attrs['fill-opacity']=0.13;}
+      else{attrs.fill='none';}
+      el('polygon',Object.assign(attrs,{points:str}),grp);
+      if(fillMode!=='none'&&o.interiorLabel!==false){
+        const cen=pts.reduce((s,p)=>({x:s.x+p.x/pts.length,y:s.y+p.y/pts.length}),{x:0,y:0});
+        labelFor(o,{x:cen.x-14,y:cen.y+4},displayName(o),11.5);
+      }
+      break;
+    }
+    case 'arc':case 'sector':{
+      let sw=g.a2-g.a1;while(sw<0)sw+=2*Math.PI;while(sw>=2*Math.PI)sw-=2*Math.PI;
+      const p1=P({x:g.c.x+g.r*Math.cos(g.a1),y:g.c.y+g.r*Math.sin(g.a1)});
+      const p2=P({x:g.c.x+g.r*Math.cos(g.a2),y:g.c.y+g.r*Math.sin(g.a2)});
+      const c=P(g.c);const large=sw>Math.PI?1:0;
+      const d='M '+p1.x+' '+p1.y+' A '+(g.r*state.view.scale)+' '+(g.r*state.view.scale)+' 0 '+large+' 0 '+p2.x+' '+p2.y+(o.type==='sector'?' L '+c.x+' '+c.y+' Z':'');
+      const attrs=strokeAttrs(o);
+      if(o.type==='sector'){attrs.fill=o.color;attrs['fill-opacity']=0.16;}
+      el('path',Object.assign(attrs,{d:d}),grp);
+      break;
+    }
+    case 'text':{
+      const p=P(g);
+      const t=el('text',{x:p.x,y:p.y,'font-size':o.fontSize||14,fill:o.color,
+        'font-weight':o.bold?'700':'400','font-style':o.italic?'italic':'normal','text-decoration':o.underline?'underline':'none','data-hit':'1'},grp);
+      t.textContent=o.text; t.style.cursor='move';
+      break;
+    }
+    case 'measure':{
+      const p=P(g);
+      el('rect',{x:p.x-3,y:p.y-13,width:Math.max(30,g.text.length*7.4+8),height:18,fill:'transparent','data-hit':'1'},grp);
+      const t=el('text',{x:p.x,y:p.y+1,'font-size':12.5,fill:'#333','paint-order':'stroke',stroke:'#fff','stroke-width':3},grp);
+      t.textContent=o.prefix?o.prefix+' = '+g.text:g.text;
+      break;
+    }
+    case 'function':{
+      const r=visibleRange();const N=280;let dAttr='';let pen=false;
+      const scope0=paramScope();
+      const fY=x=>{
+        if(g.derivAst){const h=1e-4;const f=xx=>evalAst(g.derivAst,Object.assign({},scope0,{x:xx}));const v=(f(x+h)-f(x-h))/(2*h);return isFinite(v)?v:NaN;}
+        const v=evalAst(g.ast,Object.assign({},scope0,{x:x}));return isFinite(v)?v:NaN;
+      };
+      let prevY=null;
+      for(let i=0;i<=N;i++){
+        const x=r.x0+(r.x1-r.x0)*i/N;const y=fY(x);
+        if(y==null||!isFinite(y)||y<r.y0-8||y>r.y1+8){pen=false;prevY=null;continue;}
+        if(prevY!=null&&Math.abs(y-prevY)>(r.y1-r.y0)*0.9){pen=false;}
+        const p=toPx({x:x,y:y});
+        dAttr+=(pen?'L':'M')+p.x.toFixed(1)+' '+p.y.toFixed(1)+' ';
+        pen=true;prevY=y;
+      }
+      if(dAttr)el('path',Object.assign(strokeAttrs(o),{d:dAttr}),grp);
+      const lp=toPx({x:r.x1-1.2,y:clamp(fY(r.x1-1.2)||0,r.y0+0.4,r.y1-0.4)});
+      labelFor(o,{x:lp.x-24,y:lp.y-6},o.name+'(x)',12);
+      break;
+    }
+    case 'locus':{
+      if(g.pts&&g.pts.length>1){
+        const dAttr=g.pts.map((p,i)=>{const q=toPx(p);return(i?'L':'M')+q.x.toFixed(1)+' '+q.y.toFixed(1);}).join(' ');
+        el('path',Object.assign(strokeAttrs(o),{d:dAttr,'stroke-dasharray':o.dash==='solid'?'3 3':undefined}),grp);
+      }
+      break;
+    }
+  }
+}
+function render(){
+  recompute();
+  computeInterest();
+  while(svg.firstChild)svg.removeChild(svg.firstChild);
+  renderRoot=svg;
+  const bg=el('rect',{x:0,y:0,width:W(),height:H(),fill:'#fff'},svg);
+  bg.setAttribute('data-bg','1');
+  if(state.grid.show)drawGrid(svg);
+  // 흔적
+  const tg=el('g',{},svg);
+  for(const tr of state.traces){
+    tr.pts.forEach((p,i)=>{
+      const q=toPx(p);
+      el('circle',{cx:q.x,cy:q.y,r:2.1,fill:tr.color,opacity:0.16+0.5*(i+1)/tr.pts.length},tg);
+    });
+  }
+  const upto=state.proto==null?state.objects.length:state.proto+1;
+  for(let i=0;i<upto;i++){
+    const o=state.objects[i];
+    if(o.hidden||o.type==='param')continue;
+    const g=GEOM[o.id];
+    if(g)drawObject(o,g);
+  }
+  // 관심 지점 마커
+  if(state.proto==null){
+    const ig=el('g',{},svg);
+    interestPts.forEach((ip,i)=>{
+      const p=toPx(ip);
+      const c=el('circle',{cx:p.x,cy:p.y,r:6.5,fill:'rgba(47,111,178,0.13)',stroke:'#2f6fb2','stroke-width':1.4,'stroke-dasharray':'2.5 2.5',style:'cursor:pointer'},ig);
+      c.setAttribute('data-interest',i);
+    });
+  }
+  // 오디오 트레이스 커서
+  if(audioTrace.fnId&&audioTrace.x!=null){
+    const fo=byId(audioTrace.fnId);
+    if(fo){
+      const y=fnValueAt(fo,audioTrace.x);const rr=visibleRange();
+      const p1=toPx({x:audioTrace.x,y:rr.y0}),p2=toPx({x:audioTrace.x,y:rr.y1});
+      el('line',{x1:p1.x,y1:p1.y,x2:p2.x,y2:p2.y,stroke:'#e07b00','stroke-width':1,'stroke-dasharray':'4 3'},svg);
+      if(isFinite(y)){const pp=toPx({x:audioTrace.x,y:y});
+        el('circle',{cx:pp.x,cy:pp.y,r:6.5,fill:'none',stroke:'#e07b00','stroke-width':2},svg);
+        el('circle',{cx:pp.x,cy:pp.y,r:2.4,fill:'#e07b00'},svg);}
+    }
+  }
+  // 선택 표시 (점 제외 개체 윤곽 강조)
+  updateStatus();
+  refreshAlgValues();
+}
+/* ═══════════════ 정의 · 값 (대수창) ═══════════════ */
+function nm(id){const o=byId(id);return o?displayName(o):'?';}
+function defOf(o){
+  if(o.xform){
+    const s=nm(o.xform.source);
+    return {'translate':'벡터만큼 평행이동한 상','rotate':'회전이동한 상','dilate':'닮음변환한 상','reflect':'선대칭이동한 상'}[o.xform.kind]+' · '+s;
+  }
+  switch(o.type){
+    case 'point':
+      if(o.kind==='free')return '자유점';
+      if(o.kind==='coord')return '좌표로 찍은 점';
+      if(o.kind==='on')return nm(o.parents[0])+' 위의 점';
+      if(o.kind==='midpoint')return o.parents.length===1?nm(o.parents[0])+'의 중점':nm(o.parents[0])+nm(o.parents[1])+'의 중점';
+      if(o.kind==='intersect')return nm(o.parents[0])+'와(과) '+nm(o.parents[1])+'의 교점';
+      return '점';
+    case 'segment':case 'ray':case 'line':{
+      const t=o.type==='segment'?'선분':o.type==='ray'?'반직선':'직선';
+      if(o.mode==='pts')return nm(o.parents[0])+'와(과) '+nm(o.parents[1])+'를 잇는 '+t;
+      if(o.mode==='parallel')return nm(o.parents[0])+'를 지나고 '+nm(o.parents[1])+'에 평행한 직선';
+      if(o.mode==='perp')return nm(o.parents[0])+'를 지나고 '+nm(o.parents[1])+'에 수직인 직선';
+      if(o.mode==='bisector')return '∠'+nm(o.parents[0])+nm(o.parents[1])+nm(o.parents[2])+'의 이등분선';
+      return t;
+    }
+    case 'circle':
+      if(o.mode==='pts')return '중심 '+nm(o.parents[0])+', '+nm(o.parents[1])+'를 지나는 원';
+      if(o.mode==='radiusSeg')return '중심 '+nm(o.parents[0])+', 반지름 '+nm(o.parents[1])+'인 원';
+      if(o.mode==='radiusVal')return '중심 '+nm(o.parents[0])+', 반지름 '+(o.rParam?nm(o.rParam):fmt(o.r))+'인 원';
+      return '원';
+    case 'polygon':return '다각형 '+o.parents.map(nm).join(', ');
+    case 'arc':return nm(o.parents[0])+'를 중심으로 하는 호';
+    case 'sector':return nm(o.parents[0])+'를 중심으로 하는 부채꼴';
+    case 'text':return '글 상자';
+    case 'measure':return {length:'길이 측정',angle:'각의 크기 측정',area:'넓이 측정',coord:'좌표 측정',slope:'기울기 측정',radius:'반지름의 길이',ratio:'비율',equation:'방정식',calc:'계산: '+(o.expr||'')}[o.mtype]||'측정';
+    case 'function':return o.derivOf?nm(o.derivOf)+'(x)의 도함수 그래프':'함수 그래프';
+    case 'param':return '매개변수 ('+fmt(o.min)+' ~ '+fmt(o.max)+')';
+    case 'locus':return nm(o.parents[1])+'의 자취 ('+nm(o.parents[0])+' 이동)';
+  }
+  return o.type;
+}
+function valueOf(o){
+  const g=GEOM[o.id];
+  if(!g)return '—';
+  switch(o.type){
+    case 'point':return fmtPt(g);
+    case 'segment':return '길이 '+fmt(g.len);
+    case 'ray':case 'line':return Math.abs(g.d.x)<1e-12?'수직선':'기울기 '+fmt(g.d.y/g.d.x);
+    case 'circle':return '반지름 '+fmt(g.r)+' · 넓이 '+fmt(Math.PI*g.r*g.r);
+    case 'polygon':return '넓이 '+fmt(polyArea(g.pts))+' · 둘레 '+fmt(polyPerim(g.pts));
+    case 'arc':{let sw=g.a2-g.a1;while(sw<0)sw+=2*Math.PI;return '호의 길이 '+fmt(g.r*sw);}
+    case 'sector':{let sw=g.a2-g.a1;while(sw<0)sw+=2*Math.PI;return '넓이 '+fmt(0.5*g.r*g.r*sw);}
+    case 'measure':return g.text;
+    case 'function':return o.name+'(x) = '+(o.expr||'');
+    case 'param':return fmt(o.value);
+    case 'text':return o.text;
+    case 'locus':return '자취';
+  }
+  return '';
+}
+
+/* ═══════════════ 대수창 · 작도 단계 ═══════════════ */
+function refreshAlgValues(){
+  document.querySelectorAll('.alg-val').forEach(elm=>{
+    const o=byId(elm.getAttribute('data-id'));if(o)elm.textContent=valueOf(o);
+  });
+  document.querySelectorAll('.param-val').forEach(elm=>{
+    const o=byId(elm.getAttribute('data-id'));if(o)elm.textContent=fmt(o.value);
+  });
+}
+function renderAlgebra(){
+  const list=$('#algList');list.innerHTML='';
+  if(!state.objects.length){list.innerHTML='<div class="empty-note">아직 만든 개체가 없습니다.<br>왼쪽 도구로 점을 찍어 보세요.</div>';}
+  state.objects.forEach((o,i)=>{
+    const row=document.createElement('div');row.className='alg-row'+(state.sel.includes(o.id)?' sel':'')+((state.proto!=null&&i>state.proto)?' beyond':'');
+    row.setAttribute('data-row',o.id);
+    const dot=document.createElement('span');dot.className='alg-dot';dot.style.background=o.color;
+    const eye=document.createElement('button');eye.className='alg-eye'+(o.hidden?' off':'');eye.textContent=o.hidden?'○':'●';eye.title=o.hidden?'보이기':'숨기기';
+    eye.addEventListener('click',ev=>{ev.stopPropagation();beginAction();o.hidden=!o.hidden;render();});
+    const main=document.createElement('div');main.className='alg-main';
+    main.innerHTML='<span class="alg-name"></span> <span class="alg-val" data-id="'+o.id+'"></span><div class="alg-def"></div>';
+    main.querySelector('.alg-name').textContent=displayName(o);
+    main.querySelector('.alg-def').textContent=defOf(o);
+    main.querySelector('.alg-val').textContent=valueOf(o);
+    const valEl=main.querySelector('.alg-val');
+    if(o.type==='param'){valEl.title='클릭하면 매개변수 값을 편집합니다';valEl.style.cursor='pointer';valEl.addEventListener('click',ev=>{ev.stopPropagation();paramDlg(o);});}
+    else if(o.type==='measure'&&o.mtype==='calc'){valEl.title='클릭하면 계산식을 편집합니다';valEl.style.cursor='pointer';valEl.addEventListener('click',ev=>{ev.stopPropagation();calcDlg(o);});}
+    else if(o.type==='point'&&(o.kind==='free'||o.kind==='coord')){valEl.title='클릭하면 좌표를 편집합니다';valEl.style.cursor='pointer';valEl.addEventListener('click',ev=>{ev.stopPropagation();pointCoordEditDlg(o);});}
+    row.appendChild(dot);row.appendChild(eye);row.appendChild(main);
+    if(o.type==='param'){
+      const box=document.createElement('div');box.className='param-box';
+      const ctl=document.createElement('div');ctl.className='param-ctl';
+      ctl.innerHTML='<button type="button" title="애니메이션">▶</button><span class="pv param-val" data-id="'+o.id+'">'+fmt(o.value)+'</span>';
+      const slider=document.createElement('input');slider.type='range';slider.min=o.min;slider.max=o.max;slider.step=o.step;slider.value=o.value;
+      slider.addEventListener('pointerdown',()=>beginAction());
+      slider.addEventListener('input',()=>{o.value=parseFloat(slider.value);render();});
+      ctl.querySelector('button').addEventListener('click',ev=>{ev.stopPropagation();startAnim({kind:'param',id:o.id});});
+      const pvEl=ctl.querySelector('.pv');pvEl.style.cursor='pointer';pvEl.title='클릭하면 값을 편집합니다';
+      pvEl.addEventListener('click',ev=>{ev.stopPropagation();paramDlg(o);});
+      box.appendChild(slider);box.appendChild(ctl);
+      row.appendChild(box);
+    }
+    row.addEventListener('click',()=>{selectOnly(o.id);render();renderAlgebra();renderProto();});
+    row.addEventListener('dblclick',()=>openProps(o.id));
+    list.appendChild(row);
+  });
+  renderProto();
+}
+function renderProto(){
+  const list=$('#protoList');if(!list)return;list.innerHTML='';
+  if(!state.objects.length){list.innerHTML='<div class="empty-note">작도 단계가 여기에 순서대로 쌓입니다.</div>';return;}
+  state.objects.forEach((o,i)=>{
+    const row=document.createElement('div');row.className='proto-row'+(state.proto===i?' cur':'');
+    row.innerHTML='<span class="no">'+(i+1)+'</span><span></span>';
+    row.querySelector('span:last-child').textContent=displayName(o)+' — '+defOf(o);
+    row.addEventListener('click',()=>{state.proto=(state.proto===i?null:i);render();renderAlgebra();});
+    list.appendChild(row);
+  });
+}
+function updateStatus(){
+  const hints={
+    move:state.toolVariant.arrow==='rotate'
+      ?'회전 화살표: 개체를 끌면 중심(변환 메뉴에서 지정, 없으면 원점) 둘레로 회전합니다. 먼저 개체들을 선택해 두면 함께 회전합니다.'
+      :state.toolVariant.arrow==='scale'
+      ?'확대·축소 화살표: 개체를 끌면 중심(변환 메뉴에서 지정, 없으면 원점)에서 멀어질수록 커지고 가까워질수록 작아집니다.'
+      :'개체를 선택하거나 끌어 옮깁니다. 빈 곳을 끌면 범위를 선택하고, 휠로 확대·축소합니다.',
+    point:'점을 만듭니다. 도형 위를 클릭하면 그 위의 점, 교차 지점을 클릭하면 교점이 됩니다.',
+    circle:state.toolVariant.circle==='pts'?'원의 중심을 클릭한 뒤, 원이 지날 점을 클릭하세요.':'원의 중심을 클릭한 뒤, 반지름이 될 선분이나 점을 클릭하세요.',
+    segment:'두 점을 클릭하면 '+(state.toolVariant.line==='segment'?'선분':state.toolVariant.line==='ray'?'반직선':'직선')+'을 만듭니다.',
+    line:'두 점을 클릭하면 '+(state.toolVariant.line==='segment'?'선분':state.toolVariant.line==='ray'?'반직선':'직선')+'을 만듭니다.',
+    polygon:'꼭짓점을 차례로 클릭하고, 처음 점을 다시 클릭하거나 Enter를 누르면 다각형이 완성됩니다.',
+    text:'글을 넣을 위치를 클릭하세요.',
+    info:'개체를 클릭하면 그 개체의 정보를 보여줍니다.',
+    custom:'사용자 도구를 선택하세요. (버튼을 길게 누르면 새 도구를 만들 수 있습니다)',
+  };
+  $('#statusHint').textContent=hints[state.tool]||'';
+  const selObjs=state.sel.map(byId).filter(Boolean);
+  if(!selObjs.length)$('#statusSel').textContent='';
+  else{
+    const cnt={};
+    selObjs.forEach(o=>{const k={point:'점',segment:'선분',ray:'반직선',line:'직선',circle:'원',polygon:'다각형',arc:'호',sector:'부채꼴',text:'글',measure:'측정',function:'함수',param:'매개변수',locus:'자취'}[o.type]||o.type;cnt[k]=(cnt[k]||0)+1;});
+    $('#statusSel').textContent='선택된 개체: '+Object.keys(cnt).map(k=>cnt[k]+'개의 '+k).join(', ');
+  }
+}
+/* ═══════════════ 선택 · 기록(실행 취소) ═══════════════ */
+function selectOnly(id,additive){
+  if(additive){
+    const i=state.sel.indexOf(id);
+    if(i>=0)state.sel.splice(i,1);else state.sel.push(id);
+  }else state.sel=[id];
+}
+function clearSel(){state.sel=[];}
+let past=[],future=[];
+function snapshot(){return JSON.stringify({objects:state.objects,uid:state.uid,counters:state.counters,view:state.view,grid:state.grid,docName:state.docName,marked:state.marked});}
+function beginAction(){past.push(snapshot());if(past.length>120)past.shift();future=[];scheduleVersionSave();}
+function restore(json){
+  const s=JSON.parse(json);
+  state.objects=s.objects;state.uid=s.uid;state.counters=s.counters;state.view=s.view;state.grid=s.grid;state.docName=s.docName;state.marked=s.marked;
+  state.sel=[];state.proto=null;
+  state.objects.forEach(o=>{if(o.type==='locus')o._geomCache=null;});
+  document.title=state.docName+' - 동적 기하 스케치';
+  $('#docTitle').textContent=state.docName+' - 동적 기하 스케치';
+  render();renderAlgebra();
+}
+function undo(){if(!past.length){toast('실행 취소할 내용이 없습니다.');return;}future.push(snapshot());restore(past.pop());}
+function redo(){if(!future.length){toast('다시 실행할 내용이 없습니다.');return;}past.push(snapshot());restore(future.pop());}
+/* ═══════════════ 버전 기록 (localStorage, 최근 20개 자동 저장) ═══════════════ */
+let verTimer=null;
+function scheduleVersionSave(){clearTimeout(verTimer);verTimer=setTimeout(saveVersionNow,1200);}
+function loadVersions(){try{return JSON.parse(localStorage.getItem('dgs-version-history')||'[]');}catch(e){return[];}}
+function saveVersionNow(){
+  try{
+    const arr=loadVersions();
+    const data=snapshot();
+    if(arr.length&&arr[arr.length-1].data===data)return;
+    arr.push({ts:Date.now(),name:state.docName,data:data});
+    while(arr.length>20)arr.shift();
+    localStorage.setItem('dgs-version-history',JSON.stringify(arr));
+  }catch(e){}
+}
+function descendantsOf(id){
+  const out=new Set([id]);let grew=true;
+  while(grew){grew=false;for(const o of state.objects){
+    if(out.has(o.id))continue;
+    const deps=o.parents.concat(o.xform?[o.xform.source,o.xform.vector,o.xform.center,o.xform.axis].filter(Boolean):[]);
+    if(deps.some(d=>out.has(d))){out.add(o.id);grew=true;}
+  }}
+  return out;
+}
+function deleteObjects(ids){
+  const kill=new Set();
+  ids.forEach(id=>descendantsOf(id).forEach(d=>kill.add(d)));
+  state.objects=state.objects.filter(o=>!kill.has(o.id));
+  state.sel=state.sel.filter(id=>!kill.has(id));
+  for(const k of['vector','center','axis'])if(state.marked[k]&&kill.has(state.marked[k]))state.marked[k]=null;
+}
+/* ═══════════════ 미지수 감지 → 슬라이더 자동 제안 (데스모스식) ═══════════════ */
+function collectVars(n,out){
+  if(!n)return;
+  if(n.k==='var')out.add(n.v);
+  else if(n.k==='neg')collectVars(n.a,out);
+  else if(n.k==='bin'){collectVars(n.l,out);collectVars(n.r,out);}
+  else if(n.k==='call')collectVars(n.a,out);
+}
+function undefinedIdentifiers(ast){
+  const vars=new Set();collectVars(ast,vars);
+  const known=new Set(['x','pi','π','e']);
+  state.objects.forEach(o=>{
+    if(o.type==='param'||o.type==='measure'||o.type==='function')known.add(o.name);
+    if(o.type==='segment')known.add(displayName(o));
+  });
+  return[...vars].filter(v=>!known.has(v));
+}
+function maybeSuggestSliders(ast,doSave){
+  const vars=undefinedIdentifiers(ast);
+  if(!vars.length)return false;
+  showSliderSuggest(vars,doSave);
+  return true;
+}
+function showSliderSuggest(vars,doSave){
+  toast('정의되지 않은 문자 '+vars.join(', ')+' — 슬라이더를 만들어 탐구할까요?');
+  const body=$('#modalBody');if(!body)return;
+  const old=body.querySelector('.slider-suggest');if(old)old.remove();
+  const div=document.createElement('div');div.className='slider-suggest';
+  div.innerHTML='<b>슬라이더 자동 제안</b><br>아직 없는 문자 <span class="ss-vars"></span> 를 매개변수 슬라이더로 만들면, 값을 바꿔가며 식이 어떻게 변하는지 탐구할 수 있습니다.'+
+    '<div style="margin-top:9px; display:flex; gap:8px; flex-wrap:wrap;"><button type="button" class="ss-yes">슬라이더 만들기</button><button type="button" class="ss-no">슬라이더 없이 계속</button></div>';
+  div.querySelector('.ss-vars').textContent=vars.join(', ');
+  div.querySelector('.ss-yes').addEventListener('click',()=>{
+    beginAction();
+    vars.forEach(v=>{addObj('param',{name:v,value:1,min:-5,max:5,step:0.1,color:PALETTE[6]});});
+    doSave();closeDialog();
+    toast('슬라이더 '+vars.join(', ')+'를 만들었습니다. 대수창에서 ▶ 버튼으로 애니메이션할 수 있어요.');
+  });
+  div.querySelector('.ss-no').addEventListener('click',()=>{beginAction();doSave();closeDialog();});
+  body.appendChild(div);
+  if(div.scrollIntoView)div.scrollIntoView({block:'nearest'});
+}
+
+/* ═══════════════ 다이얼로그 ═══════════════ */
+let modalCleanup=null;
+function openDialog(title,bodyHTML,buttons,onOpen){
+  closeDialog();
+  $('#modalTitle').textContent=title;
+  const body=$('#modalBody');body.innerHTML=bodyHTML;
+  const foot=$('#modalFoot');foot.innerHTML='';
+  (buttons||[{label:'확인',primary:true}]).forEach(b=>{
+    const btn=document.createElement('button');btn.textContent=b.label;if(b.primary)btn.className='primary';
+    btn.addEventListener('click',()=>{if(!b.onClick||b.onClick()!==false)closeDialog();});
+    foot.appendChild(btn);
+  });
+  $('#modalWrap').style.display='flex';
+  if(onOpen)onOpen(body);
+  const first=body.querySelector('input,select,textarea');if(first){first.focus();if(first.select)first.select();}
+  modalCleanup=()=>{};
+}
+function closeDialog(){$('#modalWrap').style.display='none';if(modalCleanup)modalCleanup();modalCleanup=null;}
+$('#modalX').addEventListener('click',closeDialog);
+$('#modalWrap').addEventListener('pointerdown',e=>{if(e.target.id==='modalWrap')closeDialog();});
+function dlgInfo(){
+  openDialog('동적 기하 스케치 정보',
+    '<p style="margin-top:0;"><b>동적 기하 스케치</b> — 웹에서 동작하는 동적 기하 작도 프로그램입니다.</p>'+
+    '<p>점·선·원을 작도하고 자유점을 끌어 움직이면, 교점·중점·수선·측정값이 의존 관계를 따라 실시간으로 함께 움직입니다. 매개변수 슬라이더, 함수 그래프, 변환, 자취, 애니메이션을 지원합니다.</p>'+
+    '<p>데스모스·알지오매스·지오지브라의 장점을 더했습니다: 미지수→슬라이더 자동 제안, 스냅샷 공유 링크와 버전 기록, 함수 오디오 트레이스, 블록코딩 작도, 문서(활동지) 모드, 작도 단계 재생과 대수창 양방향 편집.</p>'+
+    '<p style="color:var(--ink2);">Geometer\'s Sketchpad 5.03의 화면 구성에서 영감을 받은 웹 재현입니다.</p>'+
+    '<p style="color:var(--ink2);">빌드 2026-10-20 13:07 · 회전·확대 변형 드래그 동작 수정</p>');
+}
+function dlgShortcuts(){
+  const rows=[['Ctrl+1 ~ 8','도구 선택 (이동·점·원·선분·다각형·글·정보·사용자 도구)'],
+    ['Ctrl+Z / Ctrl+Y','실행 취소 / 다시 실행'],['Ctrl+X / C / V','잘라내기 / 복사 / 붙여넣기'],
+    ['Ctrl+N / O / S / P','새 문서 / 열기 / 저장 / 인쇄'],['Ctrl+B / I / U','굵게 / 기울임 / 밑줄 (글 개체)'],
+    ['Delete','선택한 개체 지우기 (종속 개체도 함께)'],['Esc','작업 취소 · 선택 해제'],['Enter','다각형 완성'],
+    ['휠 / 두 손가락','확대·축소'],['빈 곳 끌기','범위 선택 (이동 도구)'],['F1','단축키 안내']];
+  openDialog('단축키 안내','<table>'+rows.map(r=>'<tr><td style="text-align:left;white-space:nowrap;"><kbd>'+r[0]+'</kbd></td><td style="text-align:left;">'+r[1]+'</td></tr>').join('')+'</table>');
+}
+
+/* ═══════════════ 도구 · 포인터 상호작용 ═══════════════ */
+let pending=[]; // 현재 도구에서 클릭한 점 id들
+let drag=null;    // {mode:'point'|'text'|'marquee'|'pan'|'rotate'|'scale', ...}
+let mouseMath={x:0,y:0}, mousePx={x:0,y:0};
+const pendingHint=$('#pendingHint');
+function setPendingHint(txt){
+  if(txt){pendingHint.textContent=txt;pendingHint.style.display='block';}
+  else pendingHint.style.display='none';
+}
+function hitTest(m){
+  // 점 우선, 그다음 다른 개체 (역순)
+  const tolPx=11;
+  const objs=state.objects.filter(o=>visibleObj(o)&&!o.hidden&&o.type!=='param');
+  for(let i=objs.length-1;i>=0;i--){
+    const o=objs[i];if(o.type!=='point')continue;
+    const g=GEOM[o.id];if(!g)continue;
+    const p=toPx(g);
+    if(Math.hypot(p.x-mousePx.x,p.y-mousePx.y)<=tolPx)return o;
+  }
+  for(let i=objs.length-1;i>=0;i--){
+    const o=objs[i];if(o.type==='point')continue;
+    const g=GEOM[o.id];if(!g)continue;
+    const tol=7/state.view.scale;
+    if(o.type==='segment'||o.type==='ray'||o.type==='line'){
+      const u=V.unit(g.d);const t=clamp(V.dot(V.sub(m,g.a),u),o.type==='segment'?0:-1e9,o.type==='segment'?g.len:1e9);
+      const q=V.add(g.a,V.mul(u,Math.max(0,t)));const tt=V.dot(V.sub(m,g.a),u);
+      const qq=o.type==='line'?V.add(g.a,V.mul(u,tt)):q;
+      if(V.len(V.sub(m,qq))<tol)return o;
+    }
+    else if(o.type==='circle'){if(Math.abs(V.len(V.sub(m,g.c))-g.r)<tol)return o;}
+    else if(o.type==='arc'||o.type==='sector'){
+      if(Math.abs(V.len(V.sub(m,g.c))-g.r)<tol){
+        let ang=Math.atan2(m.y-g.c.y,m.x-g.c.x);let a1=g.a1;let sw=g.a2-g.a1;while(sw<0)sw+=2*Math.PI;
+        let rel=ang-a1;while(rel<0)rel+=2*Math.PI;
+        if(rel<=sw+0.05)return o;
+      }
+    }
+    else if(o.type==='polygon'){
+      // 내부 판정
+      let inside=false;const pts=g.pts;
+      for(let a=0,b=pts.length-1;a<pts.length;b=a++){
+        if(((pts[a].y>m.y)!==(pts[b].y>m.y))&&(m.x<(pts[b].x-pts[a].x)*(m.y-pts[a].y)/(pts[b].y-pts[a].y)+pts[a].x))inside=!inside;
+      }
+      if(inside)return o;
+      for(let a=0;a<pts.length;a++){
+        const A=pts[a],B=pts[(a+1)%pts.length];const d=V.sub(B,A);const L=V.len(d);
+        const s=clamp(V.dot(V.sub(m,A),d)/(L*L||1),0,1);const q=V.add(A,V.mul(d,s));
+        if(V.len(V.sub(m,q))<tol)return o;
+      }
+    }
+    else if(o.type==='function'){
+      const y=(()=>{const sc=paramScope();if(g.derivAst){const h=1e-4;const f=xx=>evalAst(g.derivAst,Object.assign({},sc,{x:xx}));return (f(m.x+h)-f(m.x-h))/(2*h);}return evalAst(g.ast,Object.assign({},sc,{x:m.x}));})();
+      if(isFinite(y)&&Math.abs(y-m.y)<tol*1.6)return o;
+    }
+    else if(o.type==='text'||o.type==='measure'){
+      const p=toPx(g);
+      if(Math.abs(p.x-mousePx.x)<70&&Math.abs(p.y-mousePx.y)<14)return o;
+    }
+    else if(o.type==='locus'){
+      if(g.pts&&g.pts.some(p=>V.len(V.sub(m,p))<tol))return o;
+    }
+  }
+  return null;
+}
+function snapCoord(v){
+  if(state.grid.snap)return Math.round(v*2)/2;
+  return v;
+}
+function obtainPoint(m,ev){
+  // 클릭 위치에서 점을 얻는다: 기존 점 > 관심 지점 > 개체 위 > 새 자유점 (beginAction은 호출측에서)
+  const hit=hitTest(m);
+  if(hit&&hit.type==='point')return hit;
+  if(hit){
+    const g=GEOM[hit.id];
+    const t=projectT(g,m);
+    const p=addPoint('on',{parents:[hit.id],t:t});
+    p.color=PALETTE[2];
+    return p;
+  }
+  const p=addPoint('free',{x:snapCoord(m.x),y:snapCoord(m.y)});
+  return p;
+}
+function finishTwoPoint(makeFn){
+  if(pending.length<2)return;
+  beginAction();
+  const a=pending[0],b=pending[1];
+  const o=makeFn(a,b);
+  pending=[];
+  setPendingHint('');
+  if(o){state.sel=[o.id];}
+  render();renderAlgebra();
+}
+/* ═══ 회전·확대 화살표: 대상 개체들의 위치를 결정하는 자유점(앵커) 수집 ═══ */
+function collectAnchorPoints(objs,excludeId){
+  const found=new Map();const seen=new Set();
+  const visit=id=>{
+    if(!id||seen.has(id))return;seen.add(id);
+    const o=byId(id);if(!o)return;
+    if(o.type==='point'&&(o.kind==='free'||o.kind==='coord')){
+      if(o.id!==excludeId)found.set(o.id,{id:o.id,x:o.x,y:o.y});
+      return;
+    }
+    if(o.xform&&o.xform.source)visit(o.xform.source);
+    (o.parents||[]).forEach(visit);
+  };
+  objs.forEach(o=>visit(o.id));
+  return [...found.values()];
+}
+function xformCenter(){
+  // 변환 메뉴에서 '중심 지정'한 점이 있으면 그 점, 없으면 원점
+  if(state.marked.center){
+    const g=geom(state.marked.center);
+    if(g)return{x:g.x,y:g.y,id:state.marked.center};
+  }
+  return{x:0,y:0,id:null};
+}
+svg.addEventListener('contextmenu',e=>e.preventDefault());
+svg.addEventListener('pointerdown',e=>{
+  svg.setPointerCapture(e.pointerId);
+  const rect=svg.getBoundingClientRect();
+  mousePx={x:e.clientX-rect.left,y:e.clientY-rect.top};
+  mouseMath=toMath(mousePx);
+  closeMenus();
+  const interestEl=e.target.closest?e.target.closest('[data-interest]'):null;
+  if(interestEl){
+    const ip=interestPts[parseInt(interestEl.getAttribute('data-interest'),10)];
+    if(ip){beginAction();const p=addPoint('intersect',{parents:[ip.a,ip.b],idx:ip.idx});p.color=PALETTE[1];state.sel=[p.id];render();renderAlgebra();toast('교점 '+p.name+'을 만들었습니다.');}
+    return;
+  }
+  const tool=state.tool;
+  if(e.button===2){drag={mode:'pan',sx:mousePx.x,sy:mousePx.y,cx:state.view.cx,cy:state.view.cy};return;}
+  if(tool==='move'){
+    const variant=state.toolVariant.arrow;
+    const hit=hitTest(mouseMath);
+    if(hit&&variant!=='move'&&!(hit.type==='point'&&hit.id===state.marked.center)){
+      // 회전 / 확대·축소 화살표: 잡은 개체(또는 현재 선택 전체)를 중심 둘레로 변형
+      if(!state.sel.includes(hit.id))selectOnly(hit.id,false);
+      const targets=state.sel.map(byId).filter(Boolean);
+      const cen=xformCenter();
+      const anchors=collectAnchorPoints(targets,cen.id);
+      if(anchors.length){
+        beginAction();
+        drag={mode:variant,cx:cen.x,cy:cen.y,cname:cen.id?(byId(cen.id)||{}).name:null,
+          a0:Math.atan2(mouseMath.y-cen.y,mouseMath.x-cen.x),
+          d0:Math.max(Math.hypot(mouseMath.x-cen.x,mouseMath.y-cen.y),1e-9),
+          anchors:anchors};
+        setPendingHint((variant==='rotate'?'회전':'확대·축소')+' 중심: '+(cen.id?('점 '+drag.cname):'원점 (변환 메뉴에서 중심을 지정할 수 있습니다)')+' — 끌어서 '+(variant==='rotate'?'회전':'확대·축소')+'하세요.');
+      }else{
+        toast('끌어서 변형할 수 있는 자유점이 없습니다. (종속 개체는 그 부모를 움직여 보세요)');
+      }
+      render();renderAlgebra();
+      return;
+    }
+    if(hit){
+      if(hit.type==='point'){
+        const o=hit;
+        if(o.kind==='free'||o.kind==='coord'){beginAction();drag={mode:'point',id:o.id};}
+        else if(o.kind==='on'){beginAction();drag={mode:'onpoint',id:o.id};}
+        selectOnly(o.id,e.shiftKey);render();renderAlgebra();
+      }else if(hit.type==='text'||hit.type==='measure'){
+        beginAction();drag={mode:'text',id:hit.id,dx:mouseMath.x-GEOM[hit.id].x,dy:mouseMath.y-GEOM[hit.id].y};
+        selectOnly(hit.id,e.shiftKey);render();renderAlgebra();
+      }else{
+        selectOnly(hit.id,e.shiftKey);render();renderAlgebra();
+      }
+    }else{
+      drag={mode:'marquee',sx:mousePx.x,sy:mousePx.y,moved:false};
+      if(!e.shiftKey)clearSel();
+      render();renderAlgebra();
+    }
+    return;
+  }
+  if(tool==='point'){
+    beginAction();
+    const hit=hitTest(mouseMath);
+    if(hit&&hit.type==='point'){state.sel=[hit.id];}
+    else{
+      const p=obtainPoint(mouseMath,e);
+      state.sel=[p.id];
+    }
+    render();renderAlgebra();
+    return;
+  }
+  if(tool==='circle'){
+    beginAction();
+    if(!pending.length){
+      const c=obtainPoint(mouseMath,e);
+      pending=[c.id];
+      setPendingHint(state.toolVariant.circle==='pts'?'중심 '+c.name+' — 원이 지날 점을 클릭하세요.':'중심 '+c.name+' — 반지름이 될 선분을 클릭하거나, 원주 위의 점을 클릭하세요.');
+      state.sel=[c.id];render();renderAlgebra();
+    }else{
+      const center=pending[0];
+      const hit=hitTest(mouseMath);
+      let circ=null;
+      if(state.toolVariant.circle==='radius'&&hit&&hit.type==='segment'){
+        circ=addObj('circle',{mode:'radiusSeg',parents:[center,hit.id]});
+      }else{
+        const p=obtainPoint(mouseMath,e);
+        circ=addObj('circle',{mode:'pts',parents:[center,p.id]});
+      }
+      circ.color=PALETTE[0];
+      pending=[];setPendingHint('');
+      state.sel=[circ.id];render();renderAlgebra();
+    }
+    return;
+  }
+  if(tool==='segment'||tool==='line'){
+    beginAction();
+    const p=obtainPoint(mouseMath,e);
+    pending.push(p.id);
+    if(pending.length===1)setPendingHint('첫 번째 점 '+p.name+' — 두 번째 점을 클릭하세요.');
+    else finishTwoPoint((a,b)=>addObj(state.toolVariant.line,{mode:'pts',parents:[a,b]}));
+    render();renderAlgebra();
+    return;
+  }
+  if(tool==='polygon'){
+    beginAction();
+    const hit=hitTest(mouseMath);
+    if(pending.length>=3&&hit&&hit.type==='point'&&hit.id===pending[0]){
+      const poly=addObj('polygon',{parents:pending.slice(),fillMode:state.toolVariant.polygon});
+      poly.color=PALETTE[3];
+      pending=[];setPendingHint('');state.sel=[poly.id];render();renderAlgebra();
+      return;
+    }
+    const p=obtainPoint(mouseMath,e);
+    if(!pending.includes(p.id))pending.push(p.id);
+    setPendingHint('꼭짓점 '+pending.length+'개 — 처음 점을 다시 클릭하거나 Enter로 완성 (Esc 취소)');
+    render();renderAlgebra();
+    return;
+  }
+  if(tool==='text'){
+    const mx=mouseMath.x,my=mouseMath.y;
+    openDialog('글 넣기','<label>내용</label><input type="text" id="txtBody" placeholder="설명 글을 입력하세요" />'+
+      '<div class="grid2"><div><label>글자 크기</label><input type="number" id="txtSize" value="14" min="9" max="40" /></div>'+
+      '<div><label>색</label><input type="text" id="txtColor" value="#1c1c1e" /></div></div>',
+      [{label:'취소'},{label:'넣기',primary:true,onClick:()=>{
+        const body=$('#txtBody').value.trim();if(!body)return false;
+        beginAction();
+        const t=addObj('text',{x:mx,y:my,text:body,fontSize:parseFloat($('#txtSize').value)||14,color:$('#txtColor').value||'#1c1c1e'});
+        state.sel=[t.id];render();renderAlgebra();
+      }}]);
+    return;
+  }
+  if(tool==='info'){
+    const hit=hitTest(mouseMath);
+    if(hit)openProps(hit.id,true);
+    else toast('개체가 없습니다. 정보를 볼 개체를 클릭하세요.');
+    return;
+  }
+  if(tool==='custom'){
+    applyCustomToolClick(mouseMath,e);
+    return;
+  }
+});
+svg.addEventListener('pointermove',e=>{
+  const rect=svg.getBoundingClientRect();
+  mousePx={x:e.clientX-rect.left,y:e.clientY-rect.top};
+  mouseMath=toMath(mousePx);
+  $('#statusXY').textContent='x '+fmt(mouseMath.x)+' · y '+fmt(mouseMath.y);
+  if(!drag)return;
+  if(drag.mode==='pan'){
+    state.view.cx=drag.cx-(mousePx.x-drag.sx)/state.view.scale;
+    state.view.cy=drag.cy+(mousePx.y-drag.sy)/state.view.scale;
+    render();return;
+  }
+  if(drag.mode==='point'){
+    const o=byId(drag.id);if(!o)return;
+    o.x=snapCoord(mouseMath.x);o.y=snapCoord(mouseMath.y);
+    afterDragMove(o);render();return;
+  }
+  if(drag.mode==='onpoint'){
+    const o=byId(drag.id);if(!o)return;
+    const base=geom(o.parents[0]);
+    if(base)o.t=projectT(base,mouseMath);
+    afterDragMove(o);render();return;
+  }
+  if(drag.mode==='rotate'||drag.mode==='scale'){
+    const c={x:drag.cx,y:drag.cy};
+    const apply=drag.mode==='rotate'
+      ? p=>V.add(c,V.rot(V.sub(p,c),Math.atan2(mouseMath.y-c.y,mouseMath.x-c.x)-drag.a0))
+      : p=>V.add(c,V.mul(V.sub(p,c),clamp(Math.hypot(mouseMath.x-c.x,mouseMath.y-c.y)/drag.d0,0.02,50)));
+    drag.anchors.forEach(a=>{
+      const o=byId(a.id);if(!o)return;
+      const np=apply(a);o.x=np.x;o.y=np.y;
+      if(o.trace)afterDragMove(o);
+    });
+    if(drag.mode==='rotate'){
+      const da=Math.atan2(mouseMath.y-c.y,mouseMath.x-c.x)-drag.a0;
+      setPendingHint('회전 중: '+(da*DEG).toFixed(1)+'° · 중심 '+(drag.cname?('점 '+drag.cname):'원점'));
+    }else{
+      const r=clamp(Math.hypot(mouseMath.x-c.x,mouseMath.y-c.y)/drag.d0,0.02,50);
+      setPendingHint('확대·축소 중: 배율 ×'+r.toFixed(2)+' · 중심 '+(drag.cname?('점 '+drag.cname):'원점'));
+    }
+    render();return;
+  }
+  if(drag.mode==='text'){
+    const o=byId(drag.id);if(!o)return;
+    o.x=mouseMath.x-drag.dx;o.y=mouseMath.y-drag.dy;
+    render();return;
+  }
+  if(drag.mode==='marquee'){
+    drag.moved=true;drag.cx=mousePx.x;drag.cy=mousePx.y;
+    drawMarquee();
+    return;
+  }
+});
+function afterDragMove(o){
+  if(o.trace){
+    let tr=state.traces.find(t=>t.id===o.id);
+    if(!tr){tr={id:o.id,color:o.color,pts:[]};state.traces.push(tr);}
+    const g=GEOM[o.id];if(g){tr.pts.push({x:g.x,y:g.y});if(tr.pts.length>500)tr.pts.shift();}
+  }
+}
+function drawMarquee(){
+  render();
+  if(!drag||drag.mode!=='marquee')return;
+  const x=Math.min(drag.sx,drag.cx),y=Math.min(drag.sy,drag.cy);
+  el('rect',{x:x,y:y,width:Math.abs(drag.cx-drag.sx),height:Math.abs(drag.cy-drag.sy),fill:'rgba(47,111,178,0.10)',stroke:'#2f6fb2','stroke-dasharray':'4 3'},svg);
+}
+svg.addEventListener('pointerup',e=>{
+  if(drag&&drag.mode==='marquee'&&drag.moved){
+    const x0=Math.min(drag.sx,drag.cx),x1=Math.max(drag.sx,drag.cx);
+    const y0=Math.min(drag.sy,drag.cy),y1=Math.max(drag.sy,drag.cy);
+    state.objects.forEach(o=>{
+      if(o.type!=='point')return;const g=GEOM[o.id];if(!g)return;
+      const p=toPx(g);
+      if(p.x>=x0&&p.x<=x1&&p.y>=y0&&p.y<=y1&&!state.sel.includes(o.id))state.sel.push(o.id);
+    });
+  }
+  const wasDrag=drag;drag=null;
+  if(wasDrag&&(wasDrag.mode==='rotate'||wasDrag.mode==='scale'))setPendingHint('');
+  if(wasDrag)render(),renderAlgebra();
+});
+svg.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const rect=svg.getBoundingClientRect();
+  const px={x:e.clientX-rect.left,y:e.clientY-rect.top};
+  const before=toMath(px);
+  const f=e.deltaY<0?1.12:1/1.12;
+  state.view.scale=clamp(state.view.scale*f,6,600);
+  const after=toMath(px);
+  state.view.cx+=before.x-after.x;state.view.cy+=before.y-after.y;
+  render();
+},{passive:false});
+$('#zoomIn').addEventListener('click',()=>{state.view.scale=clamp(state.view.scale*1.25,6,600);render();});
+$('#zoomOut').addEventListener('click',()=>{state.view.scale=clamp(state.view.scale/1.25,6,600);render();});
+$('#zoomFit').addEventListener('click',()=>{state.view={cx:0,cy:0.3,scale:52};render();});
+
+/* ═══════════════ 툴박스 ═══════════════ */
+const TOOL_DEFS=[
+  {id:'move',label:'이동 화살표 도구',hint:'이동 화살표',variants:[['move','이동 화살표'],['rotate','회전 화살표'],['scale','확대·축소 화살표']],vgroup:'arrow',
+   icon:'<path d="M6 3 L19 12 L13 13.5 L16.5 21 L13.8 22.4 L10.4 15 L6.5 18.5 Z" fill="#2f6fb2"/>'},
+  {id:'point',label:'점 도구',hint:'점',icon:'<circle cx="12" cy="12" r="4" fill="#b3352c"/><circle cx="12" cy="12" r="8.5" fill="none" stroke="#b3352c" stroke-width="1.4"/>'},
+  {id:'circle',label:'원 도구',hint:'원',variants:[['pts','중심과 원주 위의 점으로 원'],['radius','중심과 반지름으로 원']],vgroup:'circle',
+   icon:'<circle cx="12" cy="12" r="8" fill="none" stroke="#1c1c1e" stroke-width="1.8"/><circle cx="12" cy="12" r="1.8" fill="#1c1c1e"/>'},
+  {id:'segment',label:'선분 도구',hint:'선분',variants:[['segment','선분'],['ray','반직선'],['line','직선']],vgroup:'line',
+   icon:'<line x1="4" y1="19" x2="20" y2="5" stroke="#1c1c1e" stroke-width="1.8"/><circle cx="4" cy="19" r="2.4" fill="#b3352c"/><circle cx="20" cy="5" r="2.4" fill="#b3352c"/>'},
+  {id:'polygon',label:'다각형 도구',hint:'다각형',variants:[['stroke','다각형 (변만)'],['fillstroke','다각형 (내부 및 변)'],['fill','다각형 (내부만)']],vgroup:'polygon',
+   icon:'<polygon points="12,3.5 21,19 3,19" fill="rgba(30,138,76,0.25)" stroke="#1e8a4c" stroke-width="1.8"/><circle cx="12" cy="3.5" r="2" fill="#1e8a4c"/><circle cx="21" cy="19" r="2" fill="#1e8a4c"/><circle cx="3" cy="19" r="2" fill="#1e8a4c"/>'},
+  {id:'text',label:'글 도구',hint:'글',icon:'<text x="12" y="18" text-anchor="middle" font-size="17" font-weight="700" fill="#1c1c1e" font-family="Georgia,serif">T</text>'},
+  {id:'info',label:'정보 도구',hint:'정보',icon:'<circle cx="12" cy="12" r="9" fill="none" stroke="#2f6fb2" stroke-width="1.8"/><text x="12" y="17.5" text-anchor="middle" font-size="13" font-weight="700" fill="#2f6fb2" font-family="Georgia,serif">i</text>'},
+  {id:'custom',label:'사용자 도구',hint:'사용자 도구',icon:'<path d="M12 3 L14.2 9.2 L20.8 9.4 L15.6 13.4 L17.4 19.8 L12 16.2 L6.6 19.8 L8.4 13.4 L3.2 9.4 L9.8 9.2 Z" fill="#e07b00"/>'},
+];
+let curToolBtn={};
+function buildToolbox(){
+  const tb=$('#toolbox');tb.innerHTML='';
+  TOOL_DEFS.forEach((td,idx)=>{
+    if(idx===6){const s=document.createElement('div');s.className='tool-sep';tb.appendChild(s);}
+    const b=document.createElement('button');b.className='tool';b.type='button';
+    b.title=td.label+' (Ctrl+'+(idx+1)+') — '+td.hint;
+    b.innerHTML='<svg viewBox="0 0 24 24">'+td.icon+'</svg>'+(td.variants?'<span class="tri"></span>':'');
+    b.setAttribute('data-tool',td.id);
+    let pressTimer=null;
+    b.addEventListener('click',()=>{if(b._longFired){b._longFired=false;return;}setTool(td.id);});
+    if(td.variants){
+      b.addEventListener('pointerdown',()=>{pressTimer=setTimeout(()=>{b._longFired=true;openVariantMenu(td,b);},480);});
+      b.addEventListener('pointerup',()=>clearTimeout(pressTimer));
+      b.addEventListener('pointerleave',()=>clearTimeout(pressTimer));
+      b.addEventListener('contextmenu',e=>{e.preventDefault();clearTimeout(pressTimer);openVariantMenu(td,b);});
+    }
+    if(td.id==='custom'){
+      b.addEventListener('pointerdown',()=>{pressTimer=setTimeout(()=>{b._longFired=true;openCustomMenu(b);},480);});
+      b.addEventListener('pointerup',()=>clearTimeout(pressTimer));
+      b.addEventListener('contextmenu',e=>{e.preventDefault();openCustomMenu(b);});
+    }
+    tb.appendChild(b);curToolBtn[td.id]=b;
+  });
+  markToolBtn();
+}
+function markToolBtn(){
+  TOOL_DEFS.forEach(td=>{if(curToolBtn[td.id])curToolBtn[td.id].classList.toggle('on',state.tool===td.id);});
+  const mb=curToolBtn.move;
+  if(mb){
+    const v={move:'이동 화살표',rotate:'회전 화살표',scale:'확대·축소 화살표'}[state.toolVariant.arrow]||'이동 화살표';
+    mb.title='이동 화살표 도구 (Ctrl+1) — 현재: '+v+' (길게 누르거나 우클릭하면 변형 도구 전환)';
+  }
+}
+function setTool(t){
+  state.tool=t;pending=[];setPendingHint('');
+  markToolBtn();updateStatus();
+}
+/* ═══════════════ 메뉴 시스템 ═══════════════ */
+let openMenuEl=null,openMenuTop=null;
+function closeMenus(){
+  if(openMenuEl){openMenuEl.remove();openMenuEl=null;}
+  document.querySelectorAll('.mb-item.open').forEach(n=>n.classList.remove('open'));
+  openMenuTop=null;
+}
+function showMenu(items,anchorEl){
+  closeMenus();
+  const pop=document.createElement('div');pop.className='menu-pop';
+  items.forEach(it=>{
+    if(it==='-'){const s=document.createElement('div');s.className='mi-sep';pop.appendChild(s);return;}
+    if(it.swatches){
+      const wrapEl=document.createElement('div');wrapEl.className='mi-swatches';
+      PALETTE.forEach(c=>{
+        const sw=document.createElement('button');sw.className='swatch';sw.style.background=c;sw.title=c;
+        sw.addEventListener('click',()=>{closeMenus();it.onPick(c);});
+        wrapEl.appendChild(sw);
+      });
+      const custom=document.createElement('input');custom.type='color';custom.value='#2f6fb2';custom.title='다른 색';
+      custom.style.width='26px';custom.style.height='22px';custom.style.padding='0';custom.style.border='none';custom.style.background='none';custom.style.cursor='pointer';
+      custom.addEventListener('change',()=>{closeMenus();it.onPick(custom.value);});
+      wrapEl.appendChild(custom);
+      pop.appendChild(wrapEl);return;
+    }
+    const row=document.createElement('div');
+    const dis=it.enabled&&!it.enabled();
+    row.className='mi'+(dis?' dis':'');
+    row.innerHTML='<span class="chk">'+(it.checked&&it.checked()?'✓':'')+'</span><span class="lbl"></span>'+(it.shortcut?'<span class="sc">'+it.shortcut+'</span>':'')+(it.submenu?'<span class="arrow">▶</span>':'');
+    row.querySelector('.lbl').textContent=typeof it.label==='function'?it.label():it.label;
+    row.addEventListener('click',e=>{
+      if(dis)return;
+      if(it.submenu){
+        e.stopPropagation();
+        const r=row.getBoundingClientRect();
+        showSubMenu(it.submenu(),r);
+        return;
+      }
+      closeMenus();
+      if(it.action)it.action();
+    });
+    pop.appendChild(row);
+  });
+  document.body.appendChild(pop);
+  const r=anchorEl.getBoundingClientRect();
+  pop.style.left=Math.min(r.left,innerWidth-pop.offsetWidth-8)+'px';
+  pop.style.top=(r.bottom+2)+'px';
+  openMenuEl=pop;
+}
+function showSubMenu(items,rowRect){
+  if(openMenuEl)openMenuEl.remove();
+  const anchor={getBoundingClientRect:()=>rowRect};
+  showMenu(items,anchor);
+  if(openMenuEl){openMenuEl.style.left=Math.min(rowRect.right+2,innerWidth-openMenuEl.offsetWidth-8)+'px';openMenuEl.style.top=Math.max(4,rowRect.top-4)+'px';}
+}
+function openVariantMenu(td,btn){
+  const items=td.variants.map(v=>({
+    label:v[1],checked:()=>state.toolVariant[td.vgroup]===v[0],
+    action:()=>{state.toolVariant[td.vgroup]=v[0];setTool(td.id);toast(v[1]+' 도구를 선택했습니다.');}
+  }));
+  const r=btn.getBoundingClientRect();
+  showMenu(items,{getBoundingClientRect:()=>({left:r.right+4,bottom:r.top,right:r.right,top:r.top})});
+  if(openMenuEl){openMenuEl.style.left=(r.right+4)+'px';openMenuEl.style.top=r.top+'px';}
+}
+document.addEventListener('pointerdown',e=>{
+  if(openMenuEl&&!e.target.closest('.menu-pop')&&!e.target.closest('.mb-item'))closeMenus();
+});
+/* ═══════════════ 메뉴 정의 ═══════════════ */
+function selObjs(){return state.sel.map(byId).filter(Boolean);}
+function selPoints(){return selObjs().filter(o=>o.type==='point');}
+function selLines(){return selObjs().filter(o=>['segment','ray','line'].includes(o.type));}
+function hasSel(){return state.sel.length>0;}
+const MENUS=[
+ {label:'파일',items:()=>[
+   {label:'새 문서',shortcut:'Ctrl+N',action:newDocument},
+   {label:'열기…',shortcut:'Ctrl+O',action:()=>$('#fileOpen').click()},
+   {label:'저장',shortcut:'Ctrl+S',action:saveDocument},
+   {label:'다른 이름으로 저장…',action:saveAsDocument},
+   '-',
+   {label:'공유 링크 복사 (스냅샷)…',action:shareSnapshot},
+   {label:'버전 기록…',action:versionDlg},
+   '-',
+   {label:'PNG로 내보내기…',action:exportPNG},
+   {label:'인쇄…',shortcut:'Ctrl+P',action:()=>toast('인쇄는 브라우저 메뉴의 인쇄를 이용하세요. (Ctrl+P)')},
+   '-',
+   {label:'닫기',action:newDocument},
+ ]},
+ {label:'편집',items:()=>[
+   {label:'실행 취소',shortcut:'Ctrl+Z',enabled:()=>past.length>0,action:undo},
+   {label:'다시 실행',shortcut:'Ctrl+Y',enabled:()=>future.length>0,action:redo},
+   '-',
+   {label:'잘라내기',shortcut:'Ctrl+X',enabled:hasSel,action:cutSel},
+   {label:'복사',shortcut:'Ctrl+C',enabled:hasSel,action:copySel},
+   {label:'붙여넣기',shortcut:'Ctrl+V',enabled:()=>!!clipboard,action:pasteClip},
+   {label:'지우기',shortcut:'Del',enabled:hasSel,action:deleteSel},
+   '-',
+   {label:'모두 선택',shortcut:'Ctrl+A',action:()=>{state.sel=state.objects.map(o=>o.id);render();renderAlgebra();}},
+   {label:'상위개체 선택',enabled:hasSel,action:selectParents},
+   {label:'하위개체 선택',enabled:hasSel,action:selectChildren},
+   '-',
+   {label:'이름 바꾸기…',enabled:()=>state.sel.length===1,action:()=>renameDlg(state.sel[0])},
+   {label:'속성…',enabled:()=>state.sel.length===1,action:()=>openProps(state.sel[0])},
+   {label:'동작 버튼',submenu:()=>[
+     {label:'애니메이션…',enabled:()=>selObjs().some(o=>o.type==='param'||(o.type==='point'&&o.kind==='on')),action:animFromSelection},
+     {label:'숨기기/보이기',enabled:hasSel,action:toggleHideSel},
+   ]},
+ ]},
+ {label:'보기',items:()=>[
+   {label:'격자 보이기',checked:()=>state.grid.show,action:()=>{state.grid.show=!state.grid.show;render();}},
+   {label:'격자 형태',submenu:()=>[
+     {label:'정사각 좌표 격자',checked:()=>state.grid.type==='square',action:()=>{state.grid.type='square';state.grid.show=true;render();}},
+     {label:'직사각 좌표 격자',checked:()=>state.grid.type==='rect',action:()=>{state.grid.type='rect';state.grid.show=true;render();}},
+     {label:'극좌표 격자',checked:()=>state.grid.type==='polar',action:()=>{state.grid.type='polar';state.grid.show=true;render();}},
+     {label:'삼각함수용 격자',checked:()=>state.grid.type==='trig',action:()=>{state.grid.type='trig';state.grid.show=true;render();}},
+     {label:'격자를 점으로 표시',checked:()=>state.grid.dots,action:()=>{state.grid.dots=!state.grid.dots;state.grid.show=true;render();}},
+   ]},
+   {label:'좌표계 보이기',checked:()=>state.axes,action:()=>{state.axes=!state.axes;render();}},
+   {label:'점을 격자에 맞추기',checked:()=>state.grid.snap,action:()=>{state.grid.snap=!state.grid.snap;toast(state.grid.snap?'격자에 맞추기 켜짐 (0.5 단위)':'격자에 맞추기 꺼짐');}},
+   {label:'이름표 보이기',checked:()=>state.labels,action:()=>{state.labels=!state.labels;render();}},
+   '-',
+   {label:'숨기기/보이기',enabled:hasSel,action:toggleHideSel},
+   {label:'숨겨진 개체 모두 보이기',action:()=>{beginAction();state.objects.forEach(o=>o.hidden=false);render();renderAlgebra();}},
+   {label:'흔적 지우기',action:()=>{state.traces=[];render();}},
+   {label:'선택 개체 흔적 남기기',enabled:hasSel,checked:()=>selObjs().every(o=>o.trace),action:()=>{beginAction();const v=!selObjs().every(o=>o.trace);selObjs().forEach(o=>o.trace=v);if(!v)state.traces=state.traces.filter(t=>!state.sel.includes(t.id));render();toast(v?'흔적 남기기를 켰습니다. 끌어 보세요.':'흔적 남기기를 껐습니다.');}},
+   '-',
+   {label:'선 모양',submenu:()=>[
+     {label:'실선',checked:()=>selObjs().length&&selObjs().every(o=>o.dash==='solid'),enabled:hasSel,action:()=>applyStyle({dash:'solid'})},
+     {label:'점선',checked:()=>selObjs().length&&selObjs().every(o=>o.dash==='dot'),enabled:hasSel,action:()=>applyStyle({dash:'dot'})},
+     {label:'파선',checked:()=>selObjs().length&&selObjs().every(o=>o.dash==='dash'),enabled:hasSel,action:()=>applyStyle({dash:'dash'})},
+     '-',
+     {label:'아주 가늘게',enabled:hasSel,action:()=>applyStyle({width:0.8})},
+     {label:'가늘게',enabled:hasSel,action:()=>applyStyle({width:1.4})},
+     {label:'중간',enabled:hasSel,action:()=>applyStyle({width:2.2})},
+     {label:'굵게',enabled:hasSel,action:()=>applyStyle({width:3.4})},
+   ]},
+   {label:'점 모양',submenu:()=>[
+     {label:'아주 작게',checked:()=>state.pointR===2.5,action:()=>{state.pointR=2.5;render();}},
+     {label:'작게',checked:()=>state.pointR===3.5,action:()=>{state.pointR=3.5;render();}},
+     {label:'중간',checked:()=>state.pointR===4.5,action:()=>{state.pointR=4.5;render();}},
+     {label:'크게',checked:()=>state.pointR===6,action:()=>{state.pointR=6;render();}},
+   ]},
+   {label:'색',submenu:()=>[{swatches:true,enabled:hasSel,onPick:c=>applyStyle({color:c})}]},
+   '-',
+   {label:'굵게',shortcut:'Ctrl+B',enabled:()=>selObjs().some(o=>o.type==='text'||o.type==='point'),action:()=>applyStyle({boldToggle:true})},
+   {label:'기울임꼴',shortcut:'Ctrl+I',enabled:()=>selObjs().some(o=>o.type==='text'||o.type==='point'),action:()=>applyStyle({italicToggle:true})},
+   {label:'밑줄',shortcut:'Ctrl+U',enabled:()=>selObjs().some(o=>o.type==='text'||o.type==='point'),action:()=>applyStyle({underlineToggle:true})},
+   {label:'애니메이션 제어판 보이기',action:()=>{$('#animPanel').style.display='block';}},
+ ]},
+];
+function applyStyle(patch){
+  if(!hasSel())return;
+  beginAction();
+  selObjs().forEach(o=>{
+    if(patch.dash)o.dash=patch.dash;
+    if(patch.width)o.width=patch.width;
+    if(patch.color)o.color=patch.color;
+    if(patch.boldToggle)o.bold=!o.bold;
+    if(patch.italicToggle)o.italic=!o.italic;
+    if(patch.underlineToggle)o.underline=!o.underline;
+  });
+  render();renderAlgebra();
+}
+function toggleHideSel(){beginAction();selObjs().forEach(o=>o.hidden=!o.hidden);render();renderAlgebra();}
+function deleteSel(){if(!hasSel())return;beginAction();deleteObjects(state.sel.slice());render();renderAlgebra();}
+function selectParents(){
+  const out=new Set();
+  state.sel.forEach(id=>{const o=byId(id);if(o)o.parents.forEach(p=>out.add(p));});
+  state.sel=[...out];render();renderAlgebra();
+}
+function selectChildren(){
+  const out=new Set(state.sel);
+  state.objects.forEach(o=>{if(o.parents.some(p=>state.sel.includes(p)))out.add(o.id);});
+  state.sel=[...out];render();renderAlgebra();
+}
+let clipboard=null;
+function copySel(){
+  if(!hasSel())return;
+  clipboard=JSON.stringify(state.objects.filter(o=>state.sel.includes(o.id)));
+  toast(selObjs().length+'개 개체를 복사했습니다.');
+}
+function cutSel(){copySel();deleteSel();}
+function cloneWithMap(objs,map,offset){
+  // objs: 복사할 개체들(생성 순), map: 원본id→새id (입력 점 등 미리 정해진 것), offset: 자유점 이동량
+  const created=[];
+  for(const src of objs){
+    if(map[src.id])continue;
+    const c=JSON.parse(JSON.stringify(src));
+    delete c._geomCache;
+    c.id='o'+(++state.uid);
+    c.parents=(src.parents||[]).map(p=>map[p]||p);
+    if(src.xform){c.xform=JSON.parse(JSON.stringify(src.xform));['source','vector','center','axis'].forEach(k=>{if(c.xform[k]&&map[c.xform[k]])c.xform[k]=map[c.xform[k]];});}
+    if(src.type==='point'){
+      if(src.kind==='free'||src.kind==='coord'){c.x=src.x+offset.x;c.y=src.y+offset.y;c.name=nextPointName();}
+    }
+    if(src.type==='segment'&&src.mode==='pts'){/* 이름은 표시 시 자동 */}
+    if(src.type==='text'||src.type==='measure'){c.x=src.x+offset.x;c.y=src.y+offset.y;}
+    if(['line','ray','circle','polygon','arc','sector','measure','text'].includes(src.type)){
+      const counters={line:'line',ray:'ray',circle:'circle',polygon:'polygon',arc:'arc',sector:'sector',measure:'measure',text:'text'};
+      if(counters[src.type]){state.counters[counters[src.type]]++;c.name=src.name.replace(/[0-9]+$/,state.counters[counters[src.type]]);}
+    }
+    if(src.type==='function'){c.name=uniqueName(src.name);}
+    map[src.id]=c.id;
+    state.objects.push(c);created.push(c);
+  }
+  return created;
+}
+function pasteClip(){
+  if(!clipboard)return;
+  beginAction();
+  const objs=JSON.parse(clipboard);
+  const created=cloneWithMap(objs,{},{x:0.7,y:-0.7});
+  state.sel=created.map(o=>o.id);
+  render();renderAlgebra();
+  toast(created.length+'개 개체를 붙여넣었습니다.');
+}
+
+/* ═══════════════ 작도 함수 ═══════════════ */
+function commit(o){if(o){state.sel=[o.id];}render();renderAlgebra();return o;}
+function mkMeasure(mtype,refs,anchorObj){
+  const o=addObj('measure',{mtype:mtype,refs:refs,x:0,y:0,prefix:{length:'길이',angle:'각',area:'넓이',slope:'기울기',radius:'반지름',ratio:'비율'}[mtype]||''});
+  recompute();
+  let ax=1.5,ay=2.6;
+  if(anchorObj){const g=GEOM[anchorObj.id];
+    if(g){if(g.kind==='point'){ax=g.x+0.4;ay=g.y+0.5;}
+      else if(g.a){ax=(g.a.x+g.b.x)/2+0.3;ay=(g.a.y+g.b.y)/2+0.6;}
+      else if(g.c){ax=g.c.x+0.4;ay=g.c.y+0.4;}
+      else if(g.pts){const c=g.pts.reduce((s,p)=>({x:s.x+p.x/g.pts.length,y:s.y+p.y/g.pts.length}),{x:0,y:0});ax=c.x+0.4;ay=c.y+0.4;}}}
+  o.x=ax;o.y=ay;
+  return o;
+}
+MENUS.push(
+ {label:'작도',items:()=>{
+   const pts=selPoints(),lines=selLines(),objs=selObjs();
+   const seg=objs.find(o=>o.type==='segment');
+   const circ=objs.find(o=>o.type==='circle');
+   const poly=objs.find(o=>o.type==='polygon');
+   return [
+   {label:'도형 위의 점',enabled:()=>objs.some(o=>['segment','ray','line','circle','polygon','function','arc'].includes(o.type)),action:()=>{
+      const t=objs.find(o=>['segment','ray','line','circle','polygon','function','arc'].includes(o.type));
+      beginAction();const g=GEOM[t.id];const mid=pointAt(g,t.type==='circle'||t.type==='arc'?Math.PI/4:(t.type==='segment'?g.len/2:1));
+      const p=addPoint('on',{parents:[t.id],t:t.type==='circle'||t.type==='arc'?Math.PI/4:(t.type==='segment'?g.len/2:1)});p.color=PALETTE[2];commit(p);}},
+   {label:'교점',enabled:()=>objs.filter(o=>['segment','ray','line','circle','polygon','function'].includes(o.type)).length>=2,action:()=>{
+      const cand=objs.filter(o=>['segment','ray','line','circle','polygon','function'].includes(o.type));
+      recompute();const ints=intersectGeoms(GEOM[cand[0].id],GEOM[cand[1].id]);
+      if(!ints.length){toast('교점이 없습니다.');return;}
+      beginAction();
+      const made=ints.map((p,i)=>addPoint('intersect',{parents:[cand[0].id,cand[1].id],idx:i}));
+      made.forEach(p=>p.color=PALETTE[1]);
+      state.sel=made.map(p=>p.id);render();renderAlgebra();
+      toast('교점 '+made.length+'개를 만들었습니다.');}},
+   {label:'중점',enabled:()=>!!seg||pts.length===2,action:()=>{
+      beginAction();
+      const m=seg?addPoint('midpoint',{parents:[seg.id]}):addPoint('midpoint',{parents:[pts[0].id,pts[1].id]});
+      m.color=PALETTE[4];commit(m);}},
+   '-',
+   {label:'수선',enabled:()=>pts.length>=1&&lines.length>=1,action:()=>{
+      beginAction();commit(addObj('line',{mode:'perp',parents:[pts[0].id,lines[0].id]}));}},
+   {label:'평행선',enabled:()=>pts.length>=1&&lines.length>=1,action:()=>{
+      beginAction();commit(addObj('line',{mode:'parallel',parents:[pts[0].id,lines[0].id]}));}},
+   {label:'각의 이등분선',enabled:()=>pts.length===3,action:()=>{
+      beginAction();const r=addObj('ray',{mode:'bisector',parents:[pts[0].id,pts[1].id,pts[2].id]});commit(r);}},
+   '-',
+   {label:'원 (중심과 원주 위의 점)',enabled:()=>pts.length===2,action:()=>{
+      beginAction();commit(addObj('circle',{mode:'pts',parents:[pts[0].id,pts[1].id]}));}},
+   {label:'원 (중심과 반지름 선분)',enabled:()=>pts.length===1&&!!seg,action:()=>{
+      beginAction();commit(addObj('circle',{mode:'radiusSeg',parents:[pts[0].id,seg.id]}));}},
+   {label:'원 위의 호',enabled:()=>pts.length===3,action:()=>{
+      beginAction();commit(addObj('arc',{parents:[pts[0].id,pts[1].id,pts[2].id]}));}},
+   {label:'부채꼴',enabled:()=>pts.length===3,action:()=>{
+      beginAction();const s=addObj('sector',{parents:[pts[0].id,pts[1].id,pts[2].id]});s.color=PALETTE[5];commit(s);}},
+   '-',
+   {label:'다각형 내부 채우기',enabled:()=>!!poly,action:()=>{
+      beginAction();poly.fillMode=poly.fillMode==='stroke'?'fillstroke':'stroke';render();renderAlgebra();
+      toast(poly.fillMode==='stroke'?'내부를 비웠습니다.':'내부를 채웠습니다.');}},
+   {label:'자취…',enabled:()=>pts.length===2&&pts.some(p=>p.kind==='on'),action:()=>{
+      const driver=pts.find(p=>p.kind==='on');const target=pts.find(p=>p!==driver);
+      if(!target){toast('자취를 그릴 종속 점을 함께 선택하세요.');return;}
+      beginAction();const l=addObj('locus',{parents:[driver.id,target.id]});l.color=PALETTE[5];commit(l);
+      toast(displayName(target)+'의 자취를 만들었습니다.');}},
+   '-',
+   {label:'좌표를 입력하여 점 찍기…',action:coordPointDlg},
+   ];}},
+ {label:'변환',items:()=>{
+   const objs=selObjs().filter(o=>['point','segment','ray','line','circle','polygon','arc','sector'].includes(o.type));
+   const can=objs.length>0;
+   const applyX=(kind)=>{
+     if(!can)return;
+     beginAction();const made=[];
+     for(const src of objs){
+       const xf={kind:kind,source:src.id};
+       if(kind==='translate')xf.vector=state.marked.vector;
+       if(kind==='rotate'){xf.center=state.marked.center;xf.angle=state.marked.angle;}
+       if(kind==='dilate'){xf.center=state.marked.center;xf.ratio=state.marked.ratio;}
+       if(kind==='reflect')xf.axis=state.marked.axis;
+       const c=addObj(src.type,{xform:xf,mode:src.mode});
+       c.parents=[];c.color=PALETTE[5];c.dash='dash';made.push(c);
+     }
+     state.sel=made.map(o=>o.id);render();renderAlgebra();
+     toast(made.length+'개 개체를 변환했습니다. 원본을 끌면 따라 움직입니다.');
+   };
+   return [
+   {label:()=>'벡터 지정'+(state.marked.vector?' ✓ ('+nm(state.marked.vector)+')':''),enabled:()=>!!selObjs().find(o=>o.type==='segment'),action:()=>{
+      state.marked.vector=selObjs().find(o=>o.type==='segment').id;toast('벡터를 지정했습니다: '+nm(state.marked.vector));}},
+   {label:()=>'중심 지정'+(state.marked.center?' ✓ ('+nm(state.marked.center)+')':''),enabled:()=>selPoints().length>=1,action:()=>{
+      state.marked.center=selPoints()[0].id;toast('중심을 지정했습니다: '+nm(state.marked.center));}},
+   {label:()=>'대칭축 지정'+(state.marked.axis?' ✓ ('+nm(state.marked.axis)+')':''),enabled:()=>selLines().length>=1,action:()=>{
+      state.marked.axis=selLines()[0].id;toast('대칭축을 지정했습니다: '+nm(state.marked.axis));}},
+   {label:()=>'각 지정… (현재 '+fmt(state.marked.angle)+'°)',action:()=>{
+      openDialog('각 지정','<label>회전각 (도, 양수는 반시계 방향)</label><input type="number" id="angVal" value="'+state.marked.angle+'" step="5" />',
+      [{label:'취소'},{label:'지정',primary:true,onClick:()=>{const v=parseFloat($('#angVal').value);if(isFinite(v))state.marked.angle=v;}}]);}},
+   {label:()=>'비율 지정… (현재 '+fmt(state.marked.ratio)+')',action:()=>{
+      openDialog('비율 지정','<label>닮음비 (예: 2 → 두 배, 0.5 → 절반)</label><input type="number" id="ratioVal" value="'+state.marked.ratio+'" step="0.25" />',
+      [{label:'취소'},{label:'지정',primary:true,onClick:()=>{const v=parseFloat($('#ratioVal').value);if(isFinite(v))state.marked.ratio=v;}}]);}},
+   '-',
+   {label:'평행이동',enabled:()=>can&&!!state.marked.vector,action:()=>applyX('translate')},
+   {label:'회전이동',enabled:()=>can&&!!state.marked.center,action:()=>applyX('rotate')},
+   {label:'닮음변환',enabled:()=>can&&!!state.marked.center,action:()=>applyX('dilate')},
+   {label:'선대칭이동',enabled:()=>can&&!!state.marked.axis,action:()=>applyX('reflect')},
+   ];}},
+ {label:'측정',items:()=>{
+   const objs=selObjs(),pts=selPoints();
+   const seg=objs.find(o=>o.type==='segment'),circ=objs.find(o=>o.type==='circle'),
+         poly=objs.find(o=>o.type==='polygon'),arc=objs.find(o=>o.type==='arc'||o.type==='sector'),
+         line=objs.find(o=>['segment','ray','line'].includes(o.type));
+   const M=(mtype,refs,anchor)=>()=>{beginAction();commit(mkMeasure(mtype,refs,anchor));};
+   return [
+   {label:'길이 · 거리',enabled:()=>!!seg||pts.length===2||!!circ,action:()=>{
+      beginAction();
+      if(seg)commit(mkMeasure('length',[seg.id],seg));
+      else if(circ)commit(mkMeasure('length',[circ.id],circ));
+      else commit(mkMeasure('length',[pts[0].id,pts[1].id],pts[0]));}},
+   {label:'각의 크기',enabled:()=>pts.length===3,action:M('angle',[pts[0].id,pts[1].id,pts[2].id],pts[1])},
+   {label:'넓이',enabled:()=>!!poly||!!circ||!!arc,action:()=>{
+      beginAction();const t=poly||circ||arc;commit(mkMeasure('area',[t.id],t));}},
+   {label:'호의 길이',enabled:()=>!!arc,action:M('length',[arc.id],arc)},
+   {label:'반지름의 길이',enabled:()=>!!circ,action:M('radius',[circ.id],circ)},
+   {label:'기울기',enabled:()=>!!line,action:M('slope',[line.id],line)},
+   {label:'비율 (두 선분)',enabled:()=>objs.filter(o=>o.type==='segment').length>=2,action:()=>{
+      const segs=objs.filter(o=>o.type==='segment');beginAction();commit(mkMeasure('ratio',[segs[0].id,segs[1].id],segs[0]));}},
+   {label:'좌표',enabled:()=>pts.length>=1,action:M('coord',[pts[0].id],pts[0])},
+   {label:'방정식',enabled:()=>!!line||!!circ,action:()=>{
+      beginAction();const t=line||circ;commit(mkMeasure('equation',[t.id],t));}},
+   '-',
+   {label:'계산…',action:calcDlg},
+   ];}},
+);
+function coordPointDlg(){
+  openDialog('좌표를 입력하여 점 찍기',
+    '<div class="grid2"><div><label>x 좌표</label><input type="number" id="cpX" value="2" step="0.5" /></div>'+
+    '<div><label>y 좌표</label><input type="number" id="cpY" value="1" step="0.5" /></div></div>'+
+    '<label><input type="checkbox" id="cpPolar" style="width:auto;" /> 극좌표 (r, θ°)로 입력</label>',
+    [{label:'취소'},{label:'점 찍기',primary:true,onClick:()=>{
+      let x=parseFloat($('#cpX').value),y=parseFloat($('#cpY').value);
+      if(!isFinite(x)||!isFinite(y))return false;
+      if($('#cpPolar').checked){const r=x,th=y*RAD;x=r*Math.cos(th);y=r*Math.sin(th);}
+      beginAction();const p=addPoint('coord',{x:x,y:y});state.sel=[p.id];render();renderAlgebra();
+    }}]);
+}
+function calcDlg(editObj){
+  const avail=state.objects.filter(o=>o.type==='param'||o.type==='measure'||o.type==='segment');
+  openDialog(editObj?'계산 편집':'계산',
+    '<label>계산식 (개체 이름을 넣을 수 있습니다)</label><input type="text" id="calcExpr" placeholder="예: AB + m1 * 2" value="'+(editObj?editObj.expr.replace(/"/g,'&quot;'):'')+'" />'+
+    (avail.length?'<label>넣을 수 있는 값</label><div class="ins-list">'+avail.map(o=>'<button type="button" data-ins="'+displayName(o)+'">'+displayName(o)+' ('+valueOf(o)+')</button>').join('')+'</div>':'')+
+    '<p style="color:var(--ink2);font-size:12px;">사용 가능한 함수: sin cos tan sqrt abs ln log exp, 상수 π, e</p>',
+    [{label:'취소'},{label:editObj?'적용':'계산 넣기',primary:true,onClick:()=>{
+      const expr=$('#calcExpr').value.trim();if(!expr)return false;
+      let ast;try{ast=parseExpr(expr);}catch(err){toast('수식 오류: '+err.message);return false;}
+      const doSave=()=>{
+        if(editObj){editObj.ast=ast;editObj.expr=expr;state.sel=[editObj.id];render();renderAlgebra();}
+        else{
+          const o=addObj('measure',{mtype:'calc',refs:[],ast:ast,expr:expr,x:state.view.cx-2,y:state.view.cy+2,prefix:''});
+          o.name='m'+(++state.counters.measure);
+          commit(o);
+        }
+      };
+      if(maybeSuggestSliders(ast,doSave))return false;
+      beginAction();doSave();
+    }}],
+    body=>{
+      body.querySelectorAll('[data-ins]').forEach(b=>b.addEventListener('click',()=>{
+        const inp=$('#calcExpr');inp.value+=b.getAttribute('data-ins');inp.focus();
+      }));
+    });
+}
+
+/* ═══════════════ 수 · 그래프 · 창 · 도움말 ═══════════════ */
+function paramDlg(editObj){
+  const isEdit=!!editObj;
+  openDialog(isEdit?'매개변수 편집':'새 매개변수',
+    '<div class="grid2"><div><label>이름</label><input type="text" id="pmName" value="'+(isEdit?editObj.name:'a')+'" /></div>'+
+    '<div><label>현재 값</label><input type="number" id="pmVal" value="'+(isEdit?editObj.value:1)+'" step="0.1" /></div></div>'+
+    '<div class="grid2"><div><label>최솟값</label><input type="number" id="pmMin" value="'+(isEdit?editObj.min:-5)+'" step="0.5" /></div>'+
+    '<div><label>최댓값</label><input type="number" id="pmMax" value="'+(isEdit?editObj.max:5)+'" step="0.5" /></div></div>'+
+    '<label>간격 (슬라이더 눈금)</label><input type="number" id="pmStep" value="'+(isEdit?editObj.step:0.1)+'" step="0.05" min="0.001" />'+
+    '<label>단위 (선택)</label><input type="text" id="pmUnit" value="'+(isEdit?(editObj.unit||''):'')+'" placeholder="예: cm, °" />',
+    [{label:'취소'},{label:isEdit?'적용':'만들기',primary:true,onClick:()=>{
+      const name=$('#pmName').value.trim();if(!name)return false;
+      const val=parseFloat($('#pmVal').value),mn=parseFloat($('#pmMin').value),mx=parseFloat($('#pmMax').value),st=parseFloat($('#pmStep').value);
+      if(!isFinite(val)||!isFinite(mn)||!isFinite(mx)||mn>=mx){toast('범위를 확인하세요.');return false;}
+      beginAction();
+      if(isEdit){Object.assign(editObj,{name:name,value:clamp(val,mn,mx),min:mn,max:mx,step:st||0.1,unit:$('#pmUnit').value});}
+      else{
+        const p=addObj('param',{name:uniqueName(name),value:clamp(val,mn,mx),min:mn,max:mx,step:st||0.1,unit:$('#pmUnit').value,color:PALETTE[6]});
+        state.sel=[p.id];
+        toast('매개변수 '+p.name+'를 만들었습니다. 대수창의 슬라이더로 조정하세요.');
+      }
+      render();renderAlgebra();
+    }}]);
+}
+function funcDlg(editObj){
+  const isEdit=!!editObj;
+  openDialog(isEdit?'함수 편집':'새 함수',
+    '<div class="grid2"><div><label>함수 이름</label><input type="text" id="fnName" value="'+(isEdit?editObj.name:'f')+'" /></div>'+
+    '<div><label>색</label><input type="text" id="fnColor" value="'+(isEdit?editObj.color:'#b3352c')+'" /></div></div>'+
+    '<label>'+(isEdit?editObj.name:'f')+'(x) =</label><input type="text" id="fnExpr" value="'+(isEdit?editObj.expr:'x^2 - 2x')+'" placeholder="예: sin(x) + a*x" />'+
+    '<p style="color:var(--ink2);font-size:12px;">x와 매개변수 이름을 쓸 수 있습니다. 예: a*x^2 + b, sin(x), sqrt(x), 2^x</p>',
+    [{label:'취소'},{label:isEdit?'적용':'그래프 그리기',primary:true,onClick:()=>{
+      const expr=$('#fnExpr').value.trim();if(!expr)return false;
+      let ast;try{ast=parseExpr(expr);}catch(err){toast('수식 오류: '+err.message);return false;}
+      const doSave=()=>{
+        if(isEdit){editObj.expr=expr;editObj.ast=ast;editObj.name=$('#fnName').value.trim()||editObj.name;editObj.color=$('#fnColor').value||editObj.color;}
+        else{
+          const f=addObj('function',{expr:expr,ast:ast});
+          f.name=uniqueName($('#fnName').value.trim()||'f');
+          f.color=$('#fnColor').value||'#b3352c';
+          state.sel=[f.id];
+        }
+        render();renderAlgebra();
+      };
+      if(!isEdit&&maybeSuggestSliders(ast,doSave))return false;
+      beginAction();doSave();
+    }}]);
+}
+function tableDlg(){
+  const fns=state.objects.filter(o=>o.type==='function');
+  if(!fns.length){toast('먼저 함수를 만드세요. (수 > 새 함수)');return;}
+  const target=selObjs().find(o=>o.type==='function')||fns[0];
+  openDialog('표 만들기',
+    '<p style="margin-top:0;">함수 <b>'+target.name+'(x) = '+target.expr+'</b> 의 값표</p>'+
+    '<div class="grid2"><div><label>시작 x</label><input type="number" id="tbFrom" value="-3" step="1" /></div>'+
+    '<div><label>끝 x</label><input type="number" id="tbTo" value="3" step="1" /></div></div>'+
+    '<label>간격</label><input type="number" id="tbStep" value="1" step="0.5" />'+
+    '<div id="tbOut" style="margin-top:10px;"></div>',
+    [{label:'닫기'},{label:'표의 자료로 점 찍기',onClick:()=>{
+      const rows=calcTable(target);
+      if(!rows.length)return false;
+      beginAction();
+      const made=rows.filter(r=>isFinite(r.y)).map(r=>addPoint('free',{x:r.x,y:r.y}));
+      state.sel=made.map(p=>p.id);render();renderAlgebra();
+      toast('표의 점 '+made.length+'개를 찍었습니다.');
+    }},{label:'표 만들기',primary:true,onClick:()=>{
+      const rows=calcTable(target);
+      $('#tbOut').innerHTML='<table><tr><th>x</th><th>'+target.name+'(x)</th></tr>'+
+        rows.map(r=>'<tr><td>'+fmt(r.x)+'</td><td>'+fmt(r.y)+'</td></tr>').join('')+'</table>';
+      return false;
+    }}]);
+  function calcTable(t){
+    const from=parseFloat($('#tbFrom').value),to=parseFloat($('#tbTo').value),st=parseFloat($('#tbStep').value)||1;
+    const rows=[];if(!isFinite(from)||!isFinite(to)||st<=0)return rows;
+    const g=GEOM[t.id];
+    for(let x=from;x<=to+1e-12&&rows.length<60;x+=st){
+      let y;
+      if(g&&g.derivAst){const h=1e-4;const f=xx=>evalAst(g.derivAst,Object.assign(paramScope(),{x:xx}));y=(f(x+h)-f(x-h))/(2*h);}
+      else y=evalAst(t.ast,Object.assign(paramScope(),{x:x}));
+      rows.push({x:x,y:y});
+    }
+    return rows;
+  }
+}
+MENUS.push(
+ {label:'수',items:()=>{
+   const fn=selObjs().find(o=>o.type==='function'&&!o.derivOf);
+   return [
+   {label:'새 매개변수…',action:()=>paramDlg(null)},
+   {label:'새 함수…',action:()=>funcDlg(null)},
+   {label:'함수의 그래프',enabled:()=>!!fn,action:()=>{fn.hidden=false;render();renderAlgebra();toast(fn.name+'(x) 그래프를 표시합니다.');}},
+   {label:'미분하기',enabled:()=>!!fn,action:()=>{
+      beginAction();
+      const d=addObj('function',{derivOf:fn.id,expr:fn.name+'′(x)'});
+      d.name=uniqueName(fn.name+'′');d.color=PALETTE[4];
+      commit(d);toast(fn.name+'의 도함수 그래프를 만들었습니다.');}},
+   '-',
+   {label:'표 만들기…',action:tableDlg},
+   '-',
+   {label:'함수 소리로 듣기 (오디오 트레이스)…',enabled:()=>state.objects.some(o=>o.type==='function'),action:openAudioTrace},
+   ];}},
+ {label:'그래프',items:()=>[
+   {label:'새 좌표계 설정 (원점·배율 초기화)',action:()=>{state.view={cx:0,cy:0.3,scale:52};render();}},
+   {label:'좌표계 보이기',checked:()=>state.axes,action:()=>{state.axes=!state.axes;render();}},
+   {label:'격자 보이기',checked:()=>state.grid.show,action:()=>{state.grid.show=!state.grid.show;render();}},
+   {label:'격자 형태',submenu:()=>[
+     {label:'정사각 좌표 격자',checked:()=>state.grid.type==='square',action:()=>{state.grid.type='square';state.grid.show=true;render();}},
+     {label:'직사각 좌표 격자',checked:()=>state.grid.type==='rect',action:()=>{state.grid.type='rect';state.grid.show=true;render();}},
+     {label:'극좌표 격자',checked:()=>state.grid.type==='polar',action:()=>{state.grid.type='polar';state.grid.show=true;render();}},
+     {label:'삼각함수용 격자',checked:()=>state.grid.type==='trig',action:()=>{state.grid.type='trig';state.grid.show=true;render();}},
+   ]},
+   '-',
+   {label:'좌표를 입력하여 점 찍기…',action:coordPointDlg},
+   {label:'확대',action:()=>{state.view.scale=clamp(state.view.scale*1.3,6,600);render();}},
+   {label:'축소',action:()=>{state.view.scale=clamp(state.view.scale/1.3,6,600);render();}},
+ ]},
+ {label:'창',items:()=>[
+   {label:'대수창 · 작도 단계 보이기',checked:()=>!$('#panel').classList.contains('hidden'),action:()=>{$('#panel').classList.toggle('hidden');setTimeout(render,30);}},
+   {label:'애니메이션 제어판 보이기',action:()=>{$('#animPanel').style.display='block';}},
+   {label:'블록코딩 패널 보이기',action:()=>{const p=$('#blockPanel');p.style.display=p.style.display==='block'?'none':'block';}},
+   {label:'문서 (활동지) 모드 열기',action:openDocMode},
+   {label:'프레젠테이션 모드 (전체 화면)',action:()=>{
+      if(document.fullscreenElement){document.exitFullscreen();}
+      else if(document.documentElement.requestFullscreen){document.documentElement.requestFullscreen().catch(()=>{});}
+      $('#panel').classList.add('hidden');setTimeout(render,60);
+      toast('전체 화면 프레젠테이션 모드 — Esc를 누르면 종료됩니다.');}},
+   {label:'작도 단계 전부 보기',action:()=>{state.proto=null;render();renderAlgebra();}},
+ ]},
+ {label:'도움말',items:()=>[
+   {label:'단축키 안내',shortcut:'F1',action:dlgShortcuts},
+   {label:'사용법',action:()=>openDialog('사용법',
+     '<p style="margin-top:0;"><b>기본 흐름</b> — 왼쪽 도구로 점·원·선분을 그리고, <b>이동 화살표</b>로 자유점을 끌어 보세요. 종속 개체(교점·중점·수선·측정값)가 실시간으로 따라 움직입니다.</p>'+
+     '<p><b>선택 후 작도</b> — 개체를 클릭해 선택한 뒤 <b>작도</b> 메뉴에서 중점·수선·평행선·교점·각의 이등분선·자취를 만들 수 있습니다. 두 도형이 만나는 곳에는 반투명 마커가 나타나고, 클릭하면 교점이 됩니다.</p>'+
+     '<p><b>변환</b> — 먼저 벡터(선분)·중심(점)·대칭축(직선)을 지정한 뒤 평행이동·회전이동·닮음변환·선대칭이동을 적용합니다.</p>'+
+     '<p><b>매개변수</b> — 수 &gt; 새 매개변수로 슬라이더를 만들고 함수식이나 원의 반지름에 연결해 탐구할 수 있습니다.</p>')},
+   '-',
+   {label:'동적 기하 스케치 정보…',action:dlgInfo},
+ ]},
+);
+/* ═══════════════ 속성 · 이름 바꾸기 ═══════════════ */
+function renameDlg(id){
+  const o=byId(id);if(!o)return;
+  openDialog('이름 바꾸기','<label>새 이름</label><input type="text" id="rnName" value="'+o.name+'" />',
+    [{label:'취소'},{label:'바꾸기',primary:true,onClick:()=>{
+      const n=$('#rnName').value.trim();if(!n)return false;
+      beginAction();o.name=n;render();renderAlgebra();
+    }}]);
+}
+function openProps(id,infoOnly){
+  const o=byId(id);if(!o)return;
+  recompute();
+  const parents=o.parents.map(nm).join(', ')||'없음';
+  const children=state.objects.filter(x=>x.parents.includes(id)).map(x=>displayName(x)).join(', ')||'없음';
+  let extra='';
+  if(o.type==='function'&&!o.derivOf)extra='<p><button type="button" id="ppEditFn" style="border:1px solid var(--line2);background:var(--btn);border-radius:5px;padding:5px 12px;cursor:pointer;">함수식 편집…</button></p>';
+  if(o.type==='param')extra='<p><button type="button" id="ppEditPm" style="border:1px solid var(--line2);background:var(--btn);border-radius:5px;padding:5px 12px;cursor:pointer;">매개변수 편집…</button></p>';
+  openDialog((infoOnly?'정보 — ':'속성 — ')+displayName(o),
+    '<table><tr><th style="text-align:left;">종류</th><td style="text-align:left;">'+({point:'점',segment:'선분',ray:'반직선',line:'직선',circle:'원',polygon:'다각형',arc:'호',sector:'부채꼴',text:'글',measure:'측정',function:'함수',param:'매개변수',locus:'자취'}[o.type]||o.type)+'</td></tr>'+
+    '<tr><th style="text-align:left;">정의</th><td style="text-align:left;">'+defOf(o)+'</td></tr>'+
+    '<tr><th style="text-align:left;">현재 값</th><td style="text-align:left;">'+valueOf(o)+'</td></tr>'+
+    '<tr><th style="text-align:left;">상위 개체</th><td style="text-align:left;">'+parents+'</td></tr>'+
+    '<tr><th style="text-align:left;">하위 개체</th><td style="text-align:left;">'+children+'</td></tr></table>'+extra+
+    (infoOnly?'':'<div class="grid2"><div><label>이름</label><input type="text" id="ppName" value="'+o.name+'" /></div>'+
+    '<div><label>색 (#rrggbb)</label><input type="text" id="ppColor" value="'+o.color+'" /></div></div>'+
+    '<label><input type="checkbox" id="ppLabel" style="width:auto;" '+(o.label!==false?'checked':'')+' /> 이름표 보이기</label> '+
+    '<label><input type="checkbox" id="ppTrace" style="width:auto;" '+(o.trace?'checked':'')+' /> 흔적 남기기</label>'),
+    infoOnly?[{label:'닫기',primary:true}]:[{label:'취소'},{label:'적용',primary:true,onClick:()=>{
+      beginAction();
+      const n=$('#ppName').value.trim();if(n)o.name=n;
+      const c=$('#ppColor').value.trim();if(/^#[0-9a-fA-F]{6}$/.test(c))o.color=c;
+      o.label=$('#ppLabel').checked;o.trace=$('#ppTrace').checked;
+      render();renderAlgebra();
+    }}],
+    body=>{
+      const ef=body.querySelector('#ppEditFn');if(ef)ef.addEventListener('click',()=>funcDlg(o));
+      const ep=body.querySelector('#ppEditPm');if(ep)ep.addEventListener('click',()=>paramDlg(o));
+    });
+}
+/* ═══════════════ 애니메이션 ═══════════════ */
+let anim={raf:null,cur:null,dirSign:1};
+function startAnim(target){
+  anim.cur=target;anim.dirSign=1;
+  $('#animPanel').style.display='block';
+  const o=byId(target.id);
+  $('#animTarget').textContent='대상: '+(o?displayName(o)+' — '+defOf(o):'');
+  if(!anim.raf)animTick();
+  updateAnimBtn();
+}
+function stopAnim(){anim.cur=null;if(anim.raf)cancelAnimationFrame(anim.raf);anim.raf=null;updateAnimBtn();}
+function updateAnimBtn(){$('#animPlay').textContent=anim.cur?'❚❚ 정지':'▶ 재생';}
+function animTick(){
+  anim.raf=requestAnimationFrame(animTick);
+  if(!anim.cur)return;
+  const o=byId(anim.cur.id);if(!o){stopAnim();return;}
+  const speed=parseFloat($('#animSpeed').value)||1;
+  const bounce=$('#animDir').value==='bounce';
+  if(anim.cur.kind==='param'){
+    const range=o.max-o.min;let v=o.value+anim.dirSign*speed*range*0.008;
+    if(bounce){if(v>o.max){v=o.max;anim.dirSign=-1;}if(v<o.min){v=o.min;anim.dirSign=1;}}
+    else{if(v>o.max)v=o.min;}
+    o.value=v;
+    const slider=document.querySelector('.alg-row[data-row="'+o.id+'"] input[type=range]');
+    if(slider)slider.value=v;
+  }else if(anim.cur.kind==='onpoint'){
+    const base=geom(o.parents[0]);if(!base)return;
+    let range;
+    if(base.kind==='circle'||base.kind==='arc'||base.kind==='sector')range=[0,Math.PI*2];
+    else if(base.kind==='segment')range=[0,base.len];
+    else if(base.kind==='polygon')range=[0,polyPerim(base.pts)];
+    else if(base.kind==='function')range=[state.view.cx-9,state.view.cx+9];
+    else range=[-8,8];
+    let t=o.t+anim.dirSign*speed*(range[1]-range[0])*0.008;
+    if(bounce){if(t>range[1]){t=range[1];anim.dirSign=-1;}if(t<range[0]){t=range[0];anim.dirSign=1;}}
+    else{if(t>range[1])t=range[0];}
+    o.t=t;
+    if(o.trace)afterDragMove(o);
+  }
+  render();
+}
+$('#animPlay').addEventListener('click',()=>{
+  if(anim.cur){stopAnim();return;}
+  if(animLast)startAnim(animLast);
+  else toast('애니메이션할 매개변수나 도형 위의 점을 먼저 선택하세요.');
+});
+$('#animClose').addEventListener('click',()=>{stopAnim();$('#animPanel').style.display='none';});
+let animLast=null;
+function animFromSelection(){
+  const o=selObjs().find(x=>x.type==='param')||selObjs().find(x=>x.type==='point'&&x.kind==='on');
+  if(!o){toast('매개변수 또는 도형 위의 점을 선택하세요.');return;}
+  animLast=o.type==='param'?{kind:'param',id:o.id}:{kind:'onpoint',id:o.id};
+  startAnim(animLast);
+}
+/* ═══════════════ 사용자 도구 ═══════════════ */
+let customPending=null;
+function openCustomMenu(btn){
+  const items=[
+    {label:'사용자 도구 만들기…',enabled:hasSel,action:createCustomTool},
+    '-',
+  ];
+  state.customTools.forEach((ct,i)=>{
+    items.push({label:ct.name,action:()=>{customPending={tool:ct,clicks:[]};setTool('custom');setPendingHint('"'+ct.name+'" — 입력 점 '+ct.inputs.length+'개를 차례로 클릭하세요.');}});
+  });
+  if(!state.customTools.length)items.push({label:'(만든 사용자 도구가 없습니다)',enabled:()=>false});
+  const r=btn.getBoundingClientRect();
+  showMenu(items,{getBoundingClientRect:()=>({left:r.right+4,bottom:r.top,right:r.right,top:r.top})});
+  if(openMenuEl){openMenuEl.style.left=(r.right+4)+'px';openMenuEl.style.top=Math.max(4,r.top-40)+'px';}
+}
+function createCustomTool(){
+  // 선택 개체들 중 자유점을 입력으로, 나머지를 결과로 하는 도구 저장
+  const sel=state.objects.filter(o=>state.sel.includes(o.id));
+  const inputs=sel.filter(o=>o.type==='point'&&(o.kind==='free'||o.kind==='coord'));
+  if(!inputs.length){toast('입력으로 쓸 자유점을 포함해 선택하세요.');return;}
+  openDialog('사용자 도구 만들기',
+    '<label>도구 이름</label><input type="text" id="ctName" value="내 도구 '+(state.customTools.length+1)+'" />'+
+    '<p style="color:var(--ink2);font-size:12px;">입력 점 '+inputs.length+'개 ('+inputs.map(p=>p.name).join(', ')+')와 선택한 개체 '+sel.length+'개가 도구가 됩니다. 도구를 쓸 때는 입력 점을 차례로 클릭합니다.</p>',
+    [{label:'취소'},{label:'만들기',primary:true,onClick:()=>{
+      const name=$('#ctName').value.trim()||'내 도구';
+      state.customTools.push({name:name,inputs:inputs.map(p=>p.id),objs:JSON.parse(JSON.stringify(sel))});
+      toast('사용자 도구 "'+name+'"를 만들었습니다. 사용자 도구 버튼을 길게 눌러 선택하세요.');
+    }}]);
+}
+function applyCustomToolClick(m,e){
+  if(!customPending){toast('사용자 도구 버튼을 길게 눌러 도구를 선택하세요.');return;}
+  beginAction();
+  const hit=hitTest(m);
+  const p=(hit&&hit.type==='point')?hit:obtainPoint(m,e);
+  customPending.clicks.push(p.id);
+  if(customPending.clicks.length<customPending.tool.inputs.length){
+    setPendingHint('입력 점 '+customPending.clicks.length+'/'+customPending.tool.inputs.length+' — 계속 클릭하세요.');
+    render();renderAlgebra();return;
+  }
+  const ct=customPending.tool;
+  const map={};
+  ct.inputs.forEach((inpId,i)=>{map[inpId]=customPending.clicks[i];});
+  const created=cloneWithMap(ct.objs.map(o=>JSON.parse(JSON.stringify(o))),map,{x:0,y:0});
+  state.sel=created.map(o=>o.id);
+  customPending=null;setPendingHint('');
+  render();renderAlgebra();
+  toast('"'+ct.name+'" 도구를 적용했습니다.');
+}
+
+/* ═══════════════ 파일 입출력 ═══════════════ */
+function download(name,blob){
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},400);
+}
+function newDocument(){
+  openDialog('새 문서','<p style="margin-top:0;">지금 문서를 지우고 새 문서를 시작할까요?<br>저장하지 않은 작업은 사라집니다.</p>',
+    [{label:'취소'},{label:'새 문서',primary:true,onClick:()=>{
+      past=[];future=[];
+      state.objects=[];state.sel=[];state.uid=0;state.proto=null;state.traces=[];
+      state.counters={line:0,ray:0,circle:0,polygon:0,arc:0,sector:0,measure:0,func:0,text:0};
+      state.marked={vector:null,center:null,axis:null,angle:60,ratio:2};
+      state.docName='제목 없음';
+      document.title='제목 없음 - 동적 기하 스케치';$('#docTitle').textContent='제목 없음 - 동적 기하 스케치';
+      render();renderAlgebra();
+    }}]);
+}
+function saveDocument(){
+  const data=JSON.stringify({app:'dynamic-geometry-sketch',version:1,docName:state.docName,objects:state.objects,uid:state.uid,counters:state.counters,view:state.view,grid:state.grid,marked:state.marked},null,1);
+  download(state.docName+'.json',new Blob([data],{type:'application/json'}));
+  toast('문서를 저장했습니다 (JSON).');
+}
+function saveAsDocument(){
+  openDialog('다른 이름으로 저장','<label>문서 이름</label><input type="text" id="saName" value="'+state.docName+'" />',
+    [{label:'취소'},{label:'저장',primary:true,onClick:()=>{
+      const n=$('#saName').value.trim();if(n){state.docName=n;document.title=n+' - 동적 기하 스케치';$('#docTitle').textContent=n+' - 동적 기하 스케치';}
+      saveDocument();
+    }}]);
+}
+$('#fileOpen').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  const rd=new FileReader();
+  rd.onload=()=>{
+    try{
+      const s=JSON.parse(rd.result);
+      if(!s.objects)throw new Error('형식 오류');
+      beginAction();
+      if(!s.docName)s.docName=f.name.replace(/\.json$/,'');
+      applyData(s);
+      toast('문서를 열었습니다.');
+    }catch(err){toast('파일을 열 수 없습니다: '+err.message);}
+    e.target.value='';
+  };
+  rd.readAsText(f);
+});
+function exportPNG(){
+  recompute();
+  const clone=svg.cloneNode(true);
+  clone.setAttribute('xmlns',SVGNS);
+  clone.setAttribute('width',W());clone.setAttribute('height',H());
+  const css=document.createElementNS(SVGNS,'style');
+  // CSS 변수를 실제 값으로 치환한 복제본 생성
+  const html=new XMLSerializer().serializeToString(clone)
+    .replace(/var\(--grid\)/g,'#dcdcdc').replace(/var\(--gridminor\)/g,'#eeeeee').replace(/var\(--axis\)/g,'#a8a8a8');
+  const blob=new Blob(['<?xml version="1.0" encoding="UTF-8"?>\n'+html],{type:'image/svg+xml;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const img=new Image();
+  img.onload=()=>{
+    const cv=document.createElement('canvas');cv.width=W()*2;cv.height=H()*2;
+    const ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,cv.width,cv.height);
+    ctx.drawImage(img,0,0,cv.width,cv.height);
+    URL.revokeObjectURL(url);
+    cv.toBlob(b=>{download(state.docName+'.png',b);toast('PNG 그림으로 내보냈습니다.');},'image/png');
+  };
+  img.onerror=()=>toast('내보내기에 실패했습니다.');
+  img.src=url;
+}
+/* ═══════════════ 메뉴바 구성 ═══════════════ */
+function buildMenubar(){
+  const mb=$('#menubar');mb.innerHTML='';
+  MENUS.forEach(m=>{
+    const b=document.createElement('button');b.className='mb-item';b.type='button';b.textContent=m.label;
+    b.addEventListener('click',e=>{
+      e.stopPropagation();
+      if(openMenuTop===m){closeMenus();return;}
+      openMenuTop=m;b.classList.add('open');
+      showMenu(m.items(),b);b.classList.add('open');
+    });
+    b.addEventListener('pointerenter',()=>{
+      if(openMenuEl&&openMenuTop!==m){openMenuTop=m;showMenu(m.items(),b);b.classList.add('open');}
+    });
+    mb.appendChild(b);
+  });
+}
+$('#panelToggle').addEventListener('click',()=>{
+  $('#panel').classList.toggle('hidden');
+  setTimeout(render,40);
+});
+$('#algAddParam').addEventListener('click',()=>paramDlg(null));
+$('#protoAll').addEventListener('click',()=>{state.proto=null;render();renderAlgebra();});
+let protoTimer=null;
+$('#protoPlay').addEventListener('click',()=>{
+  const btn=$('#protoPlay');
+  if(protoTimer){clearInterval(protoTimer);protoTimer=null;btn.textContent='▶ 재생';return;}
+  if(!state.objects.length)return;
+  state.proto=-1;btn.textContent='❚❚ 정지';
+  protoTimer=setInterval(()=>{
+    state.proto++;
+    if(state.proto>=state.objects.length-1){state.proto=null;clearInterval(protoTimer);protoTimer=null;btn.textContent='▶ 재생';}
+    render();renderAlgebra();
+  },650);
+  render();renderAlgebra();
+});
+function stopProtoPlay(){
+  if(protoTimer){clearInterval(protoTimer);protoTimer=null;$('#protoPlay').textContent='▶ 재생';}
+}
+$('#protoPrev').addEventListener('click',()=>{
+  stopProtoPlay();
+  const n=state.objects.length;if(!n)return;
+  let cur=state.proto==null?n-1:state.proto;
+  state.proto=Math.max(-1,cur-1);
+  render();renderAlgebra();
+});
+$('#protoNext').addEventListener('click',()=>{
+  stopProtoPlay();
+  const n=state.objects.length;if(!n)return;
+  let cur=state.proto==null?n-1:state.proto;
+  cur++;
+  state.proto=cur>=n-1?null:cur;
+  render();renderAlgebra();
+});
+/* ═══════════════ 단축키 ═══════════════ */
+document.addEventListener('keydown',e=>{
+  const tag=(e.target.tagName||'').toLowerCase();
+  const inField=tag==='input'||tag==='textarea'||tag==='select'||e.target.isContentEditable;
+  if(e.key==='F1'){e.preventDefault();dlgShortcuts();return;}
+  if(e.key==='Escape'){
+    if($('#modalWrap').style.display==='flex'){closeDialog();return;}
+    if(openMenuEl){closeMenus();return;}
+    pending=[];setPendingHint('');customPending=null;
+    clearSel();render();renderAlgebra();return;
+  }
+  if(inField)return;
+  if(audioTrace.active&&(e.key==='ArrowLeft'||e.key==='ArrowRight')){e.preventDefault();audioStep(e.key==='ArrowRight'?1:-1);return;}
+  const mod=e.ctrlKey||e.metaKey;
+  if(mod){
+    const k=e.key.toLowerCase();
+    if(k>='1'&&k<='8'){e.preventDefault();setTool(TOOL_DEFS[parseInt(k,10)-1].id);return;}
+    switch(k){
+      case 'z':e.preventDefault();undo();return;
+      case 'y':e.preventDefault();redo();return;
+      case 'x':e.preventDefault();if(hasSel())cutSel();return;
+      case 'c':e.preventDefault();if(hasSel())copySel();return;
+      case 'v':e.preventDefault();pasteClip();return;
+      case 'n':e.preventDefault();newDocument();return;
+      case 'o':e.preventDefault();$('#fileOpen').click();return;
+      case 's':e.preventDefault();saveDocument();return;
+      case 'p':e.preventDefault();toast('인쇄는 브라우저 메뉴의 인쇄를 이용하세요.');return;
+      case 'a':e.preventDefault();state.sel=state.objects.map(o=>o.id);render();renderAlgebra();return;
+      case 'b':e.preventDefault();applyStyle({boldToggle:true});return;
+      case 'i':e.preventDefault();applyStyle({italicToggle:true});return;
+      case 'u':e.preventDefault();applyStyle({underlineToggle:true});return;
+    }
+  }
+  if(e.key==='Delete'||e.key==='Backspace'){if(hasSel()){e.preventDefault();deleteSel();}}
+  if(e.key==='Enter'&&state.tool==='polygon'&&pending.length>=3){
+    beginAction();
+    const poly=addObj('polygon',{parents:pending.slice(),fillMode:state.toolVariant.polygon});
+    poly.color=PALETTE[3];
+    pending=[];setPendingHint('');state.sel=[poly.id];render();renderAlgebra();
+  }
+});
+/* ═══════════════ 초기 예시: 삼각형 + 중점 + 외접원 ═══════════════ */
+function loadExample(){
+  const A=addPoint('free',{x:-3.4,y:2.4});
+  const B=addPoint('free',{x:3.6,y:2.8});
+  const C=addPoint('free',{x:0.6,y:-2.9});
+  const AB=addObj('segment',{mode:'pts',parents:[A.id,B.id]});
+  const BC=addObj('segment',{mode:'pts',parents:[B.id,C.id]});
+  const CA=addObj('segment',{mode:'pts',parents:[C.id,A.id]});
+  const tri=addObj('polygon',{parents:[A.id,B.id,C.id],fillMode:'fillstroke'});
+  tri.color=PALETTE[3];
+  const mAB=addPoint('midpoint',{parents:[AB.id]});mAB.color=PALETTE[4];
+  const mBC=addPoint('midpoint',{parents:[BC.id]});mBC.color=PALETTE[4];
+  const mCA=addPoint('midpoint',{parents:[CA.id]});mCA.color=PALETTE[4];
+  const pb1=addObj('line',{mode:'perp',parents:[mAB.id,AB.id]});pb1.color='#9a958a';pb1.dash='dash';pb1.width=1;pb1.label=false;
+  const pb2=addObj('line',{mode:'perp',parents:[mBC.id,BC.id]});pb2.color='#9a958a';pb2.dash='dash';pb2.width=1;pb2.label=false;
+  const O=addPoint('intersect',{parents:[pb1.id,pb2.id],idx:0});O.color=PALETTE[1];
+  const circ=addObj('circle',{mode:'pts',parents:[O.id,A.id]});circ.color=PALETTE[1];
+  const len=mkMeasure('length',[AB.id],AB);
+  state.sel=[];
+}
+/* ═══════════════ 공유 스냅샷 · 버전 기록 (데스모스식) ═══════════════ */
+function snapshotData(){
+  return {app:'dynamic-geometry-sketch',version:1,docName:state.docName,objects:state.objects,
+    uid:state.uid,counters:state.counters,view:state.view,grid:state.grid,marked:state.marked};
+}
+function applyData(s){
+  state.objects=s.objects;state.uid=s.uid||state.objects.length;
+  state.counters=s.counters||state.counters;state.view=s.view||state.view;
+  state.grid=s.grid||state.grid;state.marked=s.marked||state.marked;
+  state.docName=s.docName||'제목 없음';
+  state.sel=[];state.proto=null;state.traces=[];
+  state.objects.forEach(o=>{if(o.type==='locus')o._geomCache=null;});
+  document.title=state.docName+' - 동적 기하 스케치';
+  $('#docTitle').textContent=state.docName+' - 동적 기하 스케치';
+  render();renderAlgebra();
+}
+function encodeSnapshot(){
+  const json=JSON.stringify(snapshotData(),(k,v)=>k==='_geomCache'?undefined:v);
+  return btoa(unescape(encodeURIComponent(json))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function decodeSnapshot(str){
+  const b64=str.replace(/-/g,'+').replace(/_/g,'/');
+  return JSON.parse(decodeURIComponent(escape(atob(b64))));
+}
+function shareSnapshot(){
+  let link;
+  try{link=location.href.split('#')[0]+'#s='+encodeSnapshot();}
+  catch(e){toast('스냅샷을 만들 수 없습니다: '+e.message);return;}
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(link).then(()=>toast('공유 링크를 클립보드에 복사했습니다.'),()=>{});
+  }
+  openDialog('공유 링크 (스냅샷)',
+    '<p style="margin-top:0;">지금 문서 전체를 담은 링크입니다. 이 링크를 열면 같은 스냅샷이 그대로 복원됩니다.</p>'+
+    '<label>링크</label><input type="text" id="shareLink" readonly />'+
+    '<p style="color:var(--ink2);font-size:12px;">문서가 클수록 링크가 길어집니다. 링크 안에 문서 내용이 들어 있으니 공유 범위에 주의하세요.</p>',
+    [{label:'닫기'},{label:'링크 복사',primary:true,onClick:()=>{
+      const inp=$('#shareLink');inp.focus();inp.select();
+      let ok=false;try{ok=document.execCommand('copy');}catch(e){}
+      if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(link).catch(()=>{});
+      toast(ok?'링크를 복사했습니다.':'링크가 선택됐습니다. 복사(Ctrl+C)하세요.');
+      return false;
+    }}],
+    body=>{body.querySelector('#shareLink').value=link;});
+}
+function versionDlg(){
+  const arr=loadVersions();
+  const rows=arr.map((v,i)=>({v:v,i:i})).reverse().map(({v,i})=>
+    '<div class="ver-row"><span>'+new Date(v.ts).toLocaleString('ko-KR')+'</span><span class="vn"></span><button type="button" data-ver="'+i+'">복원</button></div>').join('');
+  openDialog('버전 기록',
+    arr.length?('<p style="margin-top:0;color:var(--ink2);font-size:12px;">문서를 바꿀 때마다 이 브라우저에 자동 저장됩니다 (최근 20개). 복원해도 실행 취소로 되돌릴 수 있습니다.</p>'+rows)
+      :'<p>아직 저장된 버전이 없습니다. 작도를 바꾸면 자동으로 기록됩니다.</p>',
+    [{label:'기록 지우기',onClick:()=>{try{localStorage.removeItem('dgs-version-history');}catch(e){}toast('버전 기록을 지웠습니다.');}},
+     {label:'닫기',primary:true}],
+    body=>{
+      body.querySelectorAll('.ver-row').forEach((rowEl,ri)=>{
+        const item=arr.slice().reverse()[ri];
+        rowEl.querySelector('.vn').textContent=item.name||'제목 없음';
+      });
+      body.querySelectorAll('[data-ver]').forEach(b=>b.addEventListener('click',()=>{
+        const v=arr[parseInt(b.getAttribute('data-ver'),10)];
+        if(!v)return;
+        beginAction();restore(v.data);closeDialog();
+        toast('선택한 버전을 복원했습니다.');
+      }));
+    });
+}
+function pointCoordEditDlg(o){
+  const g=GEOM[o.id];if(!g)return;
+  openDialog('점 '+o.name+' 좌표 편집',
+    '<div class="grid2"><div><label>x 좌표</label><input type="number" id="pcX" value="'+fmt(g.x,4)+'" step="0.5" /></div>'+
+    '<div><label>y 좌표</label><input type="number" id="pcY" value="'+fmt(g.y,4)+'" step="0.5" /></div></div>'+
+    '<p style="color:var(--ink2);font-size:12px;">대수창에서 값을 클릭해 고치면 그래픽창에 즉시 반영됩니다.</p>',
+    [{label:'취소'},{label:'적용',primary:true,onClick:()=>{
+      const x=parseFloat($('#pcX').value),y=parseFloat($('#pcY').value);
+      if(!isFinite(x)||!isFinite(y))return false;
+      beginAction();o.x=x;o.y=y;render();renderAlgebra();
+    }}]);
+}
+
+/* ═══════════════ 오디오 트레이스 (데스모스식 접근성) ═══════════════ */
+const audioTrace={ctx:null,raf:null,fnId:null,x:null,active:false,pops:[],sweep:null};
+function fnValueAt(o,x){
+  const g=GEOM[o.id];const sc=paramScope();
+  if(g&&g.derivAst){const h=1e-4;const f=xx=>evalAst(g.derivAst,Object.assign({},sc,{x:xx}));const v=(f(x+h)-f(x-h))/(2*h);return isFinite(v)?v:NaN;}
+  if(!o.ast)return NaN;
+  const v=evalAst(o.ast,Object.assign({},sc,{x:x}));return isFinite(v)?v:NaN;
+}
+function audioFreq(y){
+  const r=visibleRange();const t=clamp((y-r.y0)/((r.y1-r.y0)||1),0,1);
+  return 160*Math.pow(2,t*2.4);
+}
+function audioEnsureCtx(){
+  if(!audioTrace.ctx){
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC)return false;
+    audioTrace.ctx=new AC();
+  }
+  if(audioTrace.ctx.state==='suspended')audioTrace.ctx.resume();
+  return true;
+}
+function audioTone(freq,dur,vol){
+  if(!audioEnsureCtx())return;
+  const ctx=audioTrace.ctx;const o=ctx.createOscillator(),g=ctx.createGain();
+  o.type='sine';o.frequency.value=freq;
+  g.gain.setValueAtTime(vol||0.12,ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+(dur||0.18));
+  o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+(dur||0.2));
+}
+function audioPop(){
+  if(!audioEnsureCtx())return;
+  const ctx=audioTrace.ctx;const o=ctx.createOscillator(),g=ctx.createGain();
+  o.type='square';
+  o.frequency.setValueAtTime(1150,ctx.currentTime);
+  o.frequency.exponentialRampToValueAtTime(240,ctx.currentTime+0.07);
+  g.gain.setValueAtTime(0.15,ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.08);
+  o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+0.09);
+}
+function computePops(o){
+  const r=visibleRange();const N=240;const pops=[];
+  let prevY=fnValueAt(o,r.x0),prevD=null;
+  for(let i=1;i<=N;i++){
+    const x=r.x0+(r.x1-r.x0)*i/N;const y=fnValueAt(o,x);
+    if(isFinite(prevY)&&isFinite(y)){
+      if(prevY*y<0)pops.push(x);
+      const d=y-prevY;
+      if(prevD!=null&&isFinite(prevD)&&d*prevD<0&&Math.abs(prevY)>1e-9)pops.push(x);
+      prevD=d;
+    }
+    prevY=y;
+  }
+  return pops;
+}
+function audioReadout(){
+  const o=byId(audioTrace.fnId);if(!o)return;
+  const y=fnValueAt(o,audioTrace.x);
+  $('#audioReadout').textContent='x '+fmt(audioTrace.x)+' · '+o.name+'(x) '+(isFinite(y)?fmt(y):'—');
+}
+function openAudioTrace(){
+  const fn=selObjs().find(o=>o.type==='function')||state.objects.find(o=>o.type==='function');
+  if(!fn){toast('먼저 함수를 만드세요. (수 > 새 함수)');return;}
+  audioStopSweep();
+  audioTrace.fnId=fn.id;audioTrace.active=true;
+  audioTrace.x=visibleRange().x0;
+  audioTrace.pops=computePops(fn);
+  $('#audioPanel').style.display='block';
+  $('#audioInfo').textContent='함수 '+fn.name+'(x) = '+(fn.expr||'');
+  audioReadout();render();
+}
+function audioStep(dir){
+  const o=byId(audioTrace.fnId);if(!o)return;
+  const r=visibleRange();const step=(r.x1-r.x0)/60;
+  audioTrace.x=clamp(audioTrace.x+dir*step,r.x0,r.x1);
+  const y=fnValueAt(o,audioTrace.x);
+  if(isFinite(y))audioTone(audioFreq(y),0.22,0.12);
+  if(audioTrace.pops.some(p=>Math.abs(p-audioTrace.x)<step*0.6))audioPop();
+  audioReadout();render();
+}
+function audioPlaySweep(){
+  const o=byId(audioTrace.fnId);if(!o)return;
+  if(audioTrace.sweep){audioStopSweep();return;}
+  if(!audioEnsureCtx()){toast('이 브라우저에서는 소리를 재생할 수 없습니다.');return;}
+  const ctx=audioTrace.ctx;
+  const osc=ctx.createOscillator(),g=ctx.createGain();
+  osc.type='sine';g.gain.value=0;osc.connect(g);g.connect(ctx.destination);osc.start();
+  const r=visibleRange();const dur=6000;const t0=performance.now();
+  audioTrace.pops=computePops(o);
+  const popped=new Set();
+  const sweep={osc:osc,gain:g};
+  audioTrace.sweep=sweep;
+  $('#audioPlayBtn').textContent='❚❚ 정지';
+  const frame=now=>{
+    if(audioTrace.sweep!==sweep)return;
+    const t=(now-t0)/dur;
+    if(t>=1){audioStopSweep();audioReadout();render();return;}
+    audioTrace.x=r.x0+(r.x1-r.x0)*t;
+    const y=fnValueAt(o,audioTrace.x);
+    if(isFinite(y)){osc.frequency.setTargetAtTime(audioFreq(y),ctx.currentTime,0.03);g.gain.setTargetAtTime(0.11,ctx.currentTime,0.03);}
+    else g.gain.setTargetAtTime(0,ctx.currentTime,0.03);
+    audioTrace.pops.forEach((p,i)=>{if(!popped.has(i)&&audioTrace.x>=p){popped.add(i);audioPop();}});
+    audioReadout();render();
+    audioTrace.raf=requestAnimationFrame(frame);
+  };
+  audioTrace.raf=requestAnimationFrame(frame);
+}
+function audioStopSweep(){
+  if(audioTrace.raf)cancelAnimationFrame(audioTrace.raf);audioTrace.raf=null;
+  if(audioTrace.sweep){try{audioTrace.sweep.osc.stop();}catch(e){}audioTrace.sweep=null;}
+  const b=$('#audioPlayBtn');if(b)b.textContent='▶ 재생';
+}
+$('#audioPlayBtn').addEventListener('click',audioPlaySweep);
+$('#audioStopBtn').addEventListener('click',()=>{
+  audioStopSweep();
+  if(audioTrace.fnId){audioTrace.x=visibleRange().x0;audioReadout();render();}
+});
+$('#audioClose').addEventListener('click',()=>{
+  audioStopSweep();audioTrace.active=false;audioTrace.fnId=null;audioTrace.x=null;
+  $('#audioPanel').style.display='none';render();
+});
+
+/* ═══════════════ 블록코딩 작도 (알지오매스식) ═══════════════ */
+let blocks=[];
+const BLOCK_LABELS={forward:'전진',turn:'회전',point:'점 찍기',penup:'펜 올리기',pendown:'펜 내리기',repeatStart:'반복 시작',repeatEnd:'반복 끝'};
+function blockDepthAt(i){
+  let d=0;
+  for(let k=0;k<i;k++){
+    if(blocks[k].type==='repeatStart')d++;
+    if(blocks[k].type==='repeatEnd')d=Math.max(0,d-1);
+  }
+  if(blocks[i].type==='repeatEnd')d=Math.max(0,d-1);
+  return d;
+}
+function renderBlocks(){
+  const list=$('#blockList');if(!list)return;list.innerHTML='';
+  if(!blocks.length){list.innerHTML='<div class="empty-note">위 버튼으로 블록을 쌓아 보세요.</div>';return;}
+  blocks.forEach((b,i)=>{
+    const row=document.createElement('div');row.className='blk-row';
+    row.style.marginLeft=(blockDepthAt(i)*14)+'px';
+    const lbl=document.createElement('span');lbl.className='blk-lbl';lbl.textContent=BLOCK_LABELS[b.type]||b.type;
+    row.appendChild(lbl);
+    if(b.type==='forward'||b.type==='turn'||b.type==='repeatStart'){
+      const inp=document.createElement('input');inp.type='number';
+      inp.step=b.type==='turn'?'5':'0.5';
+      inp.value=b.type==='forward'?b.dist:(b.type==='turn'?b.ang:b.n);
+      inp.addEventListener('change',()=>{
+        const v=parseFloat(inp.value);
+        if(b.type==='forward')b.dist=v;else if(b.type==='turn')b.ang=v;else b.n=v;
+      });
+      row.appendChild(inp);
+      const unit=document.createElement('span');unit.className='blk-unit';
+      unit.textContent=b.type==='forward'?'만큼':(b.type==='turn'?'°':'회');
+      row.appendChild(unit);
+    }
+    const mkBtn=(txt,title,fn)=>{const btn=document.createElement('button');btn.type='button';btn.textContent=txt;btn.title=title;btn.addEventListener('click',fn);return btn;};
+    row.appendChild(mkBtn('↑','위로',()=>{if(i>0){const t=blocks[i-1];blocks[i-1]=blocks[i];blocks[i]=t;renderBlocks();}}));
+    row.appendChild(mkBtn('↓','아래로',()=>{if(i<blocks.length-1){const t=blocks[i+1];blocks[i+1]=blocks[i];blocks[i]=t;renderBlocks();}}));
+    row.appendChild(mkBtn('✕','삭제',()=>{blocks.splice(i,1);renderBlocks();}));
+    list.appendChild(row);
+  });
+}
+function runBlocks(){
+  if(!blocks.length){toast('먼저 블록을 추가하세요.');return;}
+  let depth=0,bad=false;
+  blocks.forEach(b=>{if(b.type==='repeatStart')depth++;if(b.type==='repeatEnd'){depth--;if(depth<0)bad=true;}});
+  if(bad||depth!==0){toast('반복 시작/끝 짝이 맞지 않습니다.');return;}
+  beginAction();
+  let pos={x:0,y:0},heading=Math.PI/2,pen=true,curPt=null,ops=0;
+  const mkPt=p=>addPoint('free',{x:Math.round(p.x*1e6)/1e6,y:Math.round(p.y*1e6)/1e6});
+  function forward(d){
+    const np={x:pos.x+d*Math.cos(heading),y:pos.y+d*Math.sin(heading)};
+    if(pen&&Math.abs(d)>1e-12){
+      if(!curPt)curPt=mkPt(pos);
+      const npPt=mkPt(np);
+      addObj('segment',{mode:'pts',parents:[curPt.id,npPt.id]});
+      curPt=npPt;
+    }else curPt=null;
+    pos=np;
+  }
+  function exec(list){
+    let i=0;
+    while(i<list.length){
+      if(++ops>6000)return;
+      const b=list[i];
+      if(b.type==='repeatStart'){
+        let dep=1,j=i+1;
+        while(j<list.length&&dep>0){if(list[j].type==='repeatStart')dep++;else if(list[j].type==='repeatEnd')dep--;j++;}
+        const body=list.slice(i+1,j-1);
+        const n=clamp(Math.round(parseFloat(b.n)||0),0,200);
+        for(let k=0;k<n;k++)exec(body);
+        i=j;continue;
+      }
+      if(b.type==='repeatEnd'){i++;continue;}
+      if(b.type==='forward')forward(parseFloat(b.dist)||0);
+      else if(b.type==='turn')heading+=(parseFloat(b.ang)||0)*RAD;
+      else if(b.type==='point')curPt=mkPt(pos);
+      else if(b.type==='penup')pen=false;
+      else if(b.type==='pendown')pen=true;
+      i++;
+    }
+  }
+  exec(blocks);
+  state.sel=[];
+  render();renderAlgebra();
+  toast('블록을 실행했습니다 — 경로가 점·선분 개체로 만들어졌습니다.');
+}
+function buildBlockPanel(){
+  document.querySelectorAll('#blockPanel [data-add]').forEach(b=>b.addEventListener('click',()=>{
+    const t=b.getAttribute('data-add');
+    const nb={type:t};
+    if(t==='forward')nb.dist=2;
+    if(t==='turn')nb.ang=90;
+    if(t==='repeatStart')nb.n=4;
+    blocks.push(nb);renderBlocks();
+  }));
+  $('#blockRun').addEventListener('click',runBlocks);
+  $('#blockClear').addEventListener('click',()=>{blocks=[];renderBlocks();});
+  $('#polyPreset').addEventListener('click',()=>{
+    const n=clamp(Math.round(parseFloat($('#polyN').value)||5),3,24);
+    blocks=[{type:'repeatStart',n:n},{type:'forward',dist:2},{type:'turn',ang:Math.round(3600/n)/10},{type:'repeatEnd'}];
+    renderBlocks();
+    toast('정'+n+'각형 예시(외각 '+fmt(360/n)+'°)를 넣었습니다. ▶ 실행을 눌러 보세요.');
+  });
+  $('#blockClose').addEventListener('click',()=>{$('#blockPanel').style.display='none';});
+  renderBlocks();
+}
+
+/* ═══════════════ 문서(활동지) 모드 (알지오매스식) ═══════════════ */
+let docBlocks=null;
+function svgToPNGDataURL(cb){
+  recompute();
+  const clone=svg.cloneNode(true);
+  clone.setAttribute('xmlns',SVGNS);
+  clone.setAttribute('width',W());clone.setAttribute('height',H());
+  const html=new XMLSerializer().serializeToString(clone)
+    .replace(/var\(--grid\)/g,'#dcdcdc').replace(/var\(--gridminor\)/g,'#eeeeee').replace(/var\(--axis\)/g,'#a8a8a8');
+  const url=URL.createObjectURL(new Blob(['<?xml version="1.0" encoding="UTF-8"?>\n'+html],{type:'image/svg+xml;charset=utf-8'}));
+  const img=new Image();
+  img.onload=()=>{
+    const cv=document.createElement('canvas');cv.width=W()*2;cv.height=H()*2;
+    const cx=cv.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,cv.width,cv.height);
+    cx.drawImage(img,0,0,cv.width,cv.height);
+    URL.revokeObjectURL(url);cb(cv.toDataURL('image/png'));
+  };
+  img.onerror=()=>{URL.revokeObjectURL(url);cb(null);};
+  img.src=url;
+}
+function openDocMode(){
+  $('#docMode').style.display='flex';
+  if(!docBlocks){
+    docBlocks=[{type:'text',kind:'설명',title:'활동 안내',text:'스케치를 보고 아래 문제를 풀어 보세요.'}];
+    renderDocBlocks();
+    svgToPNGDataURL(url=>{if(url){docBlocks.unshift({type:'img',src:url});renderDocBlocks();}});
+  }else renderDocBlocks();
+}
+function closeDocMode(){$('#docMode').style.display='none';}
+function renderDocBlocks(){
+  const page=$('#docPage');if(!page||!docBlocks)return;page.innerHTML='';
+  const sheet=document.createElement('div');sheet.className='doc-sheet';
+  const h=document.createElement('h2');h.textContent=state.docName+' — 활동지';sheet.appendChild(h);
+  docBlocks.forEach((b,i)=>{
+    const wrapEl=document.createElement('div');wrapEl.className='doc-block';
+    const tools=document.createElement('div');tools.className='doc-btools';
+    const tag=document.createElement('span');tag.textContent=b.type==='img'?'스케치 스냅샷':(b.kind+' 블록');
+    const sp=document.createElement('span');sp.className='sp';
+    tools.appendChild(tag);tools.appendChild(sp);
+    const mkT=(txt,title,fn)=>{const btn=document.createElement('button');btn.type='button';btn.textContent=txt;btn.title=title;btn.addEventListener('click',fn);tools.appendChild(btn);};
+    mkT('↑','위로',()=>{if(i>0){const t=docBlocks[i-1];docBlocks[i-1]=docBlocks[i];docBlocks[i]=t;renderDocBlocks();}});
+    mkT('↓','아래로',()=>{if(i<docBlocks.length-1){const t=docBlocks[i+1];docBlocks[i+1]=docBlocks[i];docBlocks[i]=t;renderDocBlocks();}});
+    mkT('✕','삭제',()=>{docBlocks.splice(i,1);renderDocBlocks();});
+    wrapEl.appendChild(tools);
+    if(b.type==='img'){
+      const im=document.createElement('img');im.className='doc-img';im.src=b.src;im.alt='스케치 스냅샷';
+      wrapEl.appendChild(im);
+    }else{
+      const ti=document.createElement('input');ti.type='text';ti.value=b.title;ti.placeholder='제목';
+      ti.addEventListener('input',()=>{b.title=ti.value;});
+      const ta=document.createElement('textarea');ta.value=b.text;ta.placeholder=b.kind==='문제'?'문제를 입력하세요':'설명을 입력하세요';
+      ta.addEventListener('input',()=>{b.text=ta.value;});
+      wrapEl.appendChild(ti);wrapEl.appendChild(ta);
+    }
+    sheet.appendChild(wrapEl);
+  });
+  page.appendChild(sheet);
+}
+$('#docSnap').addEventListener('click',()=>{
+  svgToPNGDataURL(url=>{
+    if(!url){toast('스냅샷을 찍지 못했습니다.');return;}
+    const imgBlock=docBlocks.find(b=>b.type==='img');
+    if(imgBlock)imgBlock.src=url;else docBlocks.unshift({type:'img',src:url});
+    renderDocBlocks();toast('스케치 스냅샷을 다시 찍었습니다.');
+  });
+});
+$('#docAddText').addEventListener('click',()=>{docBlocks.push({type:'text',kind:'설명',title:'설명',text:''});renderDocBlocks();});
+$('#docAddProb').addEventListener('click',()=>{docBlocks.push({type:'text',kind:'문제',title:'문제 '+(docBlocks.filter(b=>b.kind==='문제').length+1),text:''});renderDocBlocks();});
+$('#docPrint').addEventListener('click',()=>{try{window.print();}catch(e){toast('이 환경에서는 인쇄 창을 열 수 없습니다.');}});
+$('#docClose').addEventListener('click',closeDocMode);
+
+/* ═══════════════ 타이틀바 버튼 ═══════════════ */
+$('#shareBtn').addEventListener('click',shareSnapshot);
+$('#blockBtn').addEventListener('click',()=>{
+  const p=$('#blockPanel');
+  p.style.display=p.style.display==='block'?'none':'block';
+});
+$('#docBtn').addEventListener('click',openDocMode);
+
+/* ═══════════════ 시작 ═══════════════ */
+function fitView(){
+  recompute();
+  let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;
+  for(const o of state.objects){
+    const g=GEOM[o.id];if(!g)continue;
+    if(g.kind==='point'){x0=Math.min(x0,g.x);x1=Math.max(x1,g.x);y0=Math.min(y0,g.y);y1=Math.max(y1,g.y);}
+    if(g.kind==='circle'){x0=Math.min(x0,g.c.x-g.r);x1=Math.max(x1,g.c.x+g.r);y0=Math.min(y0,g.c.y-g.r);y1=Math.max(y1,g.c.y+g.r);}
+  }
+  if(x1<=x0)return;
+  const bw=x1-x0+1.8,bh=y1-y0+1.8;
+  state.view.scale=clamp(Math.min(W()/bw,H()/bh),6,600);
+  state.view.cx=(x0+x1)/2;state.view.cy=(y0+y1)/2;
+}
+buildToolbox();
+buildMenubar();
+buildBlockPanel();
+let _fromHash=false;
+if(location.hash&&location.hash.indexOf('#s=')===0){
+  try{
+    const s=decodeSnapshot(location.hash.slice(3));
+    if(s&&s.objects){applyData(s);_fromHash=true;setTimeout(()=>toast('공유 링크의 스냅샷을 열었습니다.'),350);}
+  }catch(e){}
+}
+if(!_fromHash)loadExample();
+if(innerWidth<=760)fitView();
+render();
+renderAlgebra();
+if(innerWidth<=760)$('#panel').classList.add('hidden');
+new ResizeObserver(()=>render()).observe(wrap);
+</script>
+</body>
+</html>
