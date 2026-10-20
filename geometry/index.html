@@ -314,7 +314,7 @@
   <div id="titlebar">
     <svg class="appmark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="15" r="6.5" fill="none" stroke="#2f6fb2" stroke-width="2"/><path d="M4 20 L20 4" stroke="#b3352c" stroke-width="2"/><circle cx="20" cy="4" r="2.2" fill="#b3352c"/></svg>
     <span id="docTitle">제목 없음 - 동적 기하 스케치</span>
-    <span id="buildTag">빌드 2026-10-20 14:02 · 좌측 도구 7종 추가(벡터·세 점 원·각·정다각형·펜·슬라이더·지우개)</span>
+    <span id="buildTag">빌드 2026-10-20 14:12 · 예제 메뉴 11종 추가(회전하는 지구본 포함)</span>
     <button class="tb-btn" id="shareBtn" type="button">공유</button>
     <button class="tb-btn" id="blockBtn" type="button">블록코딩</button>
     <button class="tb-btn" id="docBtn" type="button">문서 모드</button>
@@ -893,6 +893,20 @@ function computeGeom(o,G){
       return{kind:o.type,c:{x:c.x,y:c.y},r:V.len(V.sub(s,c)),
         a1:Math.atan2(s.y-c.y,s.x-c.x),a2:Math.atan2(e.y-c.y,e.x-c.x)};
     }
+    case 'gellipse':{
+      // 지구본 타원: parents [중심점, 반지름점], 매개변수 t(도)에 종속
+      const c=G[o.parents[0]],rp=G[o.parents[1]];
+      if(!c||!rp||c.x==null||rp.x==null)return null;
+      const R=V.len(V.sub(rp,c));
+      if(o.role==='meridian'){
+        const tp=o.tParam?byId(o.tParam):null;
+        const t=(tp&&tp.type==='param'?tp.value:0)*RAD;
+        const cs=Math.cos((o.lam||0)*RAD+t);
+        return{kind:'gellipse',cx:c.x,cy:c.y,rx:R*cs,ry:R,back:cs<0};
+      }
+      const ph=(o.phi||0)*RAD;
+      return{kind:'gellipse',cx:c.x,cy:c.y+R*Math.sin(ph),rx:R*Math.cos(ph),ry:R*Math.cos(ph)*Math.sin(20*RAD),back:false};
+    }
     case 'text':return{kind:'text',x:o.x,y:o.y};
     case 'freehand':return{kind:'freehand',pts:o.pts||[]};
     case 'measure':{
@@ -1258,6 +1272,15 @@ function drawObject(o,g){
       labelFor(o,{x:lp.x-24,y:lp.y-6},o.name+'(x)',12);
       break;
     }
+    case 'gellipse':{
+      const c=P({x:g.cx,y:g.cy});
+      const rx=Math.max(Math.abs(g.rx)*state.view.scale,0.5), ry=Math.max(g.ry*state.view.scale,0.5);
+      const attrs=strokeAttrs(o);
+      if(g.back){attrs['stroke-dasharray']='5 4';attrs['stroke-opacity']=0.45;}
+      attrs['stroke-width']=o.width+(sel?1.2:0);
+      el('ellipse',Object.assign(attrs,{cx:c.x,cy:c.y,rx:rx,ry:ry}),grp);
+      break;
+    }
     case 'locus':{
       if(g.pts&&g.pts.length>1){
         const dAttr=g.pts.map((p,i)=>{const q=toPx(p);return(i?'L':'M')+q.x.toFixed(1)+' '+q.y.toFixed(1);}).join(' ');
@@ -1357,6 +1380,7 @@ function defOf(o){
     case 'param':return '매개변수 ('+fmt(o.min)+' ~ '+fmt(o.max)+')';
     case 'locus':return nm(o.parents[1])+'의 자취 ('+nm(o.parents[0])+' 이동)';
     case 'iterate':return '반복: '+o.pre.map((p,i)=>nm(p)+'→'+nm(o.img[i])).join(', ');
+    case 'gellipse':return o.role==='meridian'?('지구본 자오선 λ='+o.lam+'° — 가로 반축이 cos(λ+t)로 변하는 타원'):('지구본 위선 φ='+(o.phi>0?'+':'')+o.phi+'° — 기울기 20° 정사영 타원');
   }
   return o.type;
 }
@@ -1383,6 +1407,7 @@ function valueOf(o){
       const cnt=state.objects.filter(x=>x._genIter===o.id).length;
       return '깊이 '+(o.depthParam?nm(o.depthParam)+' = '+d:d)+(eff<d?' (개수 제한으로 '+eff+'까지)':'')+' · 개체 '+cnt+'개';
     }
+    case 'gellipse':return '반축 '+fmt(Math.abs(g.rx))+' × '+fmt(g.ry)+(g.back?' · 뒷면 (점선)':'');
   }
   return '';
 }
@@ -1474,7 +1499,7 @@ function updateStatus(){
   if(!selObjs.length)$('#statusSel').textContent='';
   else{
     const cnt={};
-    selObjs.forEach(o=>{const k={point:'점',segment:'선분',ray:'반직선',line:'직선',circle:'원',polygon:'다각형',arc:'호',sector:'부채꼴',text:'글',measure:'측정',function:'함수',param:'매개변수',locus:'자취',iterate:'반복',vector:'벡터',freehand:'자유 곡선'}[o.type]||o.type;cnt[k]=(cnt[k]||0)+1;});
+    selObjs.forEach(o=>{const k={point:'점',segment:'선분',ray:'반직선',line:'직선',circle:'원',polygon:'다각형',arc:'호',sector:'부채꼴',text:'글',measure:'측정',function:'함수',param:'매개변수',locus:'자취',iterate:'반복',gellipse:'지구본 타원',vector:'벡터',freehand:'자유 곡선'}[o.type]||o.type;cnt[k]=(cnt[k]||0)+1;});
     $('#statusSel').textContent='선택된 개체: '+Object.keys(cnt).map(k=>cnt[k]+'개의 '+k).join(', ');
   }
 }
@@ -1601,7 +1626,7 @@ function dlgInfo(){
     '<p>점·선·원을 작도하고 자유점을 끌어 움직이면, 교점·중점·수선·측정값이 의존 관계를 따라 실시간으로 함께 움직입니다. 매개변수 슬라이더, 함수 그래프, 변환, 자취, 애니메이션을 지원합니다.</p>'+
     '<p>데스모스·알지오매스·지오지브라의 장점을 더했습니다: 미지수→슬라이더 자동 제안, 스냅샷 공유 링크와 버전 기록, 함수 오디오 트레이스, 블록코딩 작도, 문서(활동지) 모드, 작도 단계 재생과 대수창 양방향 편집.</p>'+
     '<p style="color:var(--ink2);">Geometer\'s Sketchpad 5.03의 화면 구성에서 영감을 받은 웹 재현입니다.</p>'+
-    '<p style="color:var(--ink2);">빌드 2026-10-20 14:02 · 좌측 도구 7종 추가(벡터·세 점 원·각·정다각형·펜·슬라이더·지우개)</p>');
+    '<p style="color:var(--ink2);">빌드 2026-10-20 14:12 · 예제 메뉴 11종 추가(회전하는 지구본 포함)</p>');
 }
 function dlgShortcuts(){
   const rows=[['Ctrl+1 ~ 15','도구 선택 (1 이동·2 점·3 원·4 선분·5 다각형·6 글·7 정보·8 사용자 도구·9 벡터·0 세 점 원, 11~15는 Ctrl+1 뒤 숫자: 각·정다각형·펜·슬라이더·지우개)'],
@@ -2213,8 +2238,6 @@ const MENUS=[
    {label:'열기…',shortcut:'Ctrl+O',action:()=>$('#fileOpen').click()},
    {label:'저장',shortcut:'Ctrl+S',action:saveDocument},
    {label:'다른 이름으로 저장…',action:saveAsDocument},
-   '-',
-   {label:'예시: 시에르핀스키 삼각형 (반복)…',action:loadSierpinski},
    '-',
    {label:'공유 링크 복사 (스냅샷)…',action:shareSnapshot},
    {label:'버전 기록…',action:versionDlg},
@@ -2838,33 +2861,212 @@ function iteratePropsDlg(o){
       });
     });
 }
-function loadSierpinski(){
-  openDialog('시에르핀스키 삼각형 (반복 예시)',
-    '<p style="margin-top:0;">지금 문서를 지우고 반복 예시를 불러올까요?</p>'+
-    '<p>삼각형 ABC와 각 변의 중점 D, E, F를 만들고, 대응 A→D, B→E, C→F를 깊이 4까지 반복한 <b>시에르핀스키 삼각형</b>입니다. 꼭짓점 A, B, C를 끌면 프랙탈 전체가 따라 변합니다.</p>',
+/* ═══════════════ 예제 모음 (예제 메뉴) ═══════════════ */
+function resetDocState(name){
+  stopAnim();
+  state.objects=[];state.sel=[];state.uid=0;state.proto=null;state.traces=[];
+  state.counters={line:0,ray:0,circle:0,polygon:0,arc:0,sector:0,measure:0,func:0,text:0,vector:0,freehand:0};
+  state.marked={vector:null,center:null,axis:null,angle:60,ratio:2};
+  state.docName=name;
+  document.title=name+' - 동적 기하 스케치';$('#docTitle').textContent=name+' - 동적 기하 스케치';
+}
+function confirmExample(ex){
+  openDialog('예제 불러오기 — '+ex.title,
+    '<p style="margin-top:0;">현재 문서를 예제로 바꾸겠습니까? (실행 취소로 되돌릴 수 있습니다)</p>'+
+    '<p style="color:var(--ink2);">'+ex.desc+'</p>',
     [{label:'취소'},{label:'불러오기',primary:true,onClick:()=>{
-      past=[];future=[];
-      state.objects=[];state.sel=[];state.uid=0;state.proto=null;state.traces=[];
-      state.counters={line:0,ray:0,circle:0,polygon:0,arc:0,sector:0,measure:0,func:0,text:0};
-      state.marked={vector:null,center:null,axis:null,angle:60,ratio:2};
-      state.docName='시에르핀스키 삼각형';
-      document.title=state.docName+' - 동적 기하 스케치';$('#docTitle').textContent=state.docName+' - 동적 기하 스케치';
-      const A=addPoint('free',{x:-3.4,y:-2.6});
-      const B=addPoint('free',{x:3.4,y:-2.6});
-      const C=addPoint('free',{x:0,y:3.3});
-      const AB=addObj('segment',{mode:'pts',parents:[A.id,B.id]});
-      const BC=addObj('segment',{mode:'pts',parents:[B.id,C.id]});
-      const CA=addObj('segment',{mode:'pts',parents:[C.id,A.id]});
-      const tri=addObj('polygon',{parents:[A.id,B.id,C.id],fillMode:'fillstroke'});
-      tri.color=PALETTE[3];
-      const D=addPoint('midpoint',{parents:[AB.id]});D.color=PALETTE[4];
-      const E=addPoint('midpoint',{parents:[BC.id]});E.color=PALETTE[4];
-      const F=addPoint('midpoint',{parents:[CA.id]});F.color=PALETTE[4];
-      state.sel=[AB.id,BC.id,CA.id,D.id,E.id,F.id,A.id,B.id,C.id];
-      createIteration([A.id,B.id,C.id],[D.id,E.id,F.id],4,{showMode:'last'},true);
+      beginAction();
+      resetDocState(ex.doc||ex.title);
+      ex.build();
       render();renderAlgebra();
     }}]);
 }
+function buildExCircumcenter(){
+  const A=addPoint('free',{x:-3.4,y:2.4});
+  const B=addPoint('free',{x:3.6,y:2.8});
+  const C=addPoint('free',{x:0.6,y:-2.9});
+  const AB=addObj('segment',{mode:'pts',parents:[A.id,B.id]});
+  const BC=addObj('segment',{mode:'pts',parents:[B.id,C.id]});
+  const CA=addObj('segment',{mode:'pts',parents:[C.id,A.id]});
+  const tri=addObj('polygon',{parents:[A.id,B.id,C.id],fillMode:'fillstroke'});
+  tri.color=PALETTE[3];
+  const mAB=addPoint('midpoint',{parents:[AB.id]});mAB.color=PALETTE[4];
+  const mBC=addPoint('midpoint',{parents:[BC.id]});mBC.color=PALETTE[4];
+  const mCA=addPoint('midpoint',{parents:[CA.id]});mCA.color=PALETTE[4];
+  const pb1=addObj('line',{mode:'perp',parents:[mAB.id,AB.id]});pb1.color='#9a958a';pb1.dash='dash';pb1.width=1;pb1.label=false;
+  const pb2=addObj('line',{mode:'perp',parents:[mBC.id,BC.id]});pb2.color='#9a958a';pb2.dash='dash';pb2.width=1;pb2.label=false;
+  const O=addPoint('intersect',{parents:[pb1.id,pb2.id],idx:0});O.color=PALETTE[1];
+  const circ=addObj('circle',{mode:'pts',parents:[O.id,A.id]});circ.color=PALETTE[1];
+  mkMeasure('length',[AB.id],AB);
+  mkMeasure('area',[tri.id],tri);
+  state.sel=[];
+}
+function sierpinskiBase(){
+  const A=addPoint('free',{x:-3.4,y:-2.6});
+  const B=addPoint('free',{x:3.4,y:-2.6});
+  const C=addPoint('free',{x:0,y:3.3});
+  const AB=addObj('segment',{mode:'pts',parents:[A.id,B.id]});
+  const BC=addObj('segment',{mode:'pts',parents:[B.id,C.id]});
+  const CA=addObj('segment',{mode:'pts',parents:[C.id,A.id]});
+  const tri=addObj('polygon',{parents:[A.id,B.id,C.id],fillMode:'fillstroke'});
+  tri.color=PALETTE[3];
+  const D=addPoint('midpoint',{parents:[AB.id]});D.color=PALETTE[4];
+  const E=addPoint('midpoint',{parents:[BC.id]});E.color=PALETTE[4];
+  const F=addPoint('midpoint',{parents:[CA.id]});F.color=PALETTE[4];
+  state.sel=[AB.id,BC.id,CA.id,D.id,E.id,F.id,A.id,B.id,C.id];
+  return{A:A,B:B,C:C,D:D,E:E,F:F};
+}
+function buildExSierpinski(){
+  const s=sierpinskiBase();
+  createIteration([s.A.id,s.B.id,s.C.id],[s.D.id,s.E.id,s.F.id],4,{showMode:'last'},true);
+}
+function buildExIterParam(){
+  const a=addObj('param',{name:'a',value:3,min:0,max:6,step:1,color:PALETTE[6]});
+  const s=sierpinskiBase();
+  const it=createIteration([s.A.id,s.B.id,s.C.id],[s.D.id,s.E.id,s.F.id],3,{showMode:'last'},true);
+  if(it){
+    it.depthParam=a.id;it._sig=null;refreshIteration(it);
+    render();renderAlgebra();
+    toast('반복 깊이가 매개변수 a에 연결되어 있습니다. 대수창의 슬라이더를 움직여 보세요.');
+  }
+}
+function buildExPentagon(){
+  // 블록코딩 패널의 프로그램(반복 5회: 전진 2, 회전 72°)을 실제로 실행해 만든다
+  blocks=[{type:'repeatStart',n:5},{type:'forward',dist:2},{type:'turn',ang:72},{type:'repeatEnd'}];
+  renderBlocks();
+  const before=new Set(state.objects.map(o=>o.id));
+  runBlocks();
+  past.pop(); // runBlocks 내부 beginAction이 쌓은 빈 문서 스냅샷 제거 — 실행 취소 한 번으로 이전 문서로 돌아가게
+  const pts=state.objects.filter(o=>o.type==='point'&&!before.has(o.id));
+  const segs=state.objects.filter(o=>o.type==='segment'&&!before.has(o.id));
+  if(pts.length===6&&segs.length===5){
+    // 마지막 전진으로 생긴 닫는 점(첫 점과 같은 위치)은 첫 점으로 합친다
+    const dup=pts[5];
+    segs.forEach(sg=>{sg.parents=sg.parents.map(p=>p===dup.id?pts[0].id:p);});
+    state.objects=state.objects.filter(o=>o.id!==dup.id);
+    pts.pop();
+  }
+  ['J','K','L','M','N'].forEach((nmv,i)=>{if(pts[i])pts[i].name=nmv;});
+  state.sel=segs.map(sg=>sg.id);
+  render();renderAlgebra();
+}
+function buildExPerpParallel(){
+  const A=addPoint('free',{x:-3.2,y:2.4});
+  const B=addPoint('free',{x:3.4,y:2.6});
+  const C=addPoint('free',{x:0.8,y:-2.8});
+  const AB=addObj('segment',{mode:'pts',parents:[A.id,B.id]});
+  const BC=addObj('segment',{mode:'pts',parents:[B.id,C.id]});
+  const CA=addObj('segment',{mode:'pts',parents:[C.id,A.id]});
+  const tri=addObj('polygon',{parents:[A.id,B.id,C.id],fillMode:'fillstroke'});
+  tri.color=PALETTE[3];
+  const D=addPoint('midpoint',{parents:[AB.id]});D.color=PALETTE[4];
+  const perp=addObj('line',{mode:'perp',parents:[C.id,AB.id]});perp.color=PALETTE[1];
+  const par=addObj('line',{mode:'parallel',parents:[C.id,AB.id]});par.color=PALETTE[5];
+  const bis=addObj('ray',{mode:'bisector',parents:[B.id,A.id,C.id]});bis.color=PALETTE[4];
+  state.sel=[];
+}
+function buildExCircleTangent(){
+  const O=addPoint('free',{x:-0.9,y:0.2});
+  const B=addPoint('free',{x:2.1,y:0.2});
+  const circ=addObj('circle',{mode:'pts',parents:[O.id,B.id]});circ.color=PALETTE[2];
+  const C=addPoint('free',{x:-3.8,y:-2});
+  const D=addPoint('free',{x:3.4,y:1.6});
+  const ln=addObj('line',{mode:'pts',parents:[C.id,D.id]});
+  const E=addPoint('intersect',{parents:[ln.id,circ.id],idx:0});E.color=PALETTE[1];
+  const F=addPoint('intersect',{parents:[ln.id,circ.id],idx:1});F.color=PALETTE[1];
+  const rad=addObj('segment',{mode:'pts',parents:[O.id,E.id]});
+  const tan=addObj('line',{mode:'perp',parents:[E.id,rad.id]});tan.color=PALETTE[1];
+  state.sel=[];
+}
+function buildExArcSectorLocus(){
+  const O=addPoint('free',{x:-1.4,y:0.1});
+  const B=addPoint('free',{x:1.6,y:0.1});
+  const circ=addObj('circle',{mode:'pts',parents:[O.id,B.id]});circ.color=PALETTE[2];
+  const C=addPoint('free',{x:3.6,y:2.4});
+  const P=addPoint('on',{parents:[circ.id],t:0.8});P.color=PALETTE[1];
+  const PC=addObj('segment',{mode:'pts',parents:[P.id,C.id]});
+  const M=addPoint('midpoint',{parents:[PC.id]});M.color=PALETTE[4];
+  const loc=addObj('locus',{parents:[P.id,M.id]});loc.color=PALETTE[5];
+  const Q1=addPoint('on',{parents:[circ.id],t:2.4});Q1.label=false;
+  const Q2=addPoint('on',{parents:[circ.id],t:3.6});Q2.label=false;
+  const arc=addObj('arc',{parents:[O.id,B.id,Q1.id]});arc.color=PALETTE[4];
+  const sec=addObj('sector',{parents:[O.id,Q1.id,Q2.id]});sec.color=PALETTE[5];
+  state.sel=[loc.id];
+}
+function buildExParamFunc(){
+  addObj('param',{name:'m',value:1,min:-5,max:5,step:0.1,color:PALETTE[6]});
+  addObj('param',{name:'b',value:1,min:-5,max:5,step:0.1,color:PALETTE[5]});
+  const f=addObj('function',{expr:'m*x + b',ast:parseExpr('m*x + b')});
+  f.name='f';f.color='#b3352c';
+  const d=addObj('function',{derivOf:f.id,expr:'f′(x)'});
+  d.name=uniqueName('f′');d.color=PALETTE[4];
+  state.sel=[f.id];
+}
+function buildExTransformDemo(){
+  const A=addPoint('free',{x:-2.6,y:-1.8});
+  const B=addPoint('free',{x:0.8,y:-2.2});
+  const C=addPoint('free',{x:1.6,y:0.9});
+  const D=addPoint('free',{x:-1.8,y:1.4});
+  addObj('segment',{mode:'pts',parents:[A.id,B.id]});
+  addObj('segment',{mode:'pts',parents:[B.id,C.id]});
+  addObj('segment',{mode:'pts',parents:[C.id,D.id]});
+  addObj('segment',{mode:'pts',parents:[D.id,A.id]});
+  const poly=addObj('polygon',{parents:[A.id,B.id,C.id,D.id],fillMode:'fillstroke'});
+  poly.color=PALETTE[3];
+  const O=addPoint('free',{x:-0.4,y:-0.5});O.name='O';O.color=PALETTE[1];
+  state.marked.center=O.id;
+  addObj('text',{x:-4.5,y:3.2,text:'중심 O가 지정되어 있습니다. 회전 화살표(선택됨)나 확대·축소 화살표로 사각형을 끌어 보세요.',fontSize:13,color:'#1c1c1e'});
+  state.toolVariant.arrow='rotate';
+  setTool('move');
+  state.sel=[poly.id];
+}
+function buildExHexagon(){
+  const O=addPoint('free',{x:-0.6,y:0});
+  const D=addPoint('free',{x:1.9,y:0});
+  const verts=[];
+  for(let i=0;i<6;i++){const v=addPoint('regvert',{parents:[O.id,D.id],idx:i,n:6});v.label=false;verts.push(v);}
+  const poly=addObj('polygon',{parents:verts.map(v=>v.id),fillMode:'fillstroke'});
+  poly.color=PALETTE[3];
+  mkMeasure('angle',[verts[5].id,verts[0].id,verts[1].id],verts[0]);
+  state.sel=[poly.id];
+}
+function buildExGlobe(){
+  const A=addPoint('free',{x:3,y:0});
+  const O=addPoint('free',{x:0,y:0});O.name='O';O.color=PALETTE[1];
+  const circ=addObj('circle',{mode:'pts',parents:[O.id,A.id]});circ.width=2;
+  const t=addObj('param',{name:'t',value:0,min:0,max:360,step:1,unit:'°',color:PALETTE[6]});
+  [0,30,60,90,120,150].forEach(lam=>{
+    const mer=addObj('gellipse',{role:'meridian',lam:lam,tParam:t.id,parents:[O.id,A.id],name:'자오선 '+lam+'°'});
+    mer.color=PALETTE[2];mer.width=1.2;mer.label=false;
+  });
+  [-60,-30,0,30,60].forEach(phi=>{
+    const par=addObj('gellipse',{role:'parallel',phi:phi,tParam:t.id,parents:[O.id,A.id],name:'위선 '+(phi>0?'+':'')+phi+'°'});
+    par.color=PALETTE[2];par.width=phi===0?2.4:1.2;par.label=false;
+  });
+  const N=addPoint('on',{parents:[circ.id],t:Math.PI/2});N.name='N';N.color=PALETTE[1];
+  const S=addPoint('on',{parents:[circ.id],t:-Math.PI/2});S.name='S';S.color=PALETTE[1];
+  const axis=addObj('segment',{mode:'pts',parents:[N.id,S.id]});axis.dash='dash';axis.color='#9a958a';axis.label=false;
+  addObj('text',{x:-4.7,y:-4.15,text:'원리: 지구본은 3D가 아니라 정사영입니다.',fontSize:12.5,color:'#1c1c1e'});
+  addObj('text',{x:-4.7,y:-4.8,text:'자오선을 가로 반축이 cos(λ+t)로 변하는 타원으로 그리면 회전하는 것처럼 보입니다.',fontSize:12.5,color:'#1c1c1e'});
+  state.sel=[];
+  render();renderAlgebra();
+  const sp=$('#animSpeed');if(sp)sp.value='0.35';
+  animLast={kind:'param',id:t.id};
+  startAnim(animLast);
+}
+const EXAMPLES=[
+ {title:'삼각형의 중점과 외접원',desc:'삼각형 ABC, 세 변의 중점 D·E·F, 수직이등분선의 교점인 외심 G, 외접원, 그리고 길이·넓이 측정이 있는 기본 예시입니다. 꼭짓점을 끌면 종속 개체 전부가 따라 움직입니다.',build:buildExCircumcenter},
+ {title:'시에르핀스키 삼각형 (반복 예시)',doc:'시에르핀스키 삼각형',desc:'삼각형 ABC와 각 변의 중점 D, E, F를 만들고, 대응 A→D, B→E, C→F를 깊이 4까지 반복한 시에르핀스키 삼각형입니다. 꼭짓점 A, B, C를 끌면 프랙탈 전체가 따라 변합니다.',build:buildExSierpinski},
+ {title:'정오각형 (블록코딩 예시)',desc:'블록코딩(반복 5회 — 전진 2, 회전 72°)으로 그린 정오각형입니다. 꼭짓점 J, K, L, M, N과 다섯 변이 실제 점·선분 개체로 만들어져 있고, 블록 패널에 그 프로그램이 들어 있습니다.',build:buildExPentagon},
+ {title:'수선·평행선·각의 이등분선',desc:'삼각형 ABC와 변 AB의 중점 D, 점 C에서 변 AB에 내린 수선, C를 지나고 AB에 평행한 직선, 각 A의 이등분선을 함께 작도한 예시입니다.',build:buildExPerpParallel},
+ {title:'원과 직선의 교점·접선',desc:'원과 직선이 만나는 두 교점 E, F를 표시하고, 한 교점 E에서의 접선(반지름 AE에 수직인 직선)을 작도한 예시입니다.',build:buildExCircleTangent},
+ {title:'호·부채꼴·자취',desc:'호와 부채꼴, 그리고 원 위의 점 D가 움직일 때 선분 DC의 중점 E가 그리는 자취를 함께 담은 예시입니다. 점 D를 원 둘레로 끌어 보세요.',build:buildExArcSectorLocus},
+ {title:'매개변수와 함수 그래프',desc:'일차함수 f(x) = mx + b와 그 도함수 그래프입니다. 매개변수 m(기울기)·b(y절편)는 식의 새 문자를 감지해 슬라이더를 자동 제안하는 흐름으로 만든 것이며, 슬라이더를 움직이면 그래프가 실시간으로 변합니다.',build:buildExParamFunc},
+ {title:'회전·확대 화살표 데모',desc:'사각형과 변형의 중심 O가 지정되어 있고, 회전 화살표가 선택된 상태입니다. 사각형을 끌면 O를 중심으로 회전하고, 확대·축소 화살표로 바꾸면 중심에서 멀고 가까움에 따라 크기가 변합니다.',build:buildExTransformDemo},
+ {title:'반복 깊이 조절',desc:'시에르핀스키 삼각형과 같은 대응 규칙이지만 반복 깊이가 매개변수 a에 연결된 버전입니다. 대수창에서 a 슬라이더를 움직이면 프랙탈이 자라거나 줄어듭니다.',build:buildExIterParam},
+ {title:'정다각형과 각도',desc:'정육각형과 한 꼭짓점의 내각 측정입니다. 내각이 120°로 표시되는지 확인해 보세요. 중심이나 기준점을 끌면 정육각형 전체가 따라 움직입니다.',build:buildExHexagon},
+ {title:'회전하는 지구본',desc:'3D가 아니라 2D 정사영(orthographic projection) 트릭으로 회전하는 지구본입니다. 매개변수 t가 자동으로 재생되고, 중심 O와 반지름 점 A를 끌면 지구본 전체가 따라 움직입니다. 자오선은 가로 반축이 cos(λ+t)로 변하는 타원이라 t가 변하면 뒤집혀 보이며 회전감을 만듭니다.',build:buildExGlobe},
+];
 
 /* ═══════════════ 수 · 그래프 · 창 · 도움말 ═══════════════ */
 function paramDlg(editObj){
@@ -2999,6 +3201,7 @@ MENUS.push(
       toast('전체 화면 프레젠테이션 모드 — Esc를 누르면 종료됩니다.');}},
    {label:'작도 단계 전부 보기',action:()=>{state.proto=null;render();renderAlgebra();}},
  ]},
+ {label:'예제',items:()=>EXAMPLES.map(ex=>({label:ex.title,action:()=>confirmExample(ex)}))},
  {label:'도움말',items:()=>[
    {label:'단축키 안내',shortcut:'F1',action:dlgShortcuts},
    {label:'사용법',action:()=>openDialog('사용법',
@@ -3006,7 +3209,7 @@ MENUS.push(
      '<p><b>선택 후 작도</b> — 개체를 클릭해 선택한 뒤 <b>작도</b> 메뉴에서 중점·수선·평행선·교점·각의 이등분선·자취를 만들 수 있습니다. 두 도형이 만나는 곳에는 반투명 마커가 나타나고, 클릭하면 교점이 됩니다.</p>'+
      '<p><b>변환</b> — 먼저 벡터(선분)·중심(점)·대칭축(직선)을 지정한 뒤 평행이동·회전이동·닮음변환·선대칭이동을 적용합니다.</p>'+
      '<p><b>매개변수</b> — 수 &gt; 새 매개변수로 슬라이더를 만들고 함수식이나 원의 반지름에 연결해 탐구할 수 있습니다.</p>'+
-     '<p><b>반복</b> — 원상 점들과 그 점들로 작도한 상의 점들을 함께 선택한 뒤 수 &gt; 반복에서 대응 규칙과 깊이를 정하면, 선택한 개체들의 반복된 상이 만들어집니다. 시에르핀스키 삼각형 같은 프랙탈 작도의 핵심 기능이며, 파일 메뉴에 예시가 있습니다.</p>')},
+     '<p><b>반복</b> — 원상 점들과 그 점들로 작도한 상의 점들을 함께 선택한 뒤 수 &gt; 반복에서 대응 규칙과 깊이를 정하면, 선택한 개체들의 반복된 상이 만들어집니다. 시에르핀스키 삼각형 같은 프랙탈 작도의 핵심 기능이며, 예제 메뉴에서 시에르핀스키 삼각형 예시를 불러올 수 있습니다.</p>')},
    '-',
    {label:'동적 기하 스케치 정보…',action:dlgInfo},
  ]},
@@ -3030,7 +3233,7 @@ function openProps(id,infoOnly){
   if(o.type==='function'&&!o.derivOf)extra='<p><button type="button" id="ppEditFn" style="border:1px solid var(--line2);background:var(--btn);border-radius:5px;padding:5px 12px;cursor:pointer;">함수식 편집…</button></p>';
   if(o.type==='param')extra='<p><button type="button" id="ppEditPm" style="border:1px solid var(--line2);background:var(--btn);border-radius:5px;padding:5px 12px;cursor:pointer;">매개변수 편집…</button></p>';
   openDialog((infoOnly?'정보 — ':'속성 — ')+displayName(o),
-    '<table><tr><th style="text-align:left;">종류</th><td style="text-align:left;">'+({point:'점',segment:'선분',ray:'반직선',line:'직선',circle:'원',polygon:'다각형',arc:'호',sector:'부채꼴',text:'글',measure:'측정',function:'함수',param:'매개변수',locus:'자취',iterate:'반복'}[o.type]||o.type)+'</td></tr>'+
+    '<table><tr><th style="text-align:left;">종류</th><td style="text-align:left;">'+({point:'점',segment:'선분',ray:'반직선',line:'직선',circle:'원',polygon:'다각형',arc:'호',sector:'부채꼴',text:'글',measure:'측정',function:'함수',param:'매개변수',locus:'자취',iterate:'반복',gellipse:'지구본 타원'}[o.type]||o.type)+'</td></tr>'+
     '<tr><th style="text-align:left;">정의</th><td style="text-align:left;">'+defOf(o)+'</td></tr>'+
     '<tr><th style="text-align:left;">현재 값</th><td style="text-align:left;">'+valueOf(o)+'</td></tr>'+
     '<tr><th style="text-align:left;">상위 개체</th><td style="text-align:left;">'+parents+'</td></tr>'+
