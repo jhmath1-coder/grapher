@@ -4121,6 +4121,7 @@
         renderScale=fillArea>1200000?1:2;
       }
       var key=fillCacheKey(item,kind,renderScale),cached=item._fillCache;
+      if(cached&&cached.key===key)cached.lastUsed=++layerCacheClock;
       if(!cached||cached.key!==key){
         var layer=document.createElement('canvas'),lowW=Math.max(1,Math.ceil(cssW*renderScale)),lowH=Math.max(1,Math.ceil(cssH*renderScale));
         layer.width=lowW;layer.height=lowH;
@@ -4173,7 +4174,7 @@
             bottom:Math.min(cssH,(bboxLow.bottom+marginY)/renderScale)
           };
         }
-        cached=item._fillCache={key:key,canvas:layer,region:fillRegion};
+        cached=item._fillCache={key:key,canvas:layer,region:fillRegion,lastUsed:++layerCacheClock};
       }
       item._fillRegion=cached.region||null;
       ctx.save();ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(cached.canvas,0,0,cssW,cssH);ctx.restore();
@@ -4350,30 +4351,41 @@
     // needsLayerRefinement() again: composite passes skip it rather than
     // re-rendering it synchronously (which would freeze a plain draw on
     // the largest examples), and the chunked refinement path rebuilds it
-    // on demand.
+    // on demand. The inequality fill bitmaps ride in the same budget (see
+    // layerCacheTotal below).
     var LAYER_CACHE_BUDGET=256*1024*1024;
     var LAYER_CACHE_HARD_CAP=512*1024*1024;
     var layerCacheClock=0, layerChunkGuard=0;
     var passIncomplete=false, forceFullComposite=false;
     var refinedKey='', cycleKey='', cycleCount=0;
     function layerCacheBytes(cache){return cache&&cache.canvas?cache.canvas.width*cache.canvas.height*4:0;}
+    // Inequality fill bitmaps (item._fillCache) are full-canvas canvases too,
+    // so they share this one budget: layerCacheTotal() counts both kinds and
+    // evictDownTo() drops whichever was used least recently, layer or fill.
+    // An evicted fill needs no flag — it is simply recomputed the next time
+    // its layer renders — while an evicted layer still goes through the
+    // _cacheEvicted / chunked-refinement path above.
     function layerCacheTotal(){
       var total=0;
-      for(var i=0;i<expressions.length;i++)total+=layerCacheBytes(expressions[i]._layerCache);
+      for(var i=0;i<expressions.length;i++)total+=layerCacheBytes(expressions[i]._layerCache)+layerCacheBytes(expressions[i]._fillCache);
       return total;
     }
     function evictDownTo(limit,protectedItem,guardStamp){
       var total=layerCacheTotal();
       if(total<=limit)return;
-      var cached=expressions.filter(function(item){return item._layerCache&&item._layerCache.canvas;});
-      cached.sort(function(a,b){return (a._layerCache.lastUsed||0)-(b._layerCache.lastUsed||0);});
-      for(var i=0;i<cached.length&&total>limit;i++){
-        var item=cached[i];
-        if(item===protectedItem)continue;
-        if(guardStamp!==null&&(item._layerCache.lastUsed||0)>guardStamp)continue;
-        total-=layerCacheBytes(item._layerCache);
-        item._layerCache=null;
-        item._cacheEvicted=true;
+      var entries=[];
+      expressions.forEach(function(item){
+        if(item._layerCache&&item._layerCache.canvas)entries.push({item:item,fill:false,lastUsed:item._layerCache.lastUsed||0,bytes:layerCacheBytes(item._layerCache)});
+        if(item._fillCache&&item._fillCache.canvas)entries.push({item:item,fill:true,lastUsed:item._fillCache.lastUsed||0,bytes:layerCacheBytes(item._fillCache)});
+      });
+      entries.sort(function(a,b){return a.lastUsed-b.lastUsed;});
+      for(var i=0;i<entries.length&&total>limit;i++){
+        var entry=entries[i];
+        if(entry.item===protectedItem)continue;
+        if(guardStamp!==null&&entry.lastUsed>guardStamp)continue;
+        total-=entry.bytes;
+        if(entry.fill)entry.item._fillCache=null;
+        else{entry.item._layerCache=null;entry.item._cacheEvicted=true;}
       }
     }
     function trimLayerCaches(){evictDownTo(LAYER_CACHE_BUDGET,null,null);}
@@ -5995,6 +6007,18 @@
     var distResult = null;
     var cutDir = 'diag', cutPos = 0.5;
     var netCache = null, netTreeCache = null;
+    // 전개 변환·절단면 다각형 캐시. 둘 다 도형 공간에서 계산되어 회전(rotX/rotY)과
+    // 무관하므로, 도형·파라미터 키가 같으면 회전 프레임마다 다시 계산하지 않는다.
+    // netTreeCache가 새로 만들어지면(도형 교체·점 찍기 등) 키가 어긋나 자동 무효화된다.
+    var unfoldCache = null; // {solid, tree, t, S}
+    var sectionCache = null; // {solid, dir, pos, poly}
+    function unfoldTransforms() {
+      if (!netTreeCache) netTreeCache = buildNetTree(solid, pathSpine());
+      if (!unfoldCache || unfoldCache.solid !== solid || unfoldCache.tree !== netTreeCache || unfoldCache.t !== netT) {
+        unfoldCache = { solid: solid, tree: netTreeCache, t: netT, S: computeUnfold(solid, netTreeCache, netT) };
+      }
+      return unfoldCache.S;
+    }
     var netT = 0, netTarget = 0, netAnimating = false, netAnimFrom = 0, netAnimStart = 0;
     var NET_MS = 1400;
     var reducedMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -6095,7 +6119,11 @@
       if (cutting) {
         nrm = cutNormal();
         off = cutOffset(nrm);
-        section = sectionPolygon(solid, nrm, off);
+        // 절단면 다각형은 도형·자르는 방향·위치만으로 정해진다: 키가 같으면 캐시 재사용
+        if (!sectionCache || sectionCache.solid !== solid || sectionCache.dir !== cutDir || sectionCache.pos !== cutPos) {
+          sectionCache = { solid: solid, dir: cutDir, pos: cutPos, poly: sectionPolygon(solid, nrm, off) };
+        }
+        section = sectionCache.poly;
       }
       var items = [];
       // skipEdge가 있는 도형(원뿔)은 지정된 간선(꼭짓점→밑면 사선)만 빼고 면 외곽선을 그린다
@@ -6120,8 +6148,7 @@
       curFit = 1;
       curOffX = 0; curOffY = 0;
       if (netT > 0.0001) {
-        if (!netTreeCache) netTreeCache = buildNetTree(solid, pathSpine());
-        S = computeUnfold(solid, netTreeCache, netT);
+        S = unfoldTransforms();
         var cen = [0, 0, 0], cnt = 0;
         solid.F.forEach(function (f, fi) {
           f.forEach(function (idx) { cen = vadd(cen, tApply(S[fi], solid.V[idx])); cnt++; });
@@ -7135,10 +7162,7 @@
       // 전개도가 펼쳐진 상태에서는 펼친 면 위치를 기준으로 판정하고,
       // 맞힌 점을 원래 입체 좌표로 되돌려 저장한다 (투영 중심 이동분 curOff도 반영).
       var U = null;
-      if (netT > 0.0001) {
-        if (!netTreeCache) netTreeCache = buildNetTree(solid, pathSpine());
-        U = computeUnfold(solid, netTreeCache, netT);
-      }
+      if (netT > 0.0001) U = unfoldTransforms();
       solid.F.forEach(function (f, fi) {
         var nr = rotateDir(U ? tRotApply(U[fi], solid.N[fi]) : solid.N[fi]);
         if (nr[2] <= 1e-9) return; // 뒤를 보는 면은 찍을 수 없음
@@ -7704,6 +7728,14 @@
       // 포인터 조작
       var pointers = new Map();
       var lastPinch = 0, downX = 0, downY = 0;
+      // 드래그 중 포인터 이벤트는 프레임보다 자주 올 수 있어, 렌더를 rAF당
+      // 한 번으로 합친다 (2D 그래퍼의 schedule()과 같은 방식). 회전·확대 값은
+      // 이벤트에서 즉시 갱신하고 그리기만 다음 프레임에 몰아서 한다.
+      var renderRafId = 0;
+      function scheduleRender() {
+        if (renderRafId) return;
+        renderRafId = requestAnimationFrame(function () { renderRafId = 0; render(); });
+      }
       canvas.addEventListener('pointerdown', function (e) {
         canvas.setPointerCapture(e.pointerId);
         pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -7726,14 +7758,14 @@
           var d = Math.hypot(ps[0].x - ps[1].x, ps[0].y - ps[1].y);
           if (lastPinch > 0) zoom = Math.min(3.2, Math.max(0.45, zoom * d / lastPinch));
           lastPinch = d;
-          render();
+          scheduleRender();
           return;
         }
         // 어떤 도구 모드에서도 드래그는 회전. 점 찍기는 작은 움직임(탭)으로만 판정한다.
         rotY += dx * 0.008;
         rotX += dy * 0.008;
         rotX = Math.max(-Math.PI / 2 + 0.05, Math.min(Math.PI / 2 - 0.05, rotX));
-        render();
+        scheduleRender();
       });
       function endPointer(e) {
         var wasClick = Math.hypot(e.clientX - downX, e.clientY - downY) < 6 && pointers.size === 1;
@@ -8528,9 +8560,9 @@
 
     function draw() {
       if (!mesh || !cw) return;
-      // 드래그 회전·자동 회전 중에는 본체와 거울 반사 모두 거친 메쉬로 그려 렉을 줄인다.
-      // 회전이 끝나면 전체 화질(IL_SEG) 메쉬로 다시 그린다.
-      var drawMesh = (dragging || spinning) && meshLow ? meshLow : mesh;
+      // 드래그 회전·자동 회전·뒤집기/스냅 트윈 중에는 본체와 거울 반사 모두 거친
+      // 메쉬로 그려 렉을 줄인다. 움직임이 끝나면 전체 화질(IL_SEG) 메쉬로 다시 그린다.
+      var drawMesh = (dragging || spinning || tween) && meshLow ? meshLow : mesh;
       var pal = palette();
       var cosA = Math.cos(az), sinA = Math.sin(az), cosE = Math.cos(el), sinE = Math.sin(el);
       var scale = fit.scale * zoom;
