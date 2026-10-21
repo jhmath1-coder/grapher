@@ -8555,7 +8555,8 @@
       }
       fit.cx = (minX + maxX) / 2;
       fit.cy = (minY + maxY) / 2;
-      fit.scale = Math.min(cw / (maxX - minX + 0.55), ch / (maxY - minY + 0.55));
+      // 화면 맞춤 배율을 1.1배로 키워 착시 장면 전체를 조금 더 크게 보여준다
+      fit.scale = Math.min(cw / (maxX - minX + 0.55), ch / (maxY - minY + 0.55)) * 1.1;
     }
 
     function draw() {
