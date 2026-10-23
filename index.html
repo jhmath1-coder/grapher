@@ -1488,6 +1488,52 @@
     .g24-final-list .g24-fl-nums { font-weight: 900; color: #24334d; letter-spacing: .06em; }
     .g24-final-list .g24-fl-pts { margin-left: auto; font-weight: 900; color: #1e7a3d; }
     .g24-final-list li.gaveup .g24-fl-pts { color: #b3543f; }
+    /* ---------- 24 게임 서버 랭킹 (구구단 랭킹판과 같은 구성, 초록 팔레트) ---------- */
+    .g24-save { margin-top: 14px; padding-top: 14px; border-top: 1px solid #dce9dc; }
+    .g24-save label { display: block; margin-bottom: 6px; font-size: 13px; color: #43536b; font-weight: 700; }
+    .g24-save-row { display: flex; gap: 8px; }
+    .g24-save-row input { flex: 1 1 auto; min-width: 0; background: #fff; color: #25324a; border: 2px solid #c3d5c6; border-radius: 12px; padding: 10px 12px; outline: none; font: inherit; font-size: 14px; }
+    .g24-save-row input:focus { border-color: #57c877; }
+    .g24-btn-save { appearance: none; border: 0; flex: none; border-radius: 12px; padding: 10px 16px; font: inherit; font-size: 14px; font-weight: 800; cursor: pointer; background: linear-gradient(180deg, #57c877, #35a852); color: #fff; box-shadow: 0 4px 10px rgba(46,140,80,.3); }
+    .g24-btn-save:active { transform: translateY(1px); }
+    .g24-btn-save:disabled { opacity: .55; cursor: default; }
+    .g24-save-msg { min-height: 18px; margin: 8px 2px 0; font-size: 12.5px; font-weight: 700; color: #43536b; }
+    .g24-save-msg.good { color: #15803d; }
+    .g24-save-msg.bad { color: #b3543f; }
+    .g24-server { margin-top: 16px; padding-top: 14px; border-top: 1px solid #cfe3d2; }
+    .g24-server h3 { font-size: 15px; margin: 0 0 10px; color: #263650; }
+    .g24-server h3 span { font-size: 11px; color: #888; font-weight: normal; }
+    .g24-server-tools { margin-bottom: 10px; display: flex; gap: 6px; align-items: center; }
+    .g24-btn-rank { appearance: none; border: 1px solid #b9d2bc; background: #e9f3ea; color: #273750; border-radius: 10px; padding: 8px 14px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; box-shadow: none; }
+    .g24-btn-rank:active { transform: translateY(1px); }
+    .g24-server-msg { color: #888; font-size: 12px; margin: 0; }
+    .g24-server table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .g24-server th, .g24-server td { padding: 9px 8px; border-bottom: 1px dashed rgba(70,90,120,.18); text-align: left; }
+    .g24-server th { color: #40516c; font-weight: 700; }
+    .g24-server td { color: #263650; }
+    .g24-rank-scroll { max-height: 332px; overflow-y: auto; overflow-x: hidden; border-radius: 10px; cursor: grab; scrollbar-width: thin; scrollbar-color: rgba(90,105,130,.45) transparent; -webkit-overflow-scrolling: touch; touch-action: pan-y; overscroll-behavior: contain; }
+    .g24-rank-scroll.g24-dragging { cursor: grabbing; user-select: none; }
+    .g24-rank-scroll::-webkit-scrollbar { width: 8px; }
+    .g24-rank-scroll::-webkit-scrollbar-thumb { background: rgba(90,105,130,.35); border-radius: 8px; }
+    .g24-rank-scroll::-webkit-scrollbar-track { background: transparent; }
+    .g24-rank-scroll thead th { position: sticky; top: 0; background: #eef6ee; z-index: 1; }
+    .g24-rank-hint { font-size: 11px; color: #8a94a8; margin: 6px 2px 0; }
+    .g24-medal { display: inline-block; font-size: 15px; line-height: 1; margin-right: 4px; vertical-align: -2px; }
+    .g24-rank-name, .g24-rank-score { font-weight: inherit; }
+    .g24-top-1 .g24-rank-name, .g24-top-1 .g24-rank-score { font-weight: 800; color: #9a6a00; }
+    .g24-top-2 .g24-rank-name, .g24-top-2 .g24-rank-score { font-weight: 800; color: #4f6475; }
+    .g24-top-3 .g24-rank-name, .g24-top-3 .g24-rank-score { font-weight: 800; color: #8c4f1d; }
+    .g24-top-1 { background: linear-gradient(90deg, rgba(255,193,7,.16), transparent); }
+    .g24-top-2 { background: linear-gradient(90deg, rgba(144,164,182,.16), transparent); }
+    .g24-top-3 { background: linear-gradient(90deg, rgba(205,127,50,.14), transparent); }
+    .g24-sparkles { position: relative; display: inline-block; width: 0; height: 0; }
+    .g24-sparkles i { position: absolute; font-style: normal; line-height: 1; color: #f6a609; text-shadow: 0 0 6px rgba(255,183,0,.9); opacity: 0; pointer-events: none; animation: g24-twinkle 1.8s ease-in-out infinite; }
+    .g24-sparkles i:nth-child(1) { left: 3px; top: -13px; font-size: 12px; animation-delay: 0s; }
+    .g24-sparkles i:nth-child(2) { left: 13px; top: -7px; font-size: 8px; animation-delay: .6s; }
+    .g24-sparkles i:nth-child(3) { left: -2px; top: 2px; font-size: 8px; animation-delay: 1.2s; }
+    @keyframes g24-twinkle { 0%, 100% { opacity: 0; transform: scale(.4) rotate(0deg); } 50% { opacity: 1; transform: scale(1.15) rotate(25deg); } }
+    @media (prefers-reduced-motion: reduce) { .g24-sparkles i { animation: none; opacity: .85; } }
+    @media (max-width: 560px) { .g24-rank-scroll { max-height: 294px; } }
     /* 하단 고정 액션 바: 정답/포기 후 '다음 문제' 버튼이 스크롤 없이 항상 보인다 */
     .g24-footbar {
       position: sticky;
@@ -2613,6 +2659,22 @@
           <div class="g24-final" id="g24-final" hidden>
             <p class="g24-final-score">최종 점수<b id="g24-final-score">0점</b></p>
             <ul class="g24-final-list" id="g24-final-list"></ul>
+            <div class="g24-save">
+              <label for="g24-name">랭킹에 등록할 이름</label>
+              <div class="g24-save-row">
+                <input id="g24-name" type="text" maxlength="20" placeholder="이름 입력" autocomplete="off" />
+                <button class="g24-btn-save" id="g24-btn-save" type="button">랭킹 등록</button>
+              </div>
+              <p class="g24-save-msg" id="g24-save-msg" role="status"></p>
+            </div>
+          </div>
+
+          <div class="g24-server">
+            <h3>🌐 서버 랭킹 <span>(24 게임 전용)</span></h3>
+            <div class="g24-server-tools">
+              <button class="g24-btn-rank" id="g24-btn-rank" type="button">조회</button>
+            </div>
+            <div id="g24-server-board"><p class="g24-server-msg">조회 버튼을 눌러 서버 랭킹을 확인하세요.</p></div>
           </div>
 
           <div class="g24-footbar">
@@ -9586,6 +9648,11 @@
     var btnBack = byId('g24-btn-back');
     var btnClear = byId('g24-btn-clear');
     var padEl = byId('g24-pad');
+    var nameInput = byId('g24-name');
+    var btnSaveRank = byId('g24-btn-save');
+    var saveMsg = byId('g24-save-msg');
+    var serverBoard = byId('g24-server-board');
+    var btnRank = byId('g24-btn-rank');
 
     var TOTAL = 10;
     var TILE_COLORS = { 1: '#ff6b6b', 2: '#ff922b', 3: '#ffd43b', 4: '#74d35f', 5: '#2fd6a3', 6: '#33c6dd', 7: '#4dabf7', 8: '#9775fa', 9: '#f783ac' };
@@ -9898,6 +9965,12 @@
       btnGiveup.hidden = true;
       btnMain.hidden = false;
       btnMain.textContent = '다시 하기';
+      /* 새 게임이 끝날 때마다 랭킹 등록 상태를 초기화한다 */
+      rankSaved = false;
+      btnSaveRank.disabled = false;
+      btnSaveRank.textContent = '랭킹 등록';
+      saveMsg.textContent = '';
+      saveMsg.className = 'g24-save-msg';
     }
 
     function onTile(idx) {
@@ -9949,8 +10022,151 @@
       }
     });
 
-    /* 탭을 벗어나면 타이머를 멈췄다가, 돌아오면 이어서 잰다 */
+    /*** 서버 순위 연동 (구구단과 같은 닷홈 /api/rank.php, problem_count=24 카테고리로 분리) ***/
+    var G24_RANK_API_URL = 'https://jhmath.dothome.co.kr/api/rank.php';
+    var rankSaved = false;
+
+    function medalEl24(idx) {
+      if (idx > 2) return null;
+      var medal = document.createElement('span');
+      medal.className = 'g24-medal'; medal.setAttribute('role', 'img');
+      medal.setAttribute('aria-label', ['금메달', '은메달', '동메달'][idx]);
+      medal.textContent = ['🥇', '🥈', '🥉'][idx];
+      return medal;
+    }
+    function sparklesEl24() {
+      var sp = document.createElement('span');
+      sp.className = 'g24-sparkles'; sp.setAttribute('aria-hidden', 'true');
+      ['✦', '✦', '✧'].forEach(function (ch) {
+        var i = document.createElement('i'); i.textContent = ch; sp.appendChild(i);
+      });
+      return sp;
+    }
+    /* 순위표 드래그 스크롤 (구구단과 동일 방식) */
+    function enableDragScroll24(el) {
+      if (!el || el.__dragScroll) return;
+      el.__dragScroll = true;
+      var down = false, startY = 0, startTop = 0;
+      el.addEventListener('pointerdown', function (e) {
+        if (e.pointerType !== 'mouse' || e.button !== 0) return;
+        down = true; startY = e.clientY; startTop = el.scrollTop;
+      });
+      el.addEventListener('pointermove', function (e) {
+        if (!down) return;
+        var dy = e.clientY - startY;
+        if (Math.abs(dy) > 3) el.classList.add('g24-dragging');
+        el.scrollTop = startTop - dy;
+      });
+      function endDrag() { down = false; el.classList.remove('g24-dragging'); }
+      el.addEventListener('pointerup', endDrag);
+      el.addEventListener('pointercancel', endDrag);
+      el.addEventListener('pointerleave', endDrag);
+    }
+
+    function g24SubmitScore(username, score) {
+      return fetch(G24_RANK_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: username, score: score, problem_count: 24, secret: 'jhmath2024gugudan!@#' })
+      }).then(function (res) { return res.json(); }).then(function (data) {
+        if (!data.ok) { console.warn('24 게임 점수 저장 실패:', data.error); return false; }
+        return true;
+      }).catch(function (e) {
+        console.warn('24 게임 점수 전송 오류:', e);
+        return false;
+      });
+    }
+
+    function g24ShowRankings() {
+      if (!serverBoard) return;
+      serverBoard.innerHTML = '<p class="g24-server-msg">순위 불러오는 중...</p>';
+      fetch(G24_RANK_API_URL + '?limit=50&problem_count=24')
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (!data.ok || !data.rankings || !data.rankings.length) {
+            serverBoard.innerHTML = '<p class="g24-server-msg">24 게임 순위가 아직 없어요.</p>';
+            return;
+          }
+          // 서버에서 받은 이름도 innerHTML 문자열로 넣지 않고 textContent로만 그린다.
+          serverBoard.textContent = '';
+          var title = document.createElement('p');
+          title.className = 'g24-rank-hint';
+          title.style.cssText = 'margin:0 2px 6px; font-size:12px; font-weight:700; color:#40516c';
+          title.textContent = '24 게임 순위';
+          serverBoard.appendChild(title);
+          var scroll = document.createElement('div'); scroll.className = 'g24-rank-scroll';
+          var table = document.createElement('table');
+          var thead = document.createElement('thead');
+          var htr = document.createElement('tr');
+          ['순위', '이름', '점수'].forEach(function (h) {
+            var th = document.createElement('th'); th.textContent = h; htr.appendChild(th);
+          });
+          thead.appendChild(htr); table.appendChild(thead);
+          var tbody = document.createElement('tbody');
+          data.rankings.forEach(function (r) {
+            var rankNum = parseInt(r.rank, 10);
+            var topClass = rankNum === 1 ? 'g24-top-1' : (rankNum === 2 ? 'g24-top-2' : (rankNum === 3 ? 'g24-top-3' : ''));
+            var tr = document.createElement('tr');
+            if (topClass) tr.className = topClass;
+            var tdRank = document.createElement('td'); tdRank.textContent = (isNaN(rankNum) ? '' : rankNum) + '위';
+            var tdName = document.createElement('td');
+            var medal = medalEl24(rankNum - 1); if (medal) tdName.appendChild(medal);
+            var nameSpan = document.createElement('span');
+            nameSpan.className = 'g24-rank-name';
+            nameSpan.textContent = r.username == null ? '' : String(r.username);
+            tdName.appendChild(nameSpan);
+            if (rankNum === 1) tdName.appendChild(sparklesEl24());
+            var tdScore = document.createElement('td');
+            tdScore.className = 'g24-rank-score'; tdScore.textContent = r.score == null ? '' : String(r.score);
+            tr.appendChild(tdRank); tr.appendChild(tdName); tr.appendChild(tdScore);
+            tbody.appendChild(tr);
+          });
+          table.appendChild(tbody); scroll.appendChild(table); serverBoard.appendChild(scroll);
+          var hint = document.createElement('p');
+          hint.className = 'g24-rank-hint';
+          hint.textContent = '마우스 휠로 스크롤하면 50위까지 볼 수 있어요.';
+          serverBoard.appendChild(hint);
+          var sc = serverBoard.querySelector('.g24-rank-scroll');
+          if (sc) enableDragScroll24(sc);
+        })
+        .catch(function () {
+          serverBoard.innerHTML = '<p class="g24-server-msg">순위를 불러오지 못했어요. (서버 랭킹은 닷홈에 올린 페이지에서 동작합니다)</p>';
+        });
+    }
+
+    btnSaveRank.addEventListener('click', function () {
+      if (rankSaved) return;
+      var name = (nameInput.value || '').trim().slice(0, 20) || '익명';
+      if (!(totalScore > 0)) {
+        saveMsg.textContent = '점수가 0점이라 랭킹에 등록할 수 없어요.';
+        saveMsg.className = 'g24-save-msg bad';
+        return;
+      }
+      btnSaveRank.disabled = true;
+      btnSaveRank.textContent = '등록 중...';
+      saveMsg.textContent = '';
+      saveMsg.className = 'g24-save-msg';
+      g24SubmitScore(name, totalScore).then(function (ok) {
+        if (ok) {
+          rankSaved = true;
+          btnSaveRank.textContent = '등록 완료 ✓';
+          saveMsg.textContent = '서버 랭킹에 등록했어요! 아래 랭킹판에서 확인해 보세요.';
+          saveMsg.className = 'g24-save-msg good';
+          g24ShowRankings();
+        } else {
+          btnSaveRank.disabled = false;
+          btnSaveRank.textContent = '랭킹 등록';
+          saveMsg.textContent = '등록에 실패했어요. 서버 랭킹은 닷홈에 올린 페이지에서 동작합니다.';
+          saveMsg.className = 'g24-save-msg bad';
+        }
+      });
+    });
+
+    btnRank.addEventListener('click', function () { g24ShowRankings(); });
+
+    /* 탭을 벗어나면 타이머를 멈췄다가, 돌아오면 이어서 잰다. 탭이 열리면 서버 랭킹도 불러온다 */
     window.__g24OnShow = function () {
+      g24ShowRankings();
       if (state === 'playing' && pausedAt) {
         startAt += Date.now() - pausedAt;
         pausedAt = 0;
