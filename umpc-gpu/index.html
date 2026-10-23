@@ -95,6 +95,39 @@ table.pick td:first-child{font-weight:700;color:var(--txt);white-space:nowrap}
 footer{margin-top:44px;text-align:center;color:var(--mut);font-size:12.5px;line-height:1.8}
 .toc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px}
 .toc a{font-size:12.5px;color:var(--sub);border:1px solid var(--line);border-radius:999px;padding:6px 12px;text-decoration:none;background:var(--card)}
+/* ===== 모바일 전용 (640px 이하): 표를 카드형으로 — 옆으로 밀 필요 없이 4개 구성이 한 카드에 다 보임. PC·태블릿은 기존 표 그대로 ===== */
+@media(max-width:640px){
+  .controls{position:static}
+  .controls input[type=search]{flex:1 1 100%}
+  .controls select{flex:1 1 0;min-width:0}
+  .chip{padding:6px 11px;font-size:12.5px}
+  .tbl-wrap{overflow:visible;border:none;background:transparent;border-radius:0}
+  table.main{min-width:0;display:block;font-size:13.5px}
+  table.main thead{display:none}
+  table.main tbody{display:block}
+  table.main tbody tr{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px 12px;margin-bottom:10px}
+  table.main tbody tr:nth-child(even){background:var(--card)}
+  table.main tbody tr:hover{background:var(--card)}
+  table.main tbody tr.new-row{border-left:3px solid #ea580c}
+  table.main tbody tr.new-row td:first-child{box-shadow:none}
+  table.main td{display:flex;justify-content:flex-start;align-items:center;gap:6px;text-align:right;border-top:none;padding:5px 0;white-space:normal}
+  table.main td:first-child{display:block;text-align:left;min-width:0;padding:0 0 7px;border-bottom:1px dashed #223041;margin-bottom:5px}
+  table.main td .fps{margin-left:auto}
+  table.main td::before{font-size:12.5px;font-weight:700;flex-shrink:0}
+  table.main td:nth-child(2)::before{content:"Ally X 순정";color:var(--ally)}
+  table.main td:nth-child(3)::before{content:"팬서레이크";color:var(--panther)}
+  table.main td:nth-child(4)::before{content:"RTX 3070 eGPU";color:var(--rtx)}
+  table.main td:nth-child(5)::before{content:"RX 9070 XT eGPU";color:var(--rx)}
+  table.main td:nth-child(6)::before{content:"9070 XT 배율";color:var(--sub)}
+  table.main td.bar-cell .mini{flex:1;width:auto;margin-left:8px}
+  table.main td[colspan]{display:block;text-align:center}
+  table.pick{min-width:0;display:block}
+  table.pick thead{display:none}
+  table.pick tbody{display:block}
+  table.pick tbody tr{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px 12px;margin-bottom:10px}
+  table.pick td{display:block;border-top:none;padding:3px 0;white-space:normal}
+  table.pick td:first-child{font-size:15px;padding-bottom:4px}
+}
 </style>
 </head>
 <body>
@@ -106,7 +139,7 @@ footer{margin-top:44px;text-align:center;color:var(--mut);font-size:12.5px;line-
   <div class="toc">
     <a href="#hw">하드웨어 4종</a><a href="#summary">핵심 요약</a><a href="#eff">전력 효율</a><a href="#insight">인사이트</a><a href="#table">전체 비교표 (72)</a><a href="#pick">추천 시나리오</a><a href="#tips">AG02 팁·읽는 법</a>
   </div>
-  <p class="meta">빌드 2026-10-23 22:16 KST · 모든 수치는 1080p 내부 화면 기준 <b>추정치</b>입니다 (실측 벤치마크 아님). 미출시작·차세대 칩은 예상치로 따로 표시했습니다.</p>
+  <p class="meta">빌드 2026-10-23 22:28 KST · 모든 수치는 1080p 내부 화면 기준 <b>추정치</b>입니다 (실측 벤치마크 아님). 미출시작·차세대 칩은 예상치로 따로 표시했습니다.</p>
 </header>
 
 <section id="hw">
@@ -193,7 +226,7 @@ footer{margin-top:44px;text-align:center;color:var(--mut);font-size:12.5px;line-
 
 <section id="table">
   <h2><span class="no">05</span>전체 비교표 — 72개 게임</h2>
-  <p class="sec-sub">1080p 내부 화면 기준 예상 FPS. 괄호 %는 Ally X 순정 대비 배율입니다. <span class="badge-new">NEW</span> = 이번에 추가한 게임, 주황 줄이 붙은 행입니다.</p>
+  <p class="sec-sub">1080p 내부 화면 기준 예상 FPS. 괄호 %는 Ally X 순정 대비 배율입니다. <span class="badge-new">NEW</span> = 이번에 추가한 게임, 주황 줄이 붙은 행입니다. 모바일에서는 게임마다 카드 하나로 묶여 4개 구성이 한눈에 보입니다.</p>
   <div class="controls">
     <div class="row" id="chips"></div>
     <div class="row" style="margin-top:8px">
@@ -264,7 +297,7 @@ footer{margin-top:44px;text-align:center;color:var(--mut);font-size:12.5px;line-
 </section>
 
 <footer>
-  UMPC GPU 성능 비교 · 빌드 2026-10-23 22:16 KST · 원본 43개 + 신규 29개 = 총 72개 게임<br>
+  UMPC GPU 성능 비교 · 빌드 2026-10-23 22:28 KST · 원본 43개 + 신규 29개 = 총 72개 게임<br>
   ROG Xbox Ally X · 팬서레이크 UMPC · AG02 eGPU (RTX 3070 / RX 9070 XT) · 1080p 내부 화면 기준 예상치
 </footer>
 </div>
