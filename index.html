@@ -78,6 +78,7 @@
       align-items: center;
       gap: 10px;
       min-height: 0;
+      min-width: 0;
     }
     .section-tabs {
       display: inline-flex;
@@ -87,7 +88,14 @@
       border-radius: 12px;
       background: var(--panel);
       box-shadow: var(--shadow);
+      max-width: 100%;
+      min-width: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
     }
+    .section-tabs::-webkit-scrollbar { display: none; }
+    .section-tab { flex: none; }
     .section-tab {
       border: 0;
       cursor: pointer;
@@ -104,6 +112,7 @@
     .section-tab.active { background: var(--accent); color: var(--accent-ink); }
     body.solid-mode #layerPanel, body.solid-mode #graphShell { display: none; }
     body.quiz-mode #layerPanel, body.quiz-mode #graphShell { display: none; }
+    body.game24-mode #layerPanel, body.game24-mode #graphShell { display: none; }
     .panel, .graph-shell {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -943,6 +952,18 @@
       box-shadow: var(--shadow);
     }
     .quiz-shell[hidden] { display: none; }
+    .g24-shell {
+      grid-column: 1 / -1;
+      min-width: 0;
+      min-height: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #f2f9f4;
+      box-shadow: var(--shadow);
+    }
+    .g24-shell[hidden] { display: none; }
     /* ---------- 착시 원기둥 (애매한 원기둥, .il- 접두사) ---------- */
     body.illusion-mode #layerPanel, body.illusion-mode #graphShell { display: none; }
     .il-shell {
@@ -1300,6 +1321,231 @@
       .qg-leaderboard th:nth-child(4) { width: 94px !important; }
       .qg-rank-scroll { max-height: 294px; }
     }
+    /* ---------- 24 게임 (index.html에 직접 내장, .g24- 접두사로 스코프 분리) ---------- */
+    .g24-root {
+      min-height: 100%;
+      display: flex;
+      padding: 18px;
+      color: #26324a;
+      font-family: ui-rounded, system-ui, -apple-system, "Segoe UI", Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background: radial-gradient(900px 500px at 10% -10%, #dff3e2, transparent),
+                  radial-gradient(900px 600px at 110% 0%, #fdf0d3, transparent),
+                  linear-gradient(135deg, #f4fbf3, #eef7fb 60%, #fdf8ec);
+    }
+    .g24-card {
+      width: min(680px, 100%);
+      margin: auto;
+      background: rgba(255,255,255,.96);
+      border: 1px solid rgba(90,105,130,.18);
+      border-radius: 22px;
+      box-shadow: 0 10px 30px rgba(60,70,90,.16);
+      padding: 18px 20px 0;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .g24-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .g24-head h1 { font-size: clamp(20px, 4vw, 28px); margin: 0; letter-spacing: .2px; color: #1e4630; }
+    .g24-sub { color: #5a6b7d; font-size: 12.5px; margin: 0; line-height: 1.5; }
+    .g24-status { display: flex; gap: 8px; margin: 12px 0 14px; flex-wrap: wrap; }
+    .g24-chip { background: #edf4ee; color: #263650; border: 1px solid #cfdfd2; font-weight: 700; padding: 7px 12px; border-radius: 999px; font-size: 12px; }
+    .g24-chip b { font-variant-numeric: tabular-nums; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    /* 숫자 타일: 숫자마다 다른 밝은 색의 둥근 게임 타일 (트럼프 카드 모양 아님) */
+    .g24-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; max-width: 470px; width: 100%; margin: 0 auto; }
+    .g24-tile {
+      appearance: none;
+      border: 0;
+      aspect-ratio: 1 / 1;
+      border-radius: 26px;
+      background: var(--tile, #ffd43b);
+      color: var(--ink, #26324a);
+      font-size: clamp(34px, 9vw, 52px);
+      font-weight: 900;
+      line-height: 1;
+      cursor: pointer;
+      box-shadow: 0 6px 0 rgba(38,50,74,.20), 0 12px 18px rgba(40,50,70,.16);
+      transition: transform .08s ease, filter .15s ease, opacity .15s ease, box-shadow .08s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .g24-tile:hover { filter: brightness(1.05); }
+    .g24-tile:active { transform: translateY(3px); box-shadow: 0 3px 0 rgba(38,50,74,.20), 0 6px 10px rgba(40,50,70,.16); }
+    .g24-tile.used { opacity: .34; filter: grayscale(.45); transform: scale(.93); box-shadow: 0 2px 0 rgba(38,50,74,.15), 0 4px 8px rgba(40,50,70,.10); cursor: pointer; }
+    .g24-tile.used::after {
+      content: "사용 중";
+      position: absolute;
+      left: 50%;
+      bottom: 9px;
+      transform: translateX(-50%);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .02em;
+      background: rgba(255,255,255,.85);
+      color: #43536b;
+      padding: 2px 7px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .g24-tile.idle { background: #e8edf3; color: #9aa7ba; box-shadow: 0 4px 0 rgba(38,50,74,.10); cursor: default; }
+    .g24-expr-wrap { display: flex; gap: 10px; align-items: stretch; margin-top: 16px; }
+    .g24-expr {
+      flex: 1 1 auto;
+      min-width: 0;
+      min-height: 62px;
+      display: flex;
+      align-items: center;
+      padding: 10px 16px;
+      background: #fbfcfe;
+      border: 2px solid #d4dee9;
+      border-radius: 16px;
+      font-size: clamp(20px, 4.6vw, 27px);
+      font-weight: 800;
+      letter-spacing: .04em;
+      color: #182844;
+      overflow-x: auto;
+      white-space: nowrap;
+      scrollbar-width: none;
+    }
+    .g24-expr::-webkit-scrollbar { display: none; }
+    .g24-expr-empty { color: #93a2b5; font-size: 14.5px; font-weight: 600; letter-spacing: 0; white-space: normal; }
+    .g24-result {
+      flex: none;
+      min-width: 96px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      border-radius: 16px;
+      background: #eef2f7;
+      border: 2px solid #d4dee9;
+      font-size: clamp(18px, 4vw, 24px);
+      font-weight: 900;
+      color: #43536b;
+      font-variant-numeric: tabular-nums;
+    }
+    .g24-result.ok { background: #d9f5dc; border-color: #7fce8b; color: #166534; }
+    .g24-result.close { background: #fdf0d3; border-color: #ecc964; color: #7a5200; }
+    .g24-msg { min-height: 24px; margin-top: 10px; text-align: center; font-size: 14.5px; font-weight: 700; color: #43536b; line-height: 1.45; }
+    .g24-msg.good { color: #15803d; }
+    .g24-msg.bad { color: #b3543f; }
+    .g24-pad { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin-top: 6px; }
+    .g24-op {
+      appearance: none;
+      border: 1px solid #c9d5e2;
+      background: #eef3f9;
+      color: #24334d;
+      border-radius: 16px;
+      height: 54px;
+      font-size: 24px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 3px 0 rgba(75,100,135,.18);
+      transition: transform .06s ease, filter .15s ease;
+    }
+    .g24-op:hover { filter: brightness(1.04); }
+    .g24-op:active { transform: translateY(2px); box-shadow: none; }
+    .g24-op:disabled { opacity: .45; cursor: default; }
+    .g24-pad-sub { display: flex; gap: 8px; margin-top: 10px; }
+    .g24-sub-btn {
+      appearance: none;
+      border: 1px solid #c9d5e2;
+      background: #f6f8fb;
+      color: #33455f;
+      border-radius: 13px;
+      padding: 10px 14px;
+      font: inherit;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .g24-sub-btn:active { transform: translateY(1px); }
+    .g24-sub-btn:disabled { opacity: .45; cursor: default; }
+    .g24-answer {
+      margin-top: 12px;
+      background: #fff8e6;
+      border: 1.5px dashed #d9a92c;
+      color: #6b4e00;
+      border-radius: 14px;
+      padding: 11px 14px;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+    }
+    .g24-answer b { font-size: 18px; letter-spacing: .03em; color: #4d3800; }
+    .g24-final { margin-top: 6px; }
+    .g24-final-score { text-align: center; font-size: 17px; color: #43536b; margin: 4px 0 12px; }
+    .g24-final-score b { display: block; font-size: 44px; font-weight: 900; color: #1e4630; letter-spacing: -.01em; }
+    .g24-final-list { display: grid; gap: 6px; margin: 0 0 6px; padding: 0; list-style: none; }
+    .g24-final-list li {
+      display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+      background: #f4f8f4; border: 1px solid #dde8dd; border-radius: 11px;
+      padding: 8px 12px; font-size: 13px; color: #33455f; font-weight: 600;
+    }
+    .g24-final-list .g24-fl-nums { font-weight: 900; color: #24334d; letter-spacing: .06em; }
+    .g24-final-list .g24-fl-pts { margin-left: auto; font-weight: 900; color: #1e7a3d; }
+    .g24-final-list li.gaveup .g24-fl-pts { color: #b3543f; }
+    /* 하단 고정 액션 바: 정답/포기 후 '다음 문제' 버튼이 스크롤 없이 항상 보인다 */
+    .g24-footbar {
+      position: sticky;
+      bottom: 0;
+      margin: 14px -20px 0;
+      padding: 12px 20px 16px;
+      background: rgba(255,255,255,.97);
+      border-top: 1px solid rgba(90,105,130,.16);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      z-index: 5;
+    }
+    .g24-btn-main {
+      appearance: none;
+      border: 0;
+      flex: 1 1 auto;
+      border-radius: 15px;
+      padding: 14px 18px;
+      font-weight: 800;
+      font-size: 16px;
+      cursor: pointer;
+      background: linear-gradient(180deg, #57c877, #35a852);
+      color: #fff;
+      box-shadow: 0 5px 14px rgba(46,140,80,.35);
+      transition: transform .06s ease, filter .15s ease;
+    }
+    .g24-btn-main:hover { filter: brightness(1.05); }
+    .g24-btn-main:active { transform: translateY(1px); }
+    .g24-btn-giveup {
+      appearance: none;
+      flex: none;
+      border: 1px solid #e3b7ae;
+      border-radius: 15px;
+      padding: 14px 18px;
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      background: #fdeeec;
+      color: #a03e2a;
+    }
+    .g24-btn-giveup:active { transform: translateY(1px); }
+    @keyframes g24-pop { 0% { transform: scale(1); } 40% { transform: scale(1.018); } 100% { transform: scale(1); } }
+    .g24-card.g24-pop { animation: g24-pop .45s ease-out; }
+    @media (max-width: 560px) {
+      .g24-root { padding: 10px; }
+      .g24-card { padding: 14px 14px 0; border-radius: 18px; }
+      .g24-footbar { margin: 12px -14px 0; padding: 10px 14px 12px; }
+      .g24-tiles { gap: 9px; }
+      .g24-tile { border-radius: 20px; }
+      .g24-tile.used::after { bottom: 6px; font-size: 9px; padding: 1px 6px; }
+      .g24-expr-wrap { margin-top: 12px; }
+      .g24-expr { min-height: 56px; padding: 8px 12px; }
+      .g24-result { min-width: 78px; }
+      .g24-op { height: 48px; font-size: 21px; border-radius: 13px; }
+      .g24-status { margin: 10px 0 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .g24-card.g24-pop { animation: none; } }
     .p3-panel {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -1632,6 +1878,7 @@
         <button class="section-tab" id="tabIllusion" type="button" role="tab" aria-selected="false">착시</button>
         <button class="section-tab" id="tabProb" type="button" role="tab" aria-selected="false">확률</button>
         <button class="section-tab" id="tabQuiz" type="button" role="tab" aria-selected="false">구구단</button>
+        <button class="section-tab" id="tab24" type="button" role="tab" aria-selected="false">24 게임</button>
       </div>
     </nav>
     <section class="panel sheet-open" id="layerPanel" aria-labelledby="formula-heading">
@@ -2317,6 +2564,60 @@
               <button class="qg-btn-ghost" id="qg-notice-cancel" type="button" hidden>취소</button>
               <button class="qg-btn-primary" id="qg-notice-ok" type="button">확인</button>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="g24-shell" id="g24Shell" aria-label="24 게임" hidden>
+      <div class="g24-root" id="game24">
+        <div class="g24-card" id="g24-card">
+          <div class="g24-head">
+            <h1>24 게임</h1>
+            <p class="g24-sub">숫자 타일 4개를 각각 한 번씩만 써서 +, −, ×, ÷와 괄호로 24를 만드세요. 빨리 풀수록 점수가 높아요. (한 문제 최대 100점, 1초마다 1점씩 감소 · 최소 10점)</p>
+          </div>
+
+          <div class="g24-status">
+            <div class="g24-chip">문제: <b id="g24-round">0 / 10</b></div>
+            <div class="g24-chip">시간: <b id="g24-time">0.0</b>초</div>
+            <div class="g24-chip">이번 점수: <b id="g24-cur-score">100</b></div>
+            <div class="g24-chip">총점: <b id="g24-total">0</b></div>
+          </div>
+
+          <div id="g24-play">
+            <div class="g24-tiles" id="g24-tiles" role="group" aria-label="숫자 타일"></div>
+
+            <div class="g24-expr-wrap">
+              <div class="g24-expr" id="g24-expr" aria-live="polite"><span class="g24-expr-empty">타일과 연산자를 눌러 식을 만드세요</span></div>
+              <div class="g24-result" id="g24-result">= ?</div>
+            </div>
+
+            <div class="g24-msg" id="g24-msg">시작 버튼을 누르면 문제가 나옵니다.</div>
+
+            <div class="g24-pad" id="g24-pad">
+              <button class="g24-op" type="button" data-op="+" aria-label="더하기">+</button>
+              <button class="g24-op" type="button" data-op="−" aria-label="빼기">−</button>
+              <button class="g24-op" type="button" data-op="×" aria-label="곱하기">×</button>
+              <button class="g24-op" type="button" data-op="÷" aria-label="나누기">÷</button>
+              <button class="g24-op" type="button" data-op="(" aria-label="여는 괄호">(</button>
+              <button class="g24-op" type="button" data-op=")" aria-label="닫는 괄호">)</button>
+            </div>
+            <div class="g24-pad-sub">
+              <button class="g24-sub-btn" id="g24-btn-back" type="button">⌫ 한 글자 지우기</button>
+              <button class="g24-sub-btn" id="g24-btn-clear" type="button">전체 지우기</button>
+            </div>
+
+            <div class="g24-answer" id="g24-answer" hidden></div>
+          </div>
+
+          <div class="g24-final" id="g24-final" hidden>
+            <p class="g24-final-score">최종 점수<b id="g24-final-score">0점</b></p>
+            <ul class="g24-final-list" id="g24-final-list"></ul>
+          </div>
+
+          <div class="g24-footbar">
+            <button class="g24-btn-giveup" id="g24-btn-giveup" type="button" hidden>포기</button>
+            <button class="g24-btn-main" id="g24-btn-main" type="button">게임 시작</button>
           </div>
         </div>
       </div>
@@ -5171,10 +5472,12 @@
     var tabIllusion = document.getElementById('tabIllusion');
     var tabProb = document.getElementById('tabProb');
     var tabQuiz = document.getElementById('tabQuiz');
+    var tab24 = document.getElementById('tab24');
     var p3Shell = document.getElementById('p3Shell');
     var ilShell = document.getElementById('ilShell');
     var prShell = document.getElementById('prShell');
     var quizShell = document.getElementById('quizShell');
+    var g24Shell = document.getElementById('g24Shell');
     var solidReady = false;
     var quizReady = false;
 
@@ -5191,6 +5494,7 @@
       var illusion = section === 'illusion';
       var prob = section === 'prob';
       var quiz = section === 'quiz';
+      var g24 = section === 'game24';
       // Stop the grapher's in-flight rendering before switching away, so the
       // tab change is never queued behind graph rendering work.
       if (!graph && window.__graphOnHide) window.__graphOnHide();
@@ -5198,25 +5502,31 @@
       document.body.classList.toggle('illusion-mode', illusion);
       document.body.classList.toggle('prob-mode', prob);
       document.body.classList.toggle('quiz-mode', quiz);
+      document.body.classList.toggle('game24-mode', g24);
       tabGraph.classList.toggle('active', graph);
       tabSolid.classList.toggle('active', solid);
       tabIllusion.classList.toggle('active', illusion);
       tabProb.classList.toggle('active', prob);
       tabQuiz.classList.toggle('active', quiz);
+      tab24.classList.toggle('active', g24);
       tabGraph.setAttribute('aria-selected', String(graph));
       tabSolid.setAttribute('aria-selected', String(solid));
       tabIllusion.setAttribute('aria-selected', String(illusion));
       tabProb.setAttribute('aria-selected', String(prob));
       tabQuiz.setAttribute('aria-selected', String(quiz));
+      tab24.setAttribute('aria-selected', String(g24));
       p3Shell.hidden = !solid;
       ilShell.hidden = !illusion;
       prShell.hidden = !prob;
       quizShell.hidden = !quiz;
+      g24Shell.hidden = !g24;
       if (prob) { if (window.__prOnShow) window.__prOnShow(); }
       else if (window.__prOnHide) window.__prOnHide();
       if (illusion) { if (window.__ilOnShow) window.__ilOnShow(); }
       else if (window.__ilOnHide) window.__ilOnHide();
       if (quiz) ensureQuiz();
+      if (g24) { if (window.__g24OnShow) window.__g24OnShow(); }
+      else if (window.__g24OnHide) window.__g24OnHide();
       if (solid) {
         if (!solidReady) { solidReady = true; initSolid(); }
         else { p3Resize(); }
@@ -5231,6 +5541,7 @@
     tabIllusion.addEventListener('click', function () { setSection('illusion'); });
     tabProb.addEventListener('click', function () { setSection('prob'); });
     tabQuiz.addEventListener('click', function () { setSection('quiz'); });
+    tab24.addEventListener('click', function () { setSection('game24'); });
 
     /* ================= 작은 벡터/행렬 도구 ================= */
     function vsub(a, b) { return [a[0] - b[0], a[1] - b[1], a[2] - b[2]]; }
@@ -9245,6 +9556,420 @@
     document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
     document.addEventListener('gesturechange', function (e) { e.preventDefault(); });
     document.addEventListener('wheel', function (e) { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
+  </script>
+  <script>
+  (function () {
+    'use strict';
+    /* ================= 24 게임 (내장) =================
+       숫자 타일 4개(1~9)를 각각 한 번씩 써서 +, −, ×, ÷, 괄호로 24를 만든다.
+       출제는 분수(유리수) 솔버로 풀 수 있는 조합만 골라 모범 답안을 함께 확보한다. */
+    var root = document.getElementById('game24');
+    if (!root) return;
+    function byId(id) { return document.getElementById(id); }
+
+    var card = byId('g24-card');
+    var tilesEl = byId('g24-tiles');
+    var exprEl = byId('g24-expr');
+    var resultEl = byId('g24-result');
+    var msgEl = byId('g24-msg');
+    var answerEl = byId('g24-answer');
+    var playEl = byId('g24-play');
+    var finalEl = byId('g24-final');
+    var finalScoreEl = byId('g24-final-score');
+    var finalListEl = byId('g24-final-list');
+    var roundEl = byId('g24-round');
+    var timeEl = byId('g24-time');
+    var curScoreEl = byId('g24-cur-score');
+    var totalEl = byId('g24-total');
+    var btnMain = byId('g24-btn-main');
+    var btnGiveup = byId('g24-btn-giveup');
+    var btnBack = byId('g24-btn-back');
+    var btnClear = byId('g24-btn-clear');
+    var padEl = byId('g24-pad');
+
+    var TOTAL = 10;
+    var TILE_COLORS = { 1: '#ff6b6b', 2: '#ff922b', 3: '#ffd43b', 4: '#74d35f', 5: '#2fd6a3', 6: '#33c6dd', 7: '#4dabf7', 8: '#9775fa', 9: '#f783ac' };
+    var TILE_INK = { 7: '#ffffff', 8: '#ffffff' };
+
+    /* ---------- 분수 연산 (24 판정을 정확히 하기 위해 유리수로 계산) ---------- */
+    function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { var t = a % b; a = b; b = t; } return a || 1; }
+    function frac(n, d) { if (d < 0) { n = -n; d = -d; } var g = gcd(n, d); return { n: n / g, d: d / g }; }
+    function fAdd(a, b) { return frac(a.n * b.d + b.n * a.d, a.d * b.d); }
+    function fSub(a, b) { return frac(a.n * b.d - b.n * a.d, a.d * b.d); }
+    function fMul(a, b) { return frac(a.n * b.n, a.d * b.d); }
+    function fDiv(a, b) { if (b.n === 0) return null; return frac(a.n * b.d, a.d * b.n); }
+    function is24(v) { return !!v && v.n === 24 * v.d; }
+    function fmtFrac(v) {
+      if (v.d === 1) return String(v.n);
+      var dec = v.n / v.d;
+      return v.n + '/' + v.d + ' (' + (Math.round(dec * 100) / 100) + ')';
+    }
+
+    /* ---------- 솔버: 4개 숫자로 24를 만드는 식 하나를 찾는다 ---------- */
+    function solve24(nums) {
+      var start = [];
+      for (var i = 0; i < nums.length; i++) start.push({ v: frac(nums[i], 1), s: String(nums[i]) });
+      function rec(list) {
+        if (list.length === 1) return is24(list[0].v) ? list[0].s : null;
+        for (var i = 0; i < list.length; i++) {
+          for (var j = 0; j < list.length; j++) {
+            if (i === j) continue;
+            var a = list[i], b = list[j], rest = [], k;
+            for (k = 0; k < list.length; k++) if (k !== i && k !== j) rest.push(list[k]);
+            var cands = [
+              { v: fAdd(a.v, b.v), s: '(' + a.s + '+' + b.s + ')' },
+              { v: fSub(a.v, b.v), s: '(' + a.s + '−' + b.s + ')' },
+              { v: fMul(a.v, b.v), s: '(' + a.s + '×' + b.s + ')' }
+            ];
+            var dv = fDiv(a.v, b.v);
+            if (dv) cands.push({ v: dv, s: '(' + a.s + '÷' + b.s + ')' });
+            for (var c = 0; c < cands.length; c++) {
+              var r = rec(rest.concat([cands[c]]));
+              if (r) return r;
+            }
+          }
+        }
+        return null;
+      }
+      var ans = rec(start);
+      if (ans && ans.charAt(0) === '(' && ans.charAt(ans.length - 1) === ')') ans = ans.slice(1, -1);
+      return ans;
+    }
+
+    /* ---------- 사용자 식 계산 (토큰 배열 → 분수 값, 실패 시 null) ---------- */
+    function evalTokens(tokens) {
+      var pos = 0;
+      function peek() { return tokens[pos]; }
+      function parseExpr() {
+        var v = parseTerm(); if (!v) return null;
+        while (peek() && peek().t === 'op' && (peek().op === '+' || peek().op === '−')) {
+          var op = tokens[pos++].op;
+          var r = parseTerm(); if (!r) return null;
+          v = op === '+' ? fAdd(v, r) : fSub(v, r);
+        }
+        return v;
+      }
+      function parseTerm() {
+        var v = parseFactor(); if (!v) return null;
+        while (peek() && peek().t === 'op' && (peek().op === '×' || peek().op === '÷')) {
+          var op = tokens[pos++].op;
+          var r = parseFactor(); if (!r) return null;
+          v = op === '×' ? fMul(v, r) : fDiv(v, r);
+          if (!v) return null;
+        }
+        return v;
+      }
+      function parseFactor() {
+        var tk = peek(); if (!tk) return null;
+        if (tk.t === 'num') { pos++; return frac(tk.v, 1); }
+        if (tk.t === 'lp') {
+          pos++;
+          var v = parseExpr(); if (!v) return null;
+          if (!peek() || peek().t !== 'rp') return null;
+          pos++;
+          return v;
+        }
+        return null;
+      }
+      var v = parseExpr();
+      if (!v || pos !== tokens.length) return null;
+      return v;
+    }
+
+    /* ---------- 상태 ---------- */
+    var state = 'idle'; /* idle | playing | solved | givenup | done */
+    var numbers = [];
+    var solution = null;
+    var tokens = [];
+    var usedTiles = [false, false, false, false];
+    var round = 0;
+    var totalScore = 0;
+    var results = [];
+    var seenKeys = {};
+    var startAt = 0;
+    var elapsed = 0;
+    var timerId = null;
+    var pausedAt = 0;
+
+    function curPoints() { return Math.max(10, 100 - Math.floor(elapsed)); }
+
+    function startTimer() {
+      stopTimer();
+      timerId = setInterval(function () {
+        elapsed = (Date.now() - startAt) / 1000;
+        timeEl.textContent = elapsed.toFixed(1);
+        curScoreEl.textContent = String(curPoints());
+      }, 100);
+    }
+    function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
+
+    function genProblem() {
+      for (var tries = 0; tries < 600; tries++) {
+        var ns = [];
+        for (var i = 0; i < 4; i++) ns.push(1 + Math.floor(Math.random() * 9));
+        var key = ns.slice().sort(function (a, b) { return a - b; }).join(',');
+        if (seenKeys[key]) continue;
+        var sol = solve24(ns);
+        if (sol) { seenKeys[key] = true; return { nums: ns, sol: sol }; }
+      }
+      return { nums: [3, 3, 8, 8], sol: '8÷(3−8÷3)' };
+    }
+
+    function renderTiles() {
+      tilesEl.innerHTML = '';
+      for (var i = 0; i < 4; i++) {
+        (function (idx) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'g24-tile';
+          if (state === 'idle') {
+            b.classList.add('idle');
+            b.textContent = '?';
+            b.disabled = true;
+          } else {
+            var v = numbers[idx];
+            b.textContent = String(v);
+            b.style.setProperty('--tile', TILE_COLORS[v]);
+            b.style.setProperty('--ink', TILE_INK[v] || '#26324a');
+            if (usedTiles[idx]) b.classList.add('used');
+            b.setAttribute('aria-label', '숫자 ' + v + (usedTiles[idx] ? ' (사용 중, 다시 누르면 취소)' : ''));
+          }
+          b.addEventListener('click', function () { onTile(idx); });
+          tilesEl.appendChild(b);
+        })(i);
+      }
+    }
+
+    function tokenText(tk) {
+      if (tk.t === 'num') return String(tk.v);
+      if (tk.t === 'op') return tk.op;
+      if (tk.t === 'lp') return '(';
+      return ')';
+    }
+
+    function refresh() {
+      /* 식 표시 */
+      if (!tokens.length) {
+        exprEl.innerHTML = '<span class="g24-expr-empty">타일과 연산자를 눌러 식을 만드세요</span>';
+      } else {
+        var parts = [];
+        for (var i = 0; i < tokens.length; i++) parts.push(tokenText(tokens[i]));
+        exprEl.textContent = parts.join(' ');
+      }
+      renderTiles();
+      /* 실시간 결과 */
+      var usedCount = 0;
+      for (var u = 0; u < 4; u++) if (usedTiles[u]) usedCount++;
+      resultEl.classList.remove('ok');
+      resultEl.classList.remove('close');
+      if (!tokens.length) {
+        resultEl.textContent = '= ?';
+        return;
+      }
+      var v = evalTokens(tokens);
+      if (!v) {
+        resultEl.textContent = '= …';
+        return;
+      }
+      resultEl.textContent = '= ' + fmtFrac(v);
+      if (is24(v)) {
+        if (usedCount === 4) {
+          resultEl.classList.add('ok');
+          if (state === 'playing') onSolved();
+        } else {
+          resultEl.classList.add('close');
+          if (state === 'playing') setMsg('값은 24예요! 그런데 숫자 타일 4개를 모두 써야 해요. (지금 ' + usedCount + '개 사용)', '');
+        }
+      }
+    }
+
+    function setMsg(text, kind) {
+      msgEl.textContent = text;
+      msgEl.className = 'g24-msg' + (kind ? ' ' + kind : '');
+    }
+
+    function setControlsEnabled(on) {
+      var ops = padEl.querySelectorAll('.g24-op');
+      for (var i = 0; i < ops.length; i++) ops[i].disabled = !on;
+      btnBack.disabled = !on;
+      btnClear.disabled = !on;
+    }
+
+    function updateStatus() {
+      roundEl.textContent = round + ' / ' + TOTAL;
+      totalEl.textContent = String(totalScore);
+    }
+
+    function startGame() {
+      round = 0;
+      totalScore = 0;
+      results = [];
+      seenKeys = {};
+      finalEl.hidden = true;
+      playEl.hidden = false;
+      updateStatus();
+      nextProblem();
+    }
+
+    function nextProblem() {
+      round++;
+      var p = genProblem();
+      numbers = p.nums;
+      solution = p.sol;
+      tokens = [];
+      usedTiles = [false, false, false, false];
+      state = 'playing';
+      elapsed = 0;
+      pausedAt = 0;
+      answerEl.hidden = true;
+      answerEl.textContent = '';
+      timeEl.textContent = '0.0';
+      curScoreEl.textContent = '100';
+      setMsg('숫자 타일 4개를 모두 써서 24를 만들어 보세요.', '');
+      btnMain.hidden = true;
+      btnGiveup.hidden = false;
+      setControlsEnabled(true);
+      updateStatus();
+      refresh();
+      startAt = Date.now();
+      startTimer();
+    }
+
+    function finishProblem(kind) {
+      stopTimer();
+      setControlsEnabled(false);
+      btnGiveup.hidden = true;
+      btnMain.hidden = false;
+      btnMain.textContent = round >= TOTAL ? '결과 보기' : '다음 문제 →';
+    }
+
+    function onSolved() {
+      state = 'solved';
+      elapsed = (Date.now() - startAt) / 1000;
+      timeEl.textContent = elapsed.toFixed(1);
+      var pts = curPoints();
+      totalScore += pts;
+      results.push({ nums: numbers.slice(), ok: true, secs: elapsed, pts: pts });
+      updateStatus();
+      setMsg('정답! 🎉 ' + elapsed.toFixed(1) + '초 만에 풀어서 +' + pts + '점', 'good');
+      card.classList.remove('g24-pop');
+      void card.offsetWidth;
+      card.classList.add('g24-pop');
+      finishProblem('solved');
+    }
+
+    function onGiveup() {
+      if (state !== 'playing') return;
+      state = 'givenup';
+      elapsed = (Date.now() - startAt) / 1000;
+      timeEl.textContent = elapsed.toFixed(1);
+      results.push({ nums: numbers.slice(), ok: false, secs: elapsed, pts: 0 });
+      setMsg('포기했어요. 이 문제는 0점이에요.', 'bad');
+      answerEl.innerHTML = '모범 답안&nbsp; <b></b>';
+      answerEl.querySelector('b').textContent = solution + ' = 24';
+      answerEl.hidden = false;
+      finishProblem('givenup');
+    }
+
+    function showFinal() {
+      state = 'done';
+      playEl.hidden = true;
+      finalEl.hidden = false;
+      finalScoreEl.textContent = totalScore + '점';
+      finalListEl.innerHTML = '';
+      for (var i = 0; i < results.length; i++) {
+        (function (r, idx) {
+          var li = document.createElement('li');
+          if (!r.ok) li.className = 'gaveup';
+          var nums = document.createElement('span');
+          nums.className = 'g24-fl-nums';
+          nums.textContent = (idx + 1) + '.  ' + r.nums.join('  ');
+          var info = document.createElement('span');
+          info.textContent = r.ok ? '정답 · ' + r.secs.toFixed(1) + '초' : '포기';
+          var pts = document.createElement('span');
+          pts.className = 'g24-fl-pts';
+          pts.textContent = (r.ok ? '+' : '') + r.pts + '점';
+          li.appendChild(nums);
+          li.appendChild(info);
+          li.appendChild(pts);
+          finalListEl.appendChild(li);
+        })(results[i], i);
+      }
+      btnGiveup.hidden = true;
+      btnMain.hidden = false;
+      btnMain.textContent = '다시 하기';
+    }
+
+    function onTile(idx) {
+      if (state !== 'playing') return;
+      if (usedTiles[idx]) {
+        for (var i = 0; i < tokens.length; i++) {
+          if (tokens[i].t === 'num' && tokens[i].tile === idx) { tokens.splice(i, 1); break; }
+        }
+        usedTiles[idx] = false;
+      } else {
+        tokens.push({ t: 'num', v: numbers[idx], tile: idx });
+        usedTiles[idx] = true;
+      }
+      if (state === 'playing') setMsg('', '');
+      refresh();
+    }
+
+    padEl.addEventListener('click', function (e) {
+      var b = e.target.closest('button[data-op]');
+      if (!b || state !== 'playing') return;
+      var op = b.getAttribute('data-op');
+      if (op === '(') tokens.push({ t: 'lp' });
+      else if (op === ')') tokens.push({ t: 'rp' });
+      else tokens.push({ t: 'op', op: op });
+      refresh();
+    });
+
+    btnBack.addEventListener('click', function () {
+      if (state !== 'playing' || !tokens.length) return;
+      var tk = tokens.pop();
+      if (tk.t === 'num') usedTiles[tk.tile] = false;
+      refresh();
+    });
+
+    btnClear.addEventListener('click', function () {
+      if (state !== 'playing') return;
+      tokens = [];
+      usedTiles = [false, false, false, false];
+      refresh();
+    });
+
+    btnGiveup.addEventListener('click', onGiveup);
+
+    btnMain.addEventListener('click', function () {
+      if (state === 'idle' || state === 'done') startGame();
+      else if (state === 'solved' || state === 'givenup') {
+        if (round >= TOTAL) showFinal();
+        else nextProblem();
+      }
+    });
+
+    /* 탭을 벗어나면 타이머를 멈췄다가, 돌아오면 이어서 잰다 */
+    window.__g24OnShow = function () {
+      if (state === 'playing' && pausedAt) {
+        startAt += Date.now() - pausedAt;
+        pausedAt = 0;
+        startTimer();
+      }
+    };
+    window.__g24OnHide = function () {
+      if (state === 'playing' && !pausedAt) {
+        pausedAt = Date.now();
+        elapsed = (pausedAt - startAt) / 1000;
+        stopTimer();
+      }
+    };
+
+    /* 초기 화면 */
+    setControlsEnabled(false);
+    renderTiles();
+    updateStatus();
+  })();
   </script>
 </body>
 </html>
