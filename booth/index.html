@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>2026 부산수학축전 A-1 수학예술공방 부스 3D</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:#111318;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;color:#fff}
+  #c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+  .top{position:fixed;left:12px;right:12px;top:12px;z-index:5;display:flex;justify-content:space-between;gap:10px;align-items:flex-start;pointer-events:none}
+  .card{background:rgba(10,18,44,.82);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:12px 14px;backdrop-filter:blur(6px)}
+  .card h1{margin:0;font-size:17px;line-height:1.3}
+  .card p{margin:6px 0 0;font-size:13px;line-height:1.5;color:#dbe4ff}
+  .badge{white-space:nowrap;font-size:12px;color:#cfe0ff;text-align:right;line-height:1.5}
+  .panel{position:fixed;left:12px;right:12px;bottom:12px;z-index:5;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  button{border:1px solid rgba(255,255,255,.35);background:rgba(16,32,84,.9);color:#fff;border-radius:999px;padding:10px 14px;font-size:14px;cursor:pointer}
+  button.on{background:#ffd54a;color:#111;border-color:#ffd54a;font-weight:700}
+  button:active{transform:scale(.97)}
+  .hint{position:fixed;left:50%;transform:translateX(-50%);bottom:66px;z-index:4;background:rgba(0,0,0,.55);padding:7px 12px;border-radius:999px;font-size:12px;white-space:nowrap}
+  @media(max-width:520px){.card h1{font-size:15px}.card p{font-size:12px}.badge{display:none}.hint{bottom:104px}}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="top">
+  <div class="card" style="pointer-events:auto">
+    <h1>2026 부산수학축전 · A-1 수학예술공방</h1>
+    <p>부스 6m × 5m · 양측·후면 벽체 / 전면 개방<br>드래그해서 돌리고, 두 손가락·휠로 확대하세요.</p>
+  </div>
+  <div class="card badge">빌드 2026-10-29<br>사진(간담회 PDF) 기준 재현</div>
+</div>
+<div class="hint" id="hint">🖱️ 드래그: 회전 &nbsp;·&nbsp; 휠/핀치: 확대 &nbsp;·&nbsp; 우클릭 드래그: 이동</div>
+<div class="panel">
+  <button id="btnRotate" class="on">⏸ 자동 회전 끄기</button>
+  <button data-view="front">정면</button>
+  <button data-view="side">측면</button>
+  <button data-view="top">위에서</button>
+  <button data-view="iso">대각선</button>
+  <button id="btnPoster">후면 홍보 위치 ①–⑥</button>
+  <button id="btnSize" class="on">치수 6m × 5m 표시</button>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const canvas=document.getElementById('c');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x111318);
+scene.fog=new THREE.Fog(0x111318,22,42);
+const camera=new THREE.PerspectiveCamera(45,1,0.1,100);
+camera.position.set(6.5,4.6,8.5);
+const controls=new OrbitControls(camera,renderer.domElement);
+controls.target.set(0,1.1,0);
+controls.enableDamping=true; controls.dampingFactor=.06;
+controls.maxPolarAngle=Math.PI*0.495; controls.minDistance=3; controls.maxDistance=20;
+controls.autoRotate=true; controls.autoRotateSpeed=0.9;
+
+scene.add(new THREE.HemisphereLight(0xffffff,0x333344,1.05));
+const sun=new THREE.DirectionalLight(0xffffff,1.6); sun.position.set(6,10,7); sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048); sun.shadow.camera.left=-9; sun.shadow.camera.right=9; sun.shadow.camera.top=9; sun.shadow.camera.bottom=-9;
+scene.add(sun);
+const fill=new THREE.DirectionalLight(0xcfe0ff,.5); fill.position.set(-6,5,-6); scene.add(fill);
+
+// materials
+const M={
+  wall:new THREE.MeshStandardMaterial({color:0xf2f3f5,roughness:.9}),
+  wallSide:new THREE.MeshStandardMaterial({color:0xe8eaee,roughness:.9}),
+  frame:new THREE.MeshStandardMaterial({color:0xb8bec8,roughness:.35,metalness:.75}),
+  floor:new THREE.MeshStandardMaterial({color:0xcfd1d4,roughness:.95}),
+  hall:new THREE.MeshStandardMaterial({color:0x1a1d22,roughness:1}),
+  navy:new THREE.MeshStandardMaterial({color:0x1e2f7a,roughness:.85}),
+  navyDark:new THREE.MeshStandardMaterial({color:0x182664,roughness:.9}),
+  white:new THREE.MeshStandardMaterial({color:0xffffff,roughness:.6}),
+  chair:new THREE.MeshStandardMaterial({color:0x9aa0aa,roughness:.6,metalness:.3}),
+  chairDark:new THREE.MeshStandardMaterial({color:0x2b2e33,roughness:.7}),
+};
+function box(w,h,d,mat,x,y,z,parent=scene){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
+function texCanvas(w,h,draw){const cv=document.createElement('canvas');cv.width=w;cv.height=h;const g=cv.getContext('2d');draw(g,w,h);const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t;}
+function fasciaTexture(side){
+  return texCanvas(2048,220,(g,w,h)=>{
+    const grad=g.createLinearGradient(0,0,0,h);grad.addColorStop(0,'#1d4ed8');grad.addColorStop(1,'#123a9e');
+    g.fillStyle=grad;g.fillRect(0,0,w,h);
+    g.fillStyle='#fff';g.beginPath();g.roundRect(520,28,1000,164,82);g.fill();
+    g.fillStyle='#0f2a7a';g.font='bold 88px "Apple SD Gothic Neo","Noto Sans KR",sans-serif';g.textAlign='center';g.textBaseline='middle';
+    g.fillText(side==='front'?'수학예술공방':'수학예술공방',1020,112);
+    g.fillStyle='#fff';g.font='bold 62px "Apple SD Gothic Neo",sans-serif';g.textAlign='left';g.fillText('A-1',36,112);
+    g.textAlign='right';g.font='bold 44px "Apple SD Gothic Neo",sans-serif';g.fillText('2026 부산수학축전',2010,82);
+    g.font='28px "Apple SD Gothic Neo",sans-serif';g.fillStyle='#dbeafe';g.fillText('세상을 잇는 언어, 수학으로 미래를 열다',2010,142);
+  });
+}
+function posterTexture(){
+  return texCanvas(2048,640,(g,w,h)=>{
+    g.clearRect(0,0,w,h);g.strokeStyle='#0f766e';g.setLineDash([18,14]);g.lineWidth=5;g.strokeRect(14,14,w-28,h-28);
+    g.setLineDash([]);g.textAlign='center';g.textBaseline='middle';
+    for(let i=0;i<6;i++){const x=170+i*341;g.strokeStyle='#0f766e';g.lineWidth=6;g.beginPath();g.arc(x,300,72,0,Math.PI*2);g.stroke();
+      g.fillStyle='#0f766e';g.font='bold 72px sans-serif';g.fillText(String(i+1),x,300);}
+    g.fillStyle='#0f766e';g.font='bold 42px "Apple SD Gothic Neo",sans-serif';g.fillText('후면 벽체 · 홍보물 부착 예시 ①–⑥',w/2,540);
+  });
+}
+
+// hall floor + booth carpet
+const hall=box(34,0.1,28,M.hall,0,-0.05,0); hall.receiveShadow=true;
+box(6,0.06,5,M.floor,0,0.03,0);
+
+// walls: back 6m wide (6 panels), sides 5m deep (5 panels), height 2.4
+const WALL_H=2.4, T=0.06;
+for(let i=0;i<6;i++) box(0.98,WALL_H,T,M.wall,-2.5+i, WALL_H/2, -2.5);
+for(let i=0;i<5;i++){ box(T,WALL_H,0.98,M.wallSide,-3, WALL_H/2, -2+i); box(T,WALL_H,0.98,M.wallSide,3, WALL_H/2, -2+i); }
+// vertical frames + top rails
+for(let i=0;i<=6;i++) box(0.07,WALL_H,0.07,M.frame,-3+i, WALL_H/2, -2.5);
+for(let i=0;i<=5;i++){ box(0.07,WALL_H,0.07,M.frame,-3, WALL_H/2, -2.5+i); box(0.07,WALL_H,0.07,M.frame,3, WALL_H/2, -2.5+i); }
+box(6.1,0.08,0.08,M.frame,0,WALL_H,-2.5); box(0.08,0.08,5.1,M.frame,-3,WALL_H,0); box(0.08,0.08,5.1,M.frame,3,WALL_H,0);
+for(let i=0;i<3;i++) box(0.06,0.06,5.05,M.frame,-2+i*2,WALL_H+0.12,0);
+
+// fascia: front + both sides
+function fascia(w,mat,x,y,z,ry){const m=new THREE.Mesh(new THREE.BoxGeometry(w,0.5,0.08),mat);m.position.set(x,y,z);m.rotation.y=ry;m.castShadow=true;scene.add(m);return m;}
+const frontMat=new THREE.MeshStandardMaterial({map:fasciaTexture('front'),roughness:.6});
+const sideMat=new THREE.MeshStandardMaterial({map:fasciaTexture('side'),roughness:.6});
+fascia(6.15,frontMat,0,2.72,2.52,0);
+fascia(5.15,sideMat,-3.02,2.72,0,Math.PI/2);
+fascia(5.15,sideMat,3.02,2.72,0,-Math.PI/2);
+
+// poster slots on back wall (toggle)
+const posterGroup=new THREE.Group(); posterGroup.visible=false;
+{
+  const mat=new THREE.MeshBasicMaterial({map:posterTexture(),transparent:true,side:THREE.DoubleSide});
+  const p=new THREE.Mesh(new THREE.PlaneGeometry(5.9,1.85),mat); p.position.set(0,1.55,-2.46); posterGroup.add(p);
+}
+scene.add(posterGroup);
+
+// info desk, left front
+box(1.15,1.02,0.62,M.white,-2.25,0.51,1.85);
+box(1.05,0.06,0.52,M.wallSide,-2.25,1.05,1.85);
+// folding chair helper
+function chair(x,z,ry,mat=M.chair){
+  const g=new THREE.Group();
+  const seat=box(0.44,0.04,0.42,mat,0,0.45,0,g);
+  const back=box(0.44,0.45,0.04,mat,0,0.78,-0.20,g);
+  [[-0.19,-0.18],[0.19,-0.18],[-0.19,0.18],[0.19,0.18]].forEach(([dx,dz])=>box(0.035,0.45,0.035,M.frame,dx,0.22,dz,g));
+  g.position.set(x,0,z); g.rotation.y=ry; scene.add(g);
+}
+// big tables with navy cloth
+function table(x,z,ry){
+  const g=new THREE.Group();
+  box(1.9,0.08,0.85,new THREE.MeshStandardMaterial({color:0xdddddd}),0,0.74,0,g);
+  box(1.98,0.68,0.93,M.navy,0,0.38,0,g); // cloth drape
+  box(1.9,0.04,0.85,M.navyDark,0,0.76,0,g);
+  g.position.set(x,0,z); g.rotation.y=ry; scene.add(g);
+}
+table(0.1,-0.55,0); table(1.55,1.15,0);
+chair(-2.05,1.15,Math.PI/2,M.chairDark); // desk chair
+chair(-0.75,-0.55,Math.PI, M.chair); chair(0.95,-0.55,Math.PI); chair(-0.35,0.05,0); chair(0.65,0.05,0);
+chair(0.85,1.15,Math.PI); chair(2.25,1.15,Math.PI); chair(1.05,1.85,0); chair(2.05,1.85,0);
+
+// dimension lines (toggle)
+const dimGroup=new THREE.Group();
+function dimLine(x1,z1,x2,z2,label,lx,lz){
+  const pts=[new THREE.Vector3(x1,0.02,z1),new THREE.Vector3(x2,0.02,z2)];
+  const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0xffd54a}));
+  dimGroup.add(line);
+  const cv=document.createElement('canvas');cv.width=256;cv.height=80;const g=cv.getContext('2d');g.fillStyle='#ffd54a';g.font='bold 44px sans-serif';g.textAlign='center';g.fillText(label,128,52);
+  const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;
+  const s=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true}));s.scale.set(1.2,0.38,1);s.position.set(lx,0.35,lz);dimGroup.add(s);
+}
+dimLine(-3,3.35,3,3.35,'6m',0,3.35); dimLine(3.7,-2.5,3.7,2.5,'5m',3.7,0);
+scene.add(dimGroup);
+
+// view presets + buttons
+function setView(v){
+  const p={front:[0,2.2,9.5],side:[10,2.4,0],top:[0.01,13,0.01],iso:[6.5,4.6,8.5]}[v];
+  camera.position.set(...p); controls.target.set(0,1.1,0);
+}
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
+const btnR=document.getElementById('btnRotate');
+btnR.onclick=()=>{controls.autoRotate=!controls.autoRotate;btnR.textContent=controls.autoRotate?'⏸ 자동 회전 끄기':'▶ 자동 회전 켜기';btnR.classList.toggle('on',controls.autoRotate);};
+const btnP=document.getElementById('btnPoster');
+btnP.onclick=()=>{posterGroup.visible=!posterGroup.visible;btnP.classList.toggle('on',posterGroup.visible);};
+const btnS=document.getElementById('btnSize');
+btnS.onclick=()=>{dimGroup.visible=!dimGroup.visible;btnS.classList.toggle('on',dimGroup.visible);};
+renderer.domElement.addEventListener('pointerdown',()=>{if(controls.autoRotate){controls.autoRotate=false;btnR.textContent='▶ 자동 회전 켜기';btnR.classList.remove('on');}},{once:false});
+
+function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+addEventListener('resize',resize); resize();
+renderer.setAnimationLoop(()=>{controls.update();renderer.render(scene,camera);});
+</script>
+</body>
+</html>
