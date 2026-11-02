@@ -1,0 +1,945 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>4K AAA 게임 설정 가이드 — 9070 XT 70–80fps / RTX 5080 90fps+</title>
+<meta name="description" content="Ryzen 5 5600+RX 9070 XT(4K 70-80fps)와 Ryzen 7 5700X3D+RTX 5080(4K 90fps+) 두 본체용 AAA 게임별 최적 설정. 인기순 내림차순, 2026년 11월까지 출시작 위주.">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:#0b0f14;color:#e8edf2;line-height:1.6}
+a{color:#7cc4ff}header{max-width:1080px;margin:0 auto;padding:28px 16px 8px}
+h1{font-size:26px;line-height:1.35;margin:0 0 8px}.sub{color:#9fb0c0;font-size:14px}
+.build{display:inline-block;margin-top:10px;background:#16202c;border:1px solid #2a3a4d;color:#a9c6e8;border-radius:999px;padding:4px 10px;font-size:12px}
+main{max-width:1080px;margin:0 auto;padding:12px 16px 40px}
+.panel{background:#121a23;border:1px solid #243244;border-radius:14px;padding:16px;margin:14px 0}
+.panel h2{font-size:18px;margin:0 0 8px}.panel p,.panel li{font-size:14px;color:#c6d2de}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{border-bottom:1px solid #243244;padding:8px 6px;text-align:left;vertical-align:top}th{color:#9fb0c0;font-weight:600}
+.controls{position:sticky;top:0;z-index:5;background:rgba(11,15,20,.96);padding:12px 0;border-bottom:1px solid #243244}
+.controls input{width:100%;padding:11px 12px;border-radius:10px;border:1px solid #2a3a4d;background:#121a23;color:#fff;font-size:15px;margin-bottom:10px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{border:1px solid #2a3a4d;background:#121a23;color:#dbe6f0;border-radius:999px;padding:8px 13px;font-size:13px;cursor:pointer}
+button.on{background:#e11d48;border-color:#e11d48;color:#fff;font-weight:700}
+.count{font-size:13px;color:#9fb0c0;margin:10px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}h1{font-size:22px}}
+.card{background:#121a23;border:1px solid #243244;border-radius:14px;padding:16px}
+.card-head{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+.rank{flex:0 0 40px;height:40px;border-radius:10px;background:#e11d48;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px}
+.title h2{font-size:17px;margin:0;line-height:1.4}.en{font-size:13px;color:#9fb0c0;font-weight:400}
+.meta{margin:3px 0 0;font-size:12.5px;color:#9fb0c0}
+.spec{border:1px solid #243244;border-radius:10px;padding:12px;margin-top:10px;background:#0f151d}
+.spec-b{border-color:#1d4ed8}
+.spec-title{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px}
+.badge-a,.badge-b{font-size:12px;font-weight:800;padding:3px 8px;border-radius:999px}.badge-a{background:#7f1d1d;color:#fecaca}.badge-b{background:#1e3a8a;color:#bfdbfe}
+.grade{font-size:12px;color:#c6d2de}.fps{font-size:15px;margin:4px 0 8px}.fps b{font-size:19px;color:#fff}.fps-note{font-size:12px;color:#9fb0c0}
+dl{margin:0}dl div{display:flex;gap:10px;padding:4px 0;border-top:1px dashed #22303f;font-size:13.5px}dt{flex:0 0 96px;color:#9fb0c0}dd{margin:0;flex:1}
+.note{font-size:13.5px;color:#c6d2de;margin:8px 0 0}
+.warn{background:#2a1508;border:1px solid #7c2d12}.warn h2{color:#fdba74}
+footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
+.hide{display:none!important}
+</style></head><body>
+<header>
+<h1>4K AAA 게임 설정 가이드<br>9070 XT는 70–80fps, 5080은 90fps+</h1>
+<p class="sub">인기순 내림차순 · 2026년 11월까지 출시된 AAA 위주 · 23개 게임 · 같은 게임, 두 본체 설정을 나란히 비교합니다.</p>
+<p><span class="build">빌드 2026-11-02 23:08 KST · v1 · 두 본체 비교판</span></p>
+</header>
+<main>
+<section class="panel"><h2>두 본체, 무엇이 다른가</h2>
+<table><tr><th>구분</th><th>A · 9070 XT 본체</th><th>B · RTX 5080 본체</th></tr>
+<tr><td>사양</td><td>Ryzen 5 5600 + DDR4 16GB + RX 9070 XT 16GB</td><td>Ryzen 7 5700X3D + DDR4 32GB + RTX 5080 16GB</td></tr>
+<tr><td>4K 목표</td><td><b>70–80fps</b> (실제 렌더 기준)</td><td><b>90fps+</b> (아래 ‘표시 fps’ 주의 참조)</td></tr>
+<tr><td>업스케일</td><td>FSR 4 (Quality / Balanced)</td><td>DLSS 4 (Quality / Balanced)</td></tr>
+<tr><td>프레임 생성</td><td>FSR FG · AFMF 2 (싱글 위주)</td><td>DLSS FG 2x · MFG 3–4x (싱글 위주)</td></tr>
+<tr><td>강점 / 약점</td><td>래스터 강함, RT·패스 트레이싱 약함. 16GB RAM이라 백그라운드 정리가 프레임보다 먼저일 때가 있다.</td><td>RT·패스 트레이싱 강함, 5700X3D + 32GB라 도시·군중 구간이 유리하다. 그래도 네이티브 4K 풀 RT 90+는 안 된다.</td></tr></table>
+<p><b>공통 원칙:</b> 텍스처는 웬만하면 최고로 두고, 그림자·볼류메트릭·구름·RT부터 내린다. 텍스처는 VRAM만 버티면 프레임이 거의 안 떨어지고, 그림자·RT는 내리는 즉시 프레임이 오른다.</p></section>
+
+<section class="panel warn"><h2>⚠ ‘90fps’의 함정 — 표시 fps와 실제 fps를 구분하세요</h2>
+<p>5080 표에서 <b>‘표시 95–110 (실제 55–65)’</b>라고 쓴 것은 프레임 생성(FG/MFG)을 켠 값입니다. 화면에 찍히는 숫자는 100이지만, 실제로 GPU가 그리는 프레임은 55–65장이고 나머지는 AI가 끼워 넣은 프레임입니다. 그래서 <b>기본 렌더가 45fps를 밑돌면 FG를 켜도 끊기는 느낌</b>이 남고, 입력 지연도 늘어납니다.</p>
+<ul><li><b>싱글·탐험 게임:</b> 실제 45+면 FG 2x, 실제 35–45면 MFG 3–4x까지 허용. 패드 플레이면 더 관대합니다.</li>
+<li><b>액션·슈팅:</b> 실제 55+에서만 FG 2x. 그 아래면 업스케일을 Balanced로 낮춰 실제 프레임을 먼저 올리세요.</li>
+<li><b>멀티플레이(배틀필드 6):</b> FG·MFG·AFMF 전부 끄세요. 숫자는 올라도 조준이 늦어집니다.</li></ul></section>
+
+<div class="controls">
+<input id="q" type="search" placeholder="게임 이름으로 검색 (예: 사이버펑크, 와일즈, 스타필드)">
+<div class="btns" id="specBtns">
+<button data-spec="all" class="on">둘 다 보기</button><button data-spec="a">A · 9070 XT만</button><button data-spec="b">B · 5080만</button>
+</div>
+<div class="btns" id="gradeBtns" style="margin-top:8px">
+<button data-grade="all" class="on">전체 등급</button><button data-grade="easy">🟢 여유만</button><button data-grade="ok">🔵 달성 포함</button><button data-grade="cond">🟡 조건부만</button><button data-grade="fg">🟠 FG 필요만</button>
+</div>
+<p class="count" id="count"></p>
+</div>
+
+<div class="grid" id="grid">
+
+<article class="card" data-name="블랙 미스: 오공 Black Myth: Wukong" data-ga="cond" data-gb="fg">
+  <div class="card-head">
+    <div class="rank">1</div>
+    <div class="title">
+      <h2>블랙 미스: 오공 <span class="en">Black Myth: Wukong</span></h2>
+      <p class="meta">2024 · 액션 RPG · 스팀 동접 피크 약 241만, 누적 약 3,000만 장</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-cond">🟡 조건부 · 조건부</span></div>
+    <div class="fps">예상 <b>65–75 fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>High 혼합 (Cinematic 금지)</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·글로벌 일루미네이션 → High</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Cinematic 유지</dd></div>
+    </dl>
+    <p class="note">네이티브 Cinematic 4K는 34–41fps 수준이라 70–80은 업스케일이 필수. Balanced가 싫으면 FSR Quality + 그림자 중간으로 60대 타협.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-fg">🟠 FG 필요 · FG 2x로 90+</span></div>
+    <div class="fps">예상 <b>표시 95–110 (실제 55–65)</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Cinematic</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 낮음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 2x 켬</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·반사 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처·이펙트 최고 유지</dd></div>
+    </dl>
+    <p class="note">FG 끄면 실제 55–65fps. RT 최고 + Cinematic은 MFG 3–4x를 켜야 표시 90+가 되며, 그 경우 조작감보다 화면 위주로 즐기는 싱글용.</p>
+  </div>
+</article>
+
+<article class="card" data-name="사이버펑크 2077 Cyberpunk 2077" data-ga="ok" data-gb="fg">
+  <div class="card-head">
+    <div class="rank">2</div>
+    <div class="title">
+      <h2>사이버펑크 2077 <span class="en">Cyberpunk 2077</span></h2>
+      <p class="meta">2020 · 오픈월드 RPG · 스팀 피크 약 105만, 누적 약 3,500만 장</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-ok">🔵 달성 · FSR로 달성</span></div>
+    <div class="fps">예상 <b>70–80 fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Ultra → High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>군중 밀도 High, 그림자·볼류메트릭 안개 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Ultra 유지</dd></div>
+    </dl>
+    <p class="note">RT Ultra로 바꾸면 55–65fps로 떨어진다. 패스 트레이싱(Overdrive)은 이 사양에서 70–80 불가. 시내는 CPU(5600)도 함께 걸린다.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-fg">🟠 FG 필요 · FG 2x로 90+</span></div>
+    <div class="fps">예상 <b>표시 95–110 (실제 약 50)</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>RT Ultra</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT Ultra</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 2x 켬</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>패스 트레이싱은 별도 (아래 참조)</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Ultra, RT 반사·조명 유지</dd></div>
+    </dl>
+    <p class="note">RT 끄고 Ultra면 실제 90+도 가능. 패스 트레이싱은 DLSS Quality + MFG 4x로 표시 120–135(실제 약 40). MFG 4x는 싱글·패드 위주일 때만.</p>
+  </div>
+</article>
+
+<article class="card" data-name="엘든 링 Elden Ring" data-ga="easy" data-gb="easy">
+  <div class="card-head">
+    <div class="rank">3</div>
+    <div class="title">
+      <h2>엘든 링 <span class="en">Elden Ring</span></h2>
+      <p class="meta">2022 · 소울라이크 · 스팀 피크 약 95만, 누적 약 3,000만 장</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-easy">🟢 여유 · 여유</span></div>
+    <div class="fps">예상 <b>60 고정 (게임 내 60fps 캡) fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 (업스케일 불필요)</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 최대 (선택)</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>내릴 것 없음</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 최고</dd></div>
+    </dl>
+    <p class="note">60fps 캡 게임이라 70–80을 논할 의미가 없다. 목표는 60fps를 한 번도 안 떨어뜨리는 것. 4K 최고에서도 여유 있다.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-easy">🟢 여유 · 여유</span></div>
+    <div class="fps">예상 <b>60 고정 (게임 내 60fps 캡)</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 최대</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>내릴 것 없음</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 최고</dd></div>
+    </dl>
+    <p class="note">5080 본체도 결과는 같다. 캡 해제 모드는 멀티플레이 동기화·밴 위험이 있어 권장하지 않는다.</p>
+  </div>
+</article>
+
+<article class="card" data-name="호그와트 레거시 Hogwarts Legacy" data-ga="ok" data-gb="easy">
+  <div class="card-head">
+    <div class="rank">4</div>
+    <div class="title">
+      <h2>호그와트 레거시 <span class="en">Hogwarts Legacy</span></h2>
+      <p class="meta">2023 · 오픈월드 RPG · 스팀 피크 약 88만, 누적 판매 최대급</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-ok">🔵 달성 · FSR로 달성</span></div>
+    <div class="fps">예상 <b>70–80 (호그스미드 60대) fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Ultra</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>인구 밀도·이펙트 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Ultra 유지</dd></div>
+    </dl>
+    <p class="note">호그스미드·호그와트 실내 복도는 CPU·RAM(16GB)도 걸린다. 그 구간은 60대를 ‘정상’으로 보고, 크롬 등 백그라운드를 닫는 게 프레임보다 먼저다.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-easy">🟢 여유 · 여유</span></div>
+    <div class="fps">예상 <b>90–100 (호그스미드 80대)</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Ultra</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 높음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT 울트라만 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Ultra, RT 반사 유지</dd></div>
+    </dl>
+    <p class="note">RT 울트라 + FG 2x면 표시 120+까지 가지만, 실제 렌더만으로도 90을 넘기 때문에 FG 없이 즐기는 쪽이 조작감이 낫다.</p>
+  </div>
+</article>
+
+<article class="card" data-name="발더스 게이트 3 Baldur&#x27;s Gate 3" data-ga="ok" data-gb="easy">
+  <div class="card-head">
+    <div class="rank">5</div>
+    <div class="title">
+      <h2>발더스 게이트 3 <span class="en">Baldur&#x27;s Gate 3</span></h2>
+      <p class="meta">2023 · 턴제 RPG · 스팀 피크 약 88만, 누적 2,000만 장 이상</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-ok">🔵 달성 · FSR로 달성</span></div>
+    <div class="fps">예상 <b>75–90 (3막 도시 70대) fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Ultra</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>해당 없음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자 Ultra → High</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처·모델 Ultra 유지</dd></div>
+    </dl>
+    <p class="note">턴제라 70대면 충분히 쾌적하다. 3막 도시는 CPU 병목이 먼저라 그래픽을 더 낮춰도 잘 안 오른다.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-easy">🟢 여유 · 여유</span></div>
+    <div class="fps">예상 <b>95–115 (3막 도시 85대)</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Ultra</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>해당 없음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>내릴 것 없음</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 Ultra</dd></div>
+    </dl>
+    <p class="note">5700X3D의 3D V-Cache가 도시 구간에서 특히 유리하다. 90+를 가장 쉽게 달성하는 AAA 중 하나.</p>
+  </div>
+</article>
+
+<article class="card" data-name="몬스터 헌터 와일즈 Monster Hunter Wilds" data-ga="cond" data-gb="ok">
+  <div class="card-head">
+    <div class="rank">6</div>
+    <div class="title">
+      <h2>몬스터 헌터 와일즈 <span class="en">Monster Hunter Wilds</span></h2>
+      <p class="meta">2025 · 헌팅 액션 · 출시 3일 1,000만 장, 2025년 최대 런칭급</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-cond">🟡 조건부 · 조건부</span></div>
+    <div class="fps">예상 <b>65–75 fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>High</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality → Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔 (켜면 표시 90+)</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT 끔, 볼류메트릭·그림자 High</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 High 유지 (VRAM 여유)</dd></div>
+    </dl>
+    <p class="note">4K Ultra + RT High 네이티브는 9070 XT 기준 50대 중반이라, RT를 끄는 게 출발점이다. 무기 타이밍이 중요한 게임이라 FG는 끄는 쪽을 권장.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-ok">🔵 달성 · 달성</span></div>
+    <div class="fps">예상 <b>실제 70–80 (FG 2x 시 표시 110+)</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>High</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 낮음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT 중간 이상은 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 High, 이펙트 유지</dd></div>
+    </dl>
+    <p class="note">패치로 최적화가 개선됐지만 여전히 무거운 편. FG를 켜면 표시 90+는 쉽지만, 타이밍 판정이 있는 게임이라 실제 70–80으로 즐기는 게 낫다.</p>
+  </div>
+</article>
+
+<article class="card" data-name="팬텀 블레이드 제로 Phantom Blade Zero" data-ga="cond" data-gb="cond">
+  <div class="card-head">
+    <div class="rank">7</div>
+    <div class="title">
+      <h2>팬텀 블레이드 제로 <span class="en">Phantom Blade Zero</span></h2>
+      <p class="meta">2026 · 액션 RPG · 스팀 피크 약 72만, 2026년 싱글 최다 동접</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-cond">🟡 조건부 · 조건부 · 자료 적음</span></div>
+    <div class="fps">예상 <b>60–75 (추정) fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>High</dd></div>
+      <div><dt>업스케일</dt><dd>FSR Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 낮음/끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·반사 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 High 유지</dd></div>
+    </dl>
+    <p class="note">2026년 9월 신작이라 9070 XT 전용 4K 벤치 자료가 적다. 표 수치는 동급 액션 게임 추정치이며, 출시 후 패치로 달라질 수 있다.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-cond">🟡 조건부 · 조건부 · 자료 적음</span></div>
+    <div class="fps">예상 <b>표시 90–110 (실제 60–70, 추정)</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>High–Ultra 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 중간</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 2x (표시 90+용)</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT 최고는 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 최고 유지</dd></div>
+    </dl>
+    <p class="note">5080 수치도 추정치다. FG 끄고 실제 90+를 노리려면 DLSS Balanced + RT 낮음이 필요하다.</p>
+  </div>
+</article>
+
+<article class="card" data-name="레드 데드 리뎀션 2 Red Dead Redemption 2" data-ga="easy" data-gb="easy">
+  <div class="card-head">
+    <div class="rank">8</div>
+    <div class="title">
+      <h2>레드 데드 리뎀션 2 <span class="en">Red Dead Redemption 2</span></h2>
+      <p class="meta">2018 · 오픈월드 · 시리즈 스테디셀러, 매년 스팀 상위권</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-easy">🟢 여유 · 여유</span></div>
+    <div class="fps">예상 <b>80–95 fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Ultra</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>해당 없음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>물 반사·입자 품질만 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Ultra 유지</dd></div>
+    </dl>
+    <p class="note">오래된 게임이라 4K Ultra에서도 여유가 있다. ‘울트라인데 왜 70대지?’ 싶으면 해상도 스케일(1.0)과 MSAA를 먼저 확인.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-easy">🟢 여유 · 여유</span></div>
+    <div class="fps">예상 <b>110–130</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Ultra</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 DLSS Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>해당 없음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>내릴 것 없음</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 Ultra</dd></div>
+    </dl>
+    <p class="note">90+를 네이티브에 가깝게 달성하는 대표작. DLSS를 굳이 켤 필요가 없다.</p>
+  </div>
+</article>
+
+<article class="card" data-name="GTA V 인핸스드 Grand Theft Auto V Enhanced" data-ga="easy" data-gb="easy">
+  <div class="card-head">
+    <div class="rank">9</div>
+    <div class="title">
+      <h2>GTA V 인핸스드 <span class="en">Grand Theft Auto V Enhanced</span></h2>
+      <p class="meta">2022 · 오픈월드 · 스테디셀러, 스팀 동접 상시 상위권</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-easy">🟢 여유 · 여유</span></div>
+    <div class="fps">예상 <b>90–110 fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Very High–Ultra 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·풀 품질 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Very High 유지</dd></div>
+    </dl>
+    <p class="note">인핸스드판 RT를 전부 켜면 70대로 떨어진다. RT를 끄는 것만으로 90+다.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-easy">🟢 여유 · 여유</span></div>
+    <div class="fps">예상 <b>120+ (RT 포함)</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Ultra</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 높음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>내릴 것 없음</dd></div>
+      <div><dt>유지할 것</dt><dd>RT 반사·그림자 유지</dd></div>
+    </dl>
+    <p class="note">5080 본체에서는 RT를 켜고도 90을 크게 넘긴다.</p>
+  </div>
+</article>
+
+<article class="card" data-name="배틀필드 6 Battlefield 6" data-ga="ok" data-gb="easy">
+  <div class="card-head">
+    <div class="rank">10</div>
+    <div class="title">
+      <h2>배틀필드 6 <span class="en">Battlefield 6</span></h2>
+      <p class="meta">2025 · FPS 멀티 · 2025년 멀티플레이 최대 화제작</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-ok">🔵 달성 · FSR로 달성</span></div>
+    <div class="fps">예상 <b>80–100 (64인전 70대) fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>High</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔 (멀티 금지)</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>이펙트·지형 장식 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 High, 시야 거리 유지</dd></div>
+    </dl>
+    <p class="note">멀티에서는 프레임 생성(FG·AFMF)을 켜지 말 것. 입력 지연이 조준에 바로 드러난다. 64인전은 5600 CPU가 먼저 걸릴 수 있다.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-easy">🟢 여유 · 여유</span></div>
+    <div class="fps">예상 <b>110–140</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>High–Ultra 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 낮음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔 (멀티 금지)</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>Overkill 프리셋 금지</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Ultra 유지</dd></div>
+    </dl>
+    <p class="note">Overkill 프리셋은 5080으로도 4K에서 크게 떨어진다. High 프리셋이 90+의 정석. Reflex 켜기는 필수.</p>
+  </div>
+</article>
+
+<article class="card" data-name="킹덤 컴: 딜리버런스 2 Kingdom Come: Deliverance II" data-ga="cond" data-gb="ok">
+  <div class="card-head">
+    <div class="rank">11</div>
+    <div class="title">
+      <h2>킹덤 컴: 딜리버런스 2 <span class="en">Kingdom Come: Deliverance II</span></h2>
+      <p class="meta">2025 · 오픈월드 RPG · 2025년 화제작, 300만 장 이상</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-cond">🟡 조건부 · 조건부</span></div>
+    <div class="fps">예상 <b>70–80 (쿠텐베르크 60대) fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Ultra (Experimental 금지)</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>해당 없음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>Experimental 프리셋 금지, 그림자 High</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Ultra 유지</dd></div>
+    </dl>
+    <p class="note">Experimental 프리셋은 4K에서 30–50fps까지 떨어진다. Ultra + Balanced가 70–80의 해법. 쿠텐베르크 시내는 CPU 병목이라 60대를 정상으로 볼 것.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-ok">🔵 달성 · 달성</span></div>
+    <div class="fps">예상 <b>90–100 (쿠텐베르크 80대)</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Ultra</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>해당 없음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>Experimental은 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Ultra 유지</dd></div>
+    </dl>
+    <p class="note">Experimental까지 켜려면 DLSS Balanced + FG 2x가 필요하다. 일반 Ultra면 FG 없이 90+다.</p>
+  </div>
+</article>
+
+<article class="card" data-name="어쌔신 크리드 섀도우스 Assassin&#x27;s Creed Shadows" data-ga="cond" data-gb="fg">
+  <div class="card-head">
+    <div class="rank">12</div>
+    <div class="title">
+      <h2>어쌔신 크리드 섀도우스 <span class="en">Assassin&#x27;s Creed Shadows</span></h2>
+      <p class="meta">2025 · 오픈월드 액션 · 2025년 유비소프트 최대작</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-cond">🟡 조건부 · 조건부</span></div>
+    <div class="fps">예상 <b>65–75 fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>High</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT GI 낮음/끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT GI 낮음, 그림자·구름 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 High 유지</dd></div>
+    </dl>
+    <p class="note">Ultra High는 5090도 4K에서 60을 간신히 넘기는 무거운 게임이다. High + Balanced가 현실적인 70–80 루트. 계절·식생 장면은 더 떨어진다.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-fg">🟠 FG 필요 · FG 2x로 90+</span></div>
+    <div class="fps">예상 <b>표시 95–110 (실제 55–65)</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Ultra High</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT GI 켬</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 2x 켬</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Ultra, RT GI 유지</dd></div>
+    </dl>
+    <p class="note">FG 끄면 실제 60–70fps. 싱글 게임이라 FG 2x 체감이 나쁘지 않지만, 실제 렌더 60을 밑돌면 FG를 켜도 끊기는 느낌이 남는다.</p>
+  </div>
+</article>
+
+<article class="card" data-name="레지던트 이블 레퀴엠 Resident Evil Requiem" data-ga="ok" data-gb="easy">
+  <div class="card-head">
+    <div class="rank">13</div>
+    <div class="title">
+      <h2>레지던트 이블 레퀴엠 <span class="en">Resident Evil Requiem</span></h2>
+      <p class="meta">2026 · 서바이벌 호러 · 스팀 피크 약 34만, 2026년 화제작</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-ok">🔵 달성 · FSR로 달성 · 자료 적음</span></div>
+    <div class="fps">예상 <b>70–80 (추정) fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>High</dd></div>
+      <div><dt>업스케일</dt><dd>FSR Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 낮음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT 최고 금지, 그림자 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 High 유지</dd></div>
+    </dl>
+    <p class="note">RE 엔진은 전통적으로 AMD에 잘 맞는다. 다만 2026년작이라 장기 벤치 자료가 적어 추정치가 포함돼 있다.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-easy">🟢 여유 · 여유</span></div>
+    <div class="fps">예상 <b>90–105 (추정)</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>High–최고 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 높음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT 최고만 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 최고 유지</dd></div>
+    </dl>
+    <p class="note">5080 수치도 출시 초기 추정치다. 레이트레이싱을 최고로 올리면 FG 2x를 고려할 것.</p>
+  </div>
+</article>
+
+<article class="card" data-name="고스트 오브 쓰시마 Ghost of Tsushima Director&#x27;s Cut" data-ga="easy" data-gb="easy">
+  <div class="card-head">
+    <div class="rank">14</div>
+    <div class="title">
+      <h2>고스트 오브 쓰시마 <span class="en">Ghost of Tsushima Director&#x27;s Cut</span></h2>
+      <p class="meta">2024 · 오픈월드 액션 · PC판 흥행작, 스팀 호평작</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-easy">🟢 여유 · 여유</span></div>
+    <div class="fps">예상 <b>75–90 fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Very High</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>해당 없음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·안개 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Very High 유지</dd></div>
+    </dl>
+    <p class="note">초원·바람 장면은 GPU보다 메모리 대역이 걸릴 때가 있다. FSR Quality면 대부분 80 전후로 안정적이다.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-easy">🟢 여유 · 여유</span></div>
+    <div class="fps">예상 <b>100–120</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Very High</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>해당 없음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>내릴 것 없음</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 Very High</dd></div>
+    </dl>
+    <p class="note">90+를 FG 없이 달성하는 가벼운 편. DLSS Quality만으로 충분하다.</p>
+  </div>
+</article>
+
+<article class="card" data-name="갓 오브 워 라그나로크 God of War Ragnarök" data-ga="easy" data-gb="easy">
+  <div class="card-head">
+    <div class="rank">15</div>
+    <div class="title">
+      <h2>갓 오브 워 라그나로크 <span class="en">God of War Ragnarök</span></h2>
+      <p class="meta">2024 · 액션 어드벤처 · PC판 흥행작, 전작 포함 시리즈 인기작</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-easy">🟢 여유 · 여유</span></div>
+    <div class="fps">예상 <b>80–95 fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Ultra</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>해당 없음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·반사 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Ultra 유지</dd></div>
+    </dl>
+    <p class="note">1440p 네이티브 135fps급의 가벼운 최적화라 4K에서도 FSR Quality면 80을 넘긴다.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-easy">🟢 여유 · 여유</span></div>
+    <div class="fps">예상 <b>110–130</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Ultra</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>해당 없음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>내릴 것 없음</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 Ultra</dd></div>
+    </dl>
+    <p class="note">5080 본체는 네이티브에 가깝게 돌려도 90을 넘긴다.</p>
+  </div>
+</article>
+
+<article class="card" data-name="마블 스파이더맨 2 Marvel&#x27;s Spider-Man 2" data-ga="ok" data-gb="fg">
+  <div class="card-head">
+    <div class="rank">16</div>
+    <div class="title">
+      <h2>마블 스파이더맨 2 <span class="en">Marvel&#x27;s Spider-Man 2</span></h2>
+      <p class="meta">2025 · 오픈월드 액션 · 플레이스테이션 대표작의 PC판</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-ok">🔵 달성 · FSR로 달성</span></div>
+    <div class="fps">예상 <b>70–80 fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Very High</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 중간</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT 매우 높음 금지, 교통 밀도 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Very High 유지</dd></div>
+    </dl>
+    <p class="note">맨해튼 고속 이동 장면은 CPU·스트리밍이 걸린다. RT를 ‘매우 높음’으로 올리면 60대로 떨어진다.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-fg">🟠 FG 필요 · FG 2x로 90+</span></div>
+    <div class="fps">예상 <b>표시 95–115 (실제 60–70)</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Very High</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 매우 높음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 2x 켬</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT 높음으로 낮추면 FG 불필요</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Very High 유지</dd></div>
+    </dl>
+    <p class="note">RT를 ‘높음’으로 낮추면 FG 없이 실제 90+도 노려볼 수 있다. RT 최고를 고집할 때만 FG 2x를 켤 것.</p>
+  </div>
+</article>
+
+<article class="card" data-name="스타필드 Starfield" data-ga="cond" data-gb="ok">
+  <div class="card-head">
+    <div class="rank">17</div>
+    <div class="title">
+      <h2>스타필드 <span class="en">Starfield</span></h2>
+      <p class="meta">2023 · 우주 오픈월드 RPG · 스팀 피크 약 33만, 베데스다 대표작</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-cond">🟡 조건부 · 조건부</span></div>
+    <div class="fps">예상 <b>65–75 (뉴 아틀란티스 55–65) fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>해당 없음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·간접 조명 High</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Ultra 유지</dd></div>
+    </dl>
+    <p class="note">도시 구간은 5600 CPU 병목이 먼저라 그래픽을 낮춰도 잘 안 오른다. ‘도시 60대, 야외 70대’를 정상 범위로 볼 것.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-ok">🔵 달성 · 달성</span></div>
+    <div class="fps">예상 <b>90–100 (도시 80대)</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>High–Ultra 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>해당 없음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자 Ultra 금지</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Ultra 유지</dd></div>
+    </dl>
+    <p class="note">5700X3D가 도시 구간에서 5600보다 확실히 유리하다. 그래도 도시는 80대를 기대하는 게 맞다.</p>
+  </div>
+</article>
+
+<article class="card" data-name="클레르 옵스퀴르: 익스페디션 33 Clair Obscur: Expedition 33" data-ga="ok" data-gb="easy">
+  <div class="card-head">
+    <div class="rank">18</div>
+    <div class="title">
+      <h2>클레르 옵스퀴르: 익스페디션 33 <span class="en">Clair Obscur: Expedition 33</span></h2>
+      <p class="meta">2025 · 턴제 RPG · 2025년 GOTY급 화제작, 330만 장 이상</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-ok">🔵 달성 · FSR로 달성</span></div>
+    <div class="fps">예상 <b>70–80 fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Epic → High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>해당 없음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·이펙트 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Epic 유지</dd></div>
+    </dl>
+    <p class="note">턴제 전투라 70대면 쾌적하다. 언리얼 엔진 특유의 셰이더 컴파일 끊김은 첫 플레이 구간에서만 나타난다.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-easy">🟢 여유 · 여유</span></div>
+    <div class="fps">예상 <b>95–110</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Epic</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>해당 없음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>내릴 것 없음</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 Epic</dd></div>
+    </dl>
+    <p class="note">5080 본체에서는 Epic 풀옵션으로도 FG 없이 90+다.</p>
+  </div>
+</article>
+
+<article class="card" data-name="호라이즌 포비든 웨스트 Horizon Forbidden West" data-ga="ok" data-gb="easy">
+  <div class="card-head">
+    <div class="rank">19</div>
+    <div class="title">
+      <h2>호라이즌 포비든 웨스트 <span class="en">Horizon Forbidden West</span></h2>
+      <p class="meta">2024 · 오픈월드 액션 · 플레이스테이션 대표작의 PC판</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-ok">🔵 달성 · FSR로 달성</span></div>
+    <div class="fps">예상 <b>70–85 fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Very High</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>해당 없음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>구름·그림자 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Very High 유지</dd></div>
+    </dl>
+    <p class="note">네이티브 Ultra 4K는 57fps 수준이라 FSR Quality가 사실상 필수다. Quality면 화질 손해가 거의 없다.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-easy">🟢 여유 · 여유</span></div>
+    <div class="fps">예상 <b>100–115</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Very High</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>해당 없음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>내릴 것 없음</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 Very High</dd></div>
+    </dl>
+    <p class="note">5080 본체는 DLSS Quality만으로 100을 넘긴다.</p>
+  </div>
+</article>
+
+<article class="card" data-name="앨런 웨이크 2 Alan Wake 2" data-ga="cond" data-gb="fg">
+  <div class="card-head">
+    <div class="rank">20</div>
+    <div class="title">
+      <h2>앨런 웨이크 2 <span class="en">Alan Wake 2</span></h2>
+      <p class="meta">2023 · 서바이벌 호러 · 평론가 호평작, RT 벤치마크 대표작</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-cond">🟡 조건부 · 조건부</span></div>
+    <div class="fps">예상 <b>70–80 (RT 끔 기준) fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>High</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔/낮음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT 끔, 볼류메트릭 조명 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 High 유지</dd></div>
+    </dl>
+    <p class="note">네이티브 Ultra 4K는 35fps 수준. RT를 켜는 순간 70–80은 무너진다. Full RT는 이 사양에서 FG를 켜도 조작감이 떨어진다.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-fg">🟠 FG 필요 · FG 2x로 90+</span></div>
+    <div class="fps">예상 <b>표시 95–110 (실제 50–60)</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>High–Ultra 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 높음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 2x 켬</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>Full RT는 MFG 3x 필요</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Ultra 유지</dd></div>
+    </dl>
+    <p class="note">RT Ultra + DLSS Quality만으로는 실제 49fps 수준. FG 2x가 사실상 필수이며, Full RT는 MFG 3x + 표시 90+ (실제 40대)로 타협해야 한다.</p>
+  </div>
+</article>
+
+<article class="card" data-name="스토커 2 S.T.A.L.K.E.R. 2: Heart of Chornobyl" data-ga="cond" data-gb="fg">
+  <div class="card-head">
+    <div class="rank">21</div>
+    <div class="title">
+      <h2>스토커 2 <span class="en">S.T.A.L.K.E.R. 2: Heart of Chornobyl</span></h2>
+      <p class="meta">2024 · 오픈월드 FPS · 2024년 화제작, 시리즈 부활작</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-cond">🟡 조건부 · 조건부</span></div>
+    <div class="fps">예상 <b>65–75 fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>High–Epic 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>해당 없음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>Epic 프리셋 금지, 그림자·풀 High</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Epic 유지</dd></div>
+    </dl>
+    <p class="note">Epic 프리셋은 4K에서 크게 무겁다. High 베이스 + 텍스처만 Epic이 70–80의 해법. 정착지·폭풍 장면은 60대로 떨어진다.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-fg">🟠 FG 필요 · FG 2x로 90+</span></div>
+    <div class="fps">예상 <b>표시 95–110 (실제 55–65)</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Epic</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>해당 없음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 2x 켬</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Epic 유지</dd></div>
+    </dl>
+    <p class="note">FG 끄면 실제 60–70fps. FPS 게임이라 FG의 입력 지연이 거슬리면 DLSS Balanced + FG 끔으로 실제 80대를 노릴 것.</p>
+  </div>
+</article>
+
+<article class="card" data-name="둠: 다크 에이지스 DOOM: The Dark Ages" data-ga="ok" data-gb="easy">
+  <div class="card-head">
+    <div class="rank">22</div>
+    <div class="title">
+      <h2>둠: 다크 에이지스 <span class="en">DOOM: The Dark Ages</span></h2>
+      <p class="meta">2025 · FPS · 둠 시리즈 신작, idTech 대표작</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-ok">🔵 달성 · FSR로 달성</span></div>
+    <div class="fps">예상 <b>75–90 fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Ultra</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>패스 트레이싱 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>패스 트레이싱 끔, 그림자 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Ultra 유지</dd></div>
+    </dl>
+    <p class="note">패스 트레이싱을 켜면 70–80이 무너진다. 끄고 Ultra면 80 전후로 쾌적하다.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-easy">🟢 여유 · 여유</span></div>
+    <div class="fps">예상 <b>실제 90–110 (PT 끔 기준)</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>Ultra</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>패스 트레이싱 낮음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>PT 최고는 FG 필요</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Ultra 유지</dd></div>
+    </dl>
+    <p class="note">PT 최고 + 표시 90+를 원하면 FG 2x를 켤 것. PT를 낮추면 FG 없이 실제 90+다.</p>
+  </div>
+</article>
+
+<article class="card" data-name="바이오하자드 4 리메이크 Resident Evil 4" data-ga="easy" data-gb="easy">
+  <div class="card-head">
+    <div class="rank">23</div>
+    <div class="title">
+      <h2>바이오하자드 4 리메이크 <span class="en">Resident Evil 4</span></h2>
+      <p class="meta">2023 · 서바이벌 호러 · 리메이크 흥행작, 스테디셀러</p>
+    </div>
+  </div>
+  <div class="spec spec-a" data-spec="a">
+    <div class="spec-title"><span class="badge-a">A · 9070 XT</span><span class="grade g-easy">🟢 여유 · 여유</span></div>
+    <div class="fps">예상 <b>85–100 fps</b> <span class="fps-note">4K · 목표 70–80</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>최고</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT 끔, 헤어 품질 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 최고 유지</dd></div>
+    </dl>
+    <p class="note">RE 엔진 최적화가 좋아 4K 최고에서도 여유가 있다. RT를 켜면 70대로 떨어지니 끄는 게 정석.</p>
+  </div>
+  <div class="spec spec-b" data-spec="b">
+    <div class="spec-title"><span class="badge-b">B · RTX 5080</span><span class="grade g-easy">🟢 여유 · 여유</span></div>
+    <div class="fps">예상 <b>120+</b> <span class="fps-note">4K · 목표 90+</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>최고</dd></div>
+      <div><dt>업스케일</dt><dd>DLSS 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 높음</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>내릴 것 없음</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 최고</dd></div>
+    </dl>
+    <p class="note">5080 본체에서는 RT를 켜고도 120을 넘긴다.</p>
+  </div>
+</article>
+</div>
+
+<section class="panel"><h2>본체별 공통 설정 (게임 들어가기 전 5분)</h2>
+<h3 style="font-size:15px">A · 9070 XT 본체 (5600 + 16GB)</h3>
+<ul><li><b>아드레날린:</b> 최신 드라이버 유지, FSR 3.1 게임은 드라이버에서 FSR 4 업그레이드(오버라이드)를 켜보세요. 안 맞는 게임은 원래대로 돌려놓으면 됩니다.</li>
+<li><b>16GB RAM:</b> 게임 전에 크롬·디스코드(하드웨어 가속 끄기)를 닫으세요. 호그와트·스타필드·오공은 시스템 RAM을 20GB 넘게 쓸 때가 있어 16GB 본체는 백그라운드가 곧 프레임입니다.</li>
+<li><b>5600 병목 게임:</b> 스타필드 도시, AC 섀도우스 도시, 사이버펑크 시내, KCD2 쿠텐베르크는 그래픽을 낮춰도 잘 안 오릅니다. 그 구간은 업스케일 Balanced + 60대를 정상으로 보세요.</li>
+<li><b>모니터:</b> 4K 60Hz 모니터라면 70–80fps는 화면에 다 안 나옵니다. 60fps 고정 + 화질을 올리거나, FreeSync를 켜고 70–80을 그대로 두는 쪽이 낫습니다.</li></ul>
+<h3 style="font-size:15px">B · RTX 5080 본체 (5700X3D + 32GB)</h3>
+<ul><li><b>NVIDIA 앱:</b> 최신 드라이버 유지, DLSS 오버라이드(최신 Transformer 모델)를 켜두면 구형 DLSS 게임 화질이 좋아집니다.</li>
+<li><b>Reflex:</b> FG를 켤 때는 Reflex(저지연 모드)도 함께 켜세요. 끄면 FG의 지연이 더 크게 느껴집니다.</li>
+<li><b>G-Sync + 프레임 제한:</b> 모니터 주사율보다 3fps 낮게 제한(예: 144Hz → 141)하면 FG 사용 시 끊김이 줄어듭니다.</li>
+<li><b>32GB RAM:</b> 백그라운드에 여유가 있지만, 그래도 게임 중 녹화·스트리밍을 동시에 돌리면 프레임이 흔들릴 수 있습니다.</li></ul></section>
+
+<section class="panel"><h2>인기순은 어떻게 정했나</h2>
+<p>누적 판매량 + 스팀 동시접속자 피크 + 2026년 화제성을 종합한 <b>대략적인 순서</b>입니다. 정확한 순위가 아니라 ‘많이 팔리고, 많이 플레이된 순서’라는 안내로 봐주세요. 확인된 스팀 피크(싱글 기준): 오공 약 241만, 사이버펑크 약 105만, 엘든 링 약 95만, 호그와트 약 88만, 발더스 게이트 3 약 88만, 팬텀 블레이드 제로 약 72만, 레지던트 이블 레퀴엠 약 34만, 스타필드 약 33만. 판매량은 호그와트·사이버펑크·엘든 링·오공이 3,000만 장급, 발더스 게이트 3이 2,000만 장 이상으로 보도됐습니다.</p>
+<p><b>FPS 수치에 대하여:</b> 표 수치는 실측이 아니라 공개 벤치마크를 jh의 두 사양에 맞게 낮춰 조정한 <b>추정치</b>입니다. 벤치 대부분이 9800X3D + DDR5 32GB 기준이라, 5600 + DDR4 16GB 본체는 CPU가 걸리는 장면에서 표보다 5–15fps 낮게 나올 수 있습니다. 패치·드라이버 업데이트로 수치는 달라집니다. 2026년 신작 2종(팬텀 블레이드 제로, 레지던트 이블 레퀴엠)은 벤치 자료가 적어 ‘추정’이라고 따로 표기했습니다.</p></section>
+
+<section class="panel"><h2>출처</h2>
+<p style="font-size:13px">
+<a href="https://www.techspot.com/review/3191-radeon-9070-xt-vs-radeon-7900-xtx/" target="_blank" rel="noopener">TechSpot · RX 9070 XT 51게임 벤치마크</a> ·
+<a href="https://www.techspot.com/review/3130-geforce-rtx-5070-ti-vs-radeon-rx-9070-xt/" target="_blank" rel="noopener">TechSpot · RTX 5070 Ti vs RX 9070 XT 52게임</a> ·
+<a href="https://www.tweaktown.com/reviews/11305/asrock-radeon-rx-9070-xt-monster-hunter-wilds-edition-rdna-4-style/index.html" target="_blank" rel="noopener">TweakTown · RX 9070 XT 4K 평균 (네이티브 79 / 업스케일 97fps)</a> ·
+<a href="https://techfuelhq.com/gpu-reviews/rog-astral-rtx-5080-oc-review-2026/" target="_blank" rel="noopener">TechFuelHQ · RTX 5080 실측 (사이버펑크·앨런 웨이크 2·오공)</a> ·
+<a href="https://www.notebookcheck.net/Assassin-s-Creed-Shadows-review-High-fidelity-visuals-next-gen-textures-and-brutal-demands-on-your-hardware.1011734.0.html" target="_blank" rel="noopener">Notebookcheck · AC 섀도우스 RTX 5080 벤치</a> ·
+<a href="https://samlover.com/2026/10/30/phantom-blade-zero-concurrent-players/" target="_blank" rel="noopener">SteamDB 피크 정리 · 팬텀 블레이드 제로 외</a> ·
+<a href="https://www.kitguru.net/gaming/joao-silva/black-myth-wukong-reaches-30-million-sales-milestone/" target="_blank" rel="noopener">KitGuru · 오공 3,000만 장</a>
+</p></section>
+</main>
+<footer>이 페이지는 jh의 두 본체(5600+9070 XT / 5700X3D+5080) 전용 가이드입니다. 다른 사양에는 그대로 적용되지 않습니다.</footer>
+<script>
+var spec='all',grade='all',q='';
+function apply(){var n=0;document.querySelectorAll('.card').forEach(function(c){
+var ok=true;
+if(q && c.dataset.name.toLowerCase().indexOf(q)===-1) ok=false;
+if(grade!=='all'){var g=spec==='b'?c.dataset.gb:spec==='a'?c.dataset.ga:(c.dataset.ga===grade||c.dataset.gb===grade?'__match__':'');if(spec==='all'){if(!(c.dataset.ga===grade||c.dataset.gb===grade)) ok=false;}else if(g!==grade) ok=false;}
+c.classList.toggle('hide',!ok);
+c.querySelectorAll('.spec').forEach(function(s){s.classList.toggle('hide',spec!=='all'&&s.dataset.spec!==spec);});
+if(ok)n++;});
+document.getElementById('count').textContent='표시 중: '+n+'개 게임 (인기순 내림차순 고정)';}
+document.getElementById('q').addEventListener('input',function(e){q=e.target.value.trim().toLowerCase();apply();});
+document.querySelectorAll('#specBtns button').forEach(function(b){b.addEventListener('click',function(){spec=b.dataset.spec;document.querySelectorAll('#specBtns button').forEach(function(x){x.classList.toggle('on',x===b)});apply();});});
+document.querySelectorAll('#gradeBtns button').forEach(function(b){b.addEventListener('click',function(){grade=b.dataset.grade;document.querySelectorAll('#gradeBtns button').forEach(function(x){x.classList.toggle('on',x===b)});apply();});});
+apply();
+</script>
+</body></html>
