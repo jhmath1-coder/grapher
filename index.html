@@ -1742,6 +1742,12 @@
       background: var(--canvas);
       touch-action: none; cursor: crosshair;
     }
+    #p3SphereLab {
+      width: 100%; height: 230px; display: block;
+      border: 1px solid var(--line); border-radius: 10px;
+      background: var(--canvas);
+      touch-action: manipulation;
+    }
     .p3-colors { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .p3-swatch {
       width: 40px; height: 40px; flex: none;
@@ -1789,6 +1795,7 @@
     }
     #p3Canvas { display: block; width: 100%; height: 100%; cursor: grab; }
     #p3Canvas.dragging { cursor: grabbing; }
+    .tool-btn:disabled { opacity: .45; cursor: default; }
     #p3Canvas.pick { cursor: crosshair; }
     .p3-netview {
       position: absolute;
@@ -2192,9 +2199,9 @@
         <div class="panel-head">
           <div class="panel-title">
             <h1 id="p3-heading">입체도형</h1>
-            <p class="layer-order-note accent-note">다면체 35종 · 쌓기나무 · 회전체 · 전개도 · 최단거리 · 절단면</p>
+            <p class="layer-order-note accent-note">입체도형 40종 · 쌓기나무 · 회전체 · 전개도 · 최단거리 · 절단면</p>
           </div>
-          <span class="count" id="p3Count">35</span>
+          <span class="count" id="p3Count">40</span>
         </div>
         <div class="p3-scroll">
           <div class="p3-sec">
@@ -2262,11 +2269,51 @@
             </div>
           </div>
           <div class="p3-modebox" id="p3NetBox" hidden>
-            <p class="p3-note">전개도가 3D 화면에서 펼쳐집니다. 끌어서 돌려볼 수 있고, 접으려면 전개도 버튼을 한 번 더 누르세요.</p>
+            <p class="p3-note">전개도가 3D 화면에서 펼쳐집니다. 끌어서 돌려볼 수 있고, 위아래로도 한 바퀴(360°) 돌릴 수 있습니다. 접으려면 전개도 버튼을 한 번 더 누르세요.</p>
             <div class="p3-row">
               <button class="mini-btn" id="p3NetPng" type="button">전개도 PNG 저장</button>
               <button class="mini-btn" id="p3NetPrint" type="button">전개도 인쇄</button>
             </div>
+          </div>
+          <div class="p3-modebox" id="p3SphereBox" hidden>
+            <span class="p3-sec-title">구의 겉넓이 · 부피</span>
+            <div class="p3-row">
+              <label for="p3SphereR">반지름 r</label>
+              <input class="p3-range" id="p3SphereR" type="range" min="0.5" max="1.5" step="0.05" value="1" aria-label="구 반지름" />
+              <span class="p3-result" id="p3SphereRVal">r = 1.00</span>
+            </div>
+            <p class="p3-result" id="p3SphereArea" role="status" aria-live="polite"></p>
+            <p class="p3-result" id="p3SphereVol" role="status" aria-live="polite"></p>
+            <p class="p3-note">반지름이 2배가 되면 겉넓이는 4배, 부피는 8배가 됩니다. 아래에서 활동을 골라 직접 움직여 보세요.</p>
+            <span class="p3-sec-title">겉넓이 활동 · 골라서 보기</span>
+            <div class="p3-rev-grid" role="group" aria-label="겉넓이 활동 선택">
+              <button class="p3-btn active" type="button" data-lab="pieces" aria-pressed="true">조각 채우기</button>
+              <button class="p3-btn" type="button" data-lab="cyl" aria-pressed="false">원기둥 펼치기</button>
+              <button class="p3-btn" type="button" data-lab="bands" aria-pressed="false">얇은 띠 펼치기</button>
+              <button class="p3-btn" type="button" data-lab="peel" aria-pressed="false">껍질 벗기기</button>
+            </div>
+            <span class="p3-sec-title">부피 활동 · 골라서 보기</span>
+            <div class="p3-rev-grid" role="group" aria-label="부피 활동 선택">
+              <button class="p3-btn" type="button" data-lab="sand" aria-pressed="false">모래 붓기</button>
+              <button class="p3-btn" type="button" data-lab="cylcone" aria-pressed="false">원기둥−원뿔</button>
+              <button class="p3-btn" type="button" data-lab="cavalieri" aria-pressed="false">단면 비교</button>
+              <button class="p3-btn" type="button" data-lab="disks" aria-pressed="false">얇은 원판</button>
+              <button class="p3-btn" type="button" data-lab="pyramids" aria-pressed="false">작은 뿔 나누기</button>
+            </div>
+            <canvas id="p3SphereLab" width="340" height="250" aria-label="구 겉넓이·부피 직관 활동 그림"></canvas>
+            <div class="p3-row" id="p3LabPlayRow">
+              <button class="mini-btn" id="p3LabPlay" type="button">▶ 재생</button>
+              <button class="mini-btn" id="p3LabReset" type="button">처음으로</button>
+              <input class="p3-range" id="p3LabT" type="range" min="0" max="100" value="0" aria-label="활동 진행 정도" />
+            </div>
+            <div class="p3-row" id="p3LabExtraRow" hidden>
+              <label for="p3LabExtra" id="p3LabExtraLabel">높이</label>
+              <input class="p3-range" id="p3LabExtra" type="range" min="0" max="100" value="50" aria-label="활동 조절 값" />
+              <span class="p3-result" id="p3LabExtraVal"></span>
+            </div>
+            <p class="p3-note" id="p3SphereLabText" role="status" aria-live="polite"></p>
+            <p class="p3-result" id="p3SphereLabFormula" role="status" aria-live="polite"></p>
+            <p class="p3-note" id="p3SphereCyl"></p>
           </div>
           <div class="p3-modebox" id="p3DistBox" hidden>
             <p class="p3-note">도형 겉면의 두 점을 차례로 눌러보세요. 첫 점을 찍은 뒤에는 끌어서 회전하면 다른 면의 점도 찍을 수 있습니다. 겉면을 따라가는 가장 짧은 길을 전개도로 펼쳐서 찾습니다. 전개도를 펼치면 그 길이 직선으로 보이도록, 경로가 지나는 면들을 기준으로 펼쳐집니다.</p>
@@ -5968,7 +6015,9 @@
       F.push(base);
       for (k = 0; k < nn; k++) F.push([k, (k + 1) % nn, nn]);
       // 각뿔 전체를 현재 크기에서 10% 키운 뒤, 밑면을 기둥 밑면 높이에 맞추고 전체 높이의 25%만큼 위로 올린다
-      return groundToPrismBase(scaleSolidInPlace(explicitSolid(V, F), 1.1));
+      var pyr = groundToPrismBase(scaleSolidInPlace(explicitSolid(V, F), 1.1));
+      pyr.netKind = 'pyramid'; pyr.baseFace = 0; // 전개도는 밑면(0번 면)을 가운데에 두고 옆면을 네 방향으로 펼친다
+      return pyr;
     }
     function coneSolid() {
       // 원뿔: 밑면의 원을 48개 점으로 나누어 옆면을 삼각형 48개로 근사한다.
@@ -6031,10 +6080,146 @@
       var skipEdge = {};
       for (k = 0; k < N; k++) skipEdge[key2(Math.min(k, apex), Math.max(k, apex))] = 1;
       // 밑면을 기둥 밑면 높이에 맞춘 뒤 전체 높이의 25%만큼 위로 올린다 (각뿔과 동일)
-      var grounded = groundToPrismBase({ V: V, E: E, F: F, C: C, N: Nrm, EF: EF, faceAdj: faceAdj, edgeLen: minD, skipEdge: skipEdge, cone: { apex: apex, rim: N } });
+      var grounded = groundToPrismBase({ V: V, E: E, F: F, C: C, N: Nrm, EF: EF, faceAdj: faceAdj, edgeLen: minD, skipEdge: skipEdge, netKind: 'cone', cone: { apex: apex, rim: N } });
       // 모든 각뿔(사각·오각·육각뿔)과 원뿔이 같은 규칙으로 밑면이 맞춰지도록
       // 각뿔과 동일한 groundToPrismBase(밑면 정렬 + 전체 높이의 25%만큼 올리기)를 거친다.
       return grounded;
+    }
+    // 곡면 입체(원기둥·원뿔대·구) 공통 마무리: coneSolid과 같은 방식(중심 이동→정규화→
+    // 1.21배)으로 크기를 맞추고 면·간선·인접 정보를 계산한다. opts.absScale이 있으면
+    // 그 배율을 그대로 쓰고, opts.bottom이면 밑면을 기둥 밑면 높이에 정확히 맞춘다(구).
+    function finishCurvedSolid(raw, Fin, skipKeys, extra, opts) {
+      opts = opts || {};
+      var cen = [0, 0, 0];
+      raw.forEach(function (p) { cen = vadd(cen, p); });
+      cen = vscale(cen, 1 / raw.length);
+      var V = raw.map(function (p) { return vsub(p, cen); });
+      var s;
+      if (opts.absScale) { s = opts.absScale; }
+      else {
+        var maxR = 0;
+        V.forEach(function (p) { maxR = Math.max(maxR, vlen(p)); });
+        s = 1.21 / maxR;
+      }
+      V = V.map(function (p) { return vscale(p, s); });
+      var F = Fin.map(function (f) { return f.slice(); });
+      var C = [], Nrm = [];
+      F.forEach(function (f) {
+        var c = [0, 0, 0];
+        f.forEach(function (idx) { c = vadd(c, V[idx]); });
+        c = vscale(c, 1 / f.length);
+        var nrm = vcross(vsub(V[f[1]], V[f[0]]), vsub(V[f[2]], V[f[0]]));
+        if (vdot(nrm, c) < 0) { f.reverse(); nrm = vscale(nrm, -1); }
+        C.push(c); Nrm.push(vnorm(nrm));
+      });
+      function key2(a, b) { return a + '_' + b; }
+      var EF = {}, faceAdj = [], eseen = {}, E = [], minD = Infinity;
+      F.forEach(function (f, fi) {
+        faceAdj.push([]);
+        for (var i = 0; i < f.length; i++) {
+          var a = f[i], b = f[(i + 1) % f.length];
+          var kk = a < b ? key2(a, b) : key2(b, a);
+          if (!EF[kk]) EF[kk] = [];
+          EF[kk].push(fi);
+          if (!eseen[kk]) {
+            eseen[kk] = 1;
+            E.push(a < b ? [a, b] : [b, a]);
+            var d = vlen(vsub(V[a], V[b]));
+            if (d < minD) minD = d;
+          }
+        }
+      });
+      Object.keys(EF).forEach(function (kk) {
+        var fl = EF[kk];
+        if (fl.length === 2) {
+          var parts = kk.split('_');
+          var a = +parts[0], b = +parts[1];
+          faceAdj[fl[0]].push({ nb: fl[1], va: a, vb: b });
+          faceAdj[fl[1]].push({ nb: fl[0], va: a, vb: b });
+        }
+      });
+      var solid = { V: V, E: E, F: F, C: C, N: Nrm, EF: EF, faceAdj: faceAdj, edgeLen: minD, skipEdge: skipKeys || {} };
+      if (extra) Object.keys(extra).forEach(function (k) { solid[k] = extra[k]; });
+      if (opts.bottom) {
+        var minY = Infinity;
+        solid.V.forEach(function (p) { if (p[1] < minY) minY = p[1]; });
+        var dy = PRISM_BASE_Y - minY;
+        solid.V.forEach(function (p) { p[1] += dy; });
+        solid.C.forEach(function (p) { p[1] += dy; });
+        return solid;
+      }
+      return groundToPrismBase(solid);
+    }
+    function cylinderSolid() {
+      // 원기둥: 밑면 원을 48개 점으로 나누어 옆면을 직사각형 띠 48개로 근사한다.
+      // 각기둥과 같은 높이(2.4)·지름(2)으로, 밑면이 바닥에 닿게 세운다.
+      // 옆면 띠 사이의 세로 간선은 실제 모서리가 아니므로 skipEdge에 담아 그리지 않는다.
+      var N = 48, H = 2.4, k, ang, raw = [];
+      for (k = 0; k < N; k++) { ang = 2 * Math.PI * k / N; raw.push([Math.cos(ang), 0, Math.sin(ang)]); }
+      for (k = 0; k < N; k++) { ang = 2 * Math.PI * k / N; raw.push([Math.cos(ang), H, Math.sin(ang)]); }
+      var F = [];
+      for (k = 0; k < N; k++) F.push([k, (k + 1) % N, N + (k + 1) % N, N + k]);
+      var top = [];
+      for (k = 0; k < N; k++) top.push(N + k);
+      F.push(top);
+      var bot = [];
+      for (k = N - 1; k >= 0; k--) bot.push(k);
+      F.push(bot);
+      var skip = {};
+      for (k = 0; k < N; k++) skip[k + '_' + (N + k)] = 1;
+      return finishCurvedSolid(raw, F, skip, { netKind: 'cylinder', topFace: N, botFace: N + 1, seg: N });
+    }
+    function frustumSolid() {
+      // 원뿔대(절두체): 아랫면 반지름 1, 윗면 반지름 0.5, 높이 1.7. 옆면은 사다리꼴 띠 48개,
+      // 위·아래 면은 원 2개로 근사한다. 띠 사이의 빗 간선은 실제 모서리가 아니므로 그리지 않는다.
+      var N = 48, H = 1.7, Rb = 1, Rt = 0.5, k, ang, raw = [];
+      for (k = 0; k < N; k++) { ang = 2 * Math.PI * k / N; raw.push([Rb * Math.cos(ang), 0, Rb * Math.sin(ang)]); }
+      for (k = 0; k < N; k++) { ang = 2 * Math.PI * k / N; raw.push([Rt * Math.cos(ang), H, Rt * Math.sin(ang)]); }
+      var F = [];
+      for (k = 0; k < N; k++) F.push([k, (k + 1) % N, N + (k + 1) % N, N + k]);
+      var top = [];
+      for (k = 0; k < N; k++) top.push(N + k);
+      F.push(top);
+      var bot = [];
+      for (k = N - 1; k >= 0; k--) bot.push(k);
+      F.push(bot);
+      var skip = {};
+      for (k = 0; k < N; k++) skip[k + '_' + (N + k)] = 1;
+      return finishCurvedSolid(raw, F, skip, { netKind: 'frustum', topFace: N, botFace: N + 1, seg: N });
+    }
+    function pyrFrustumSolid() {
+      // 사각뿔대(절두체): 아랫면 정사각형(외접원 반지름 1), 윗면 정사각형(외접원 반지름 0.5),
+      // 높이 1.7, 옆면은 사다리꼴 4개. 밑면은 XZ 평면에 두고 위로 세운다.
+      var nn = 4, H = 1.7, V = [], F = [], k, ang;
+      for (k = 0; k < nn; k++) { ang = 2 * Math.PI * k / nn; V.push([Math.cos(ang), 0, Math.sin(ang)]); }
+      for (k = 0; k < nn; k++) { ang = 2 * Math.PI * k / nn; V.push([0.5 * Math.cos(ang), H, 0.5 * Math.sin(ang)]); }
+      F.push([0, 1, 2, 3]);
+      F.push([4, 5, 6, 7]);
+      for (k = 0; k < nn; k++) F.push([k, (k + 1) % nn, nn + (k + 1) % nn, nn + k]);
+      var s = groundToPrismBase(scaleSolidInPlace(explicitSolid(V, F), 1.1));
+      s.netKind = 'pyrFrustum'; s.baseFace = 0; s.topFace = 1; // 전개도는 아랫면을 가운데에 둔다
+      return s;
+    }
+    var SPHERE_R = 1; // 구 반지름(표시 단위). 슬라이더로 바꾸면 구를 다시 만든다.
+    function sphereSolid(r) {
+      // 구: 위도 16 × 경도 32 격자로 삼각형·사각형 면을 만든다. 전개도가 없는 도형이다.
+      var LON = 32, LAT = 16, V = [], F = [], ring, j, phi, th;
+      V.push([0, 1, 0]);
+      V.push([0, -1, 0]);
+      for (ring = 1; ring < LAT; ring++) {
+        phi = Math.PI * ring / LAT;
+        for (j = 0; j < LON; j++) {
+          th = 2 * Math.PI * j / LON;
+          V.push([Math.sin(phi) * Math.cos(th), Math.cos(phi), Math.sin(phi) * Math.sin(th)]);
+        }
+      }
+      function ringIdx(ring, j) { return 2 + (ring - 1) * LON + ((j % LON + LON) % LON); }
+      for (j = 0; j < LON; j++) F.push([0, ringIdx(1, j + 1), ringIdx(1, j)]);
+      for (ring = 1; ring < LAT - 1; ring++) {
+        for (j = 0; j < LON; j++) F.push([ringIdx(ring, j), ringIdx(ring, j + 1), ringIdx(ring + 1, j + 1), ringIdx(ring + 1, j)]);
+      }
+      for (j = 0; j < LON; j++) F.push([1, ringIdx(LAT - 1, j), ringIdx(LAT - 1, j + 1)]);
+      return finishCurvedSolid(V, F, {}, { netKind: 'sphere' }, { absScale: r * 0.85, bottom: true });
     }
     function bipyramidSolid(nn) {
       var h = 1.55; // 위아래 꼭짓점 높이를 밑면 지름(2)의 약 0.78배로 잡아, 교과서 각뿔 그림처럼 위쪽 뿔이 또렷이 길어 보이게
@@ -6082,6 +6267,7 @@
       { group: '각기둥', name: '육각기둥', build: function () { return prismSolid(6); } },
       { group: '각기둥', name: '칠각기둥', build: function () { return prismSolid(7); } },
       { group: '각기둥', name: '팔각기둥', build: function () { return prismSolid(8); } },
+      { group: '각기둥', name: '원기둥', build: function () { return cylinderSolid(); }, counts: { F: 3, V: 0, E: 2 }, stats: '면 3개 · 꼭짓점 0개 · 모서리 2개 · 밑면은 원 2개 · 옆면은 곡면 1개' },
       { group: '엇각기둥', name: '삼각 엇각기둥', make: function () { return antiprismVerts(3); } },
       { group: '엇각기둥', name: '사각 엇각기둥', make: function () { return antiprismVerts(4); } },
       { group: '엇각기둥', name: '오각 엇각기둥', make: function () { return antiprismVerts(5); } },
@@ -6092,6 +6278,9 @@
       { group: '각뿔', name: '오각뿔', build: function () { return pyramidSolid(5); } },
       { group: '각뿔', name: '육각뿔', build: function () { return pyramidSolid(6); } },
       { group: '각뿔', name: '원뿔', build: function () { return coneSolid(); }, counts: { F: 2, V: 1, E: 0 }, stats: '면 2개 · 꼭짓점 1개 · 모서리 0개 · 밑면은 원 1개 · 옆면은 곡면 1개' },
+      { group: '각뿔', name: '원뿔대', build: function () { return frustumSolid(); }, counts: { F: 3, V: 0, E: 2 }, stats: '면 3개 · 꼭짓점 0개 · 모서리 2개 · 윗면·아랫면은 원 2개 · 옆면은 곡면 1개' },
+      { group: '각뿔대', name: '사각뿔대', build: function () { return pyrFrustumSolid(); }, stats: '면 6개 · 꼭짓점 8개 · 모서리 12개 · 정사각형 2개 · 사다리꼴 4개 · V−E+F=2' },
+      { group: '구', name: '구', build: function () { return sphereSolid(SPHERE_R); }, counts: { F: 1, V: 0, E: 0 }, stats: '면 1개(곡면) · 꼭짓점 0개 · 모서리 0개 · 반지름 r로 겉넓이·부피가 정해집니다', noNet: true, sphere: true },
       { group: '쌍각뿔', name: '삼각 쌍뿔', build: function () { return bipyramidSolid(3); } },
       { group: '쌍각뿔', name: '오각 쌍뿔', build: function () { return bipyramidSolid(5); } }
     ];
@@ -6127,7 +6316,71 @@
       var Rt = { m: R, t: vsub(Pa, [R[0][0]*Pa[0]+R[0][1]*Pa[1]+R[0][2]*Pa[2], R[1][0]*Pa[0]+R[1][1]*Pa[1]+R[1][2]*Pa[2], R[2][0]*Pa[0]+R[2][1]*Pa[1]+R[2][2]*Pa[2]]) };
       return tCompose(Rt, Ti);
     }
+    // 교과서 전개도를 위한 펼침 순서. 곡면 입체는 옆면을 띠처럼 한 줄로 이어 펼치고
+    // (원뿔은 부채꼴, 원기둥은 직사각형, 원뿔대는 고리 부채꼴이 된다), 각뿔·각뿔대는
+    // 밑면을 뿌리로 삼아 옆면을 바깥으로 펼친 별 모양이 된다. 일반 다면체는 null을
+    // 돌려보내 기존 BFS 펼침을 그대로 쓴다.
+    function customNetEdges(solid, spine) {
+      var kind = solid.netKind;
+      if (kind === 'cone' || kind === 'cylinder' || kind === 'frustum') {
+        var N = kind === 'cone' ? solid.cone.rim : solid.seg;
+        var apex = kind === 'cone' ? solid.cone.apex : 0;
+        var parent = {}, va = {}, vb = {}, order = [], i;
+        if (kind === 'cone') {
+          for (i = 1; i < N; i++) { parent[i] = i - 1; va[i] = i; vb[i] = apex; order.push(i); }
+          var mid = Math.floor(N / 2);
+          parent[N] = mid; va[N] = mid; vb[N] = (mid + 1) % N; order.push(N); // 밑면 원은 부채꼴 한가운데에 붙인다
+        } else {
+          order.push(N + 1); // 아랫면 원: 첫 번째 옆면 띠의 아랫변에 붙여 오른쪽 아래에 둔다
+          parent[N + 1] = 0; va[N + 1] = 0; vb[N + 1] = 1;
+          for (i = 1; i < N; i++) { parent[i] = i - 1; va[i] = i; vb[i] = N + i; order.push(i); }
+          parent[N] = N - 1; va[N] = N; vb[N] = 2 * N - 1; order.push(N); // 윗면 원: 마지막 띠의 윗변에 붙여 왼쪽 위에 둔다
+        }
+        return { root: 0, parent: parent, va: va, vb: vb, order: order };
+      }
+      if (kind === 'pyramid' || kind === 'pyrFrustum') {
+        if (spine && spine.length > 1) return null; // 최단거리 경로가 있으면 기존 경로 기준 펼침을 쓴다
+        var root = solid.baseFace || 0;
+        var p2 = {}, a2 = {}, b2 = {}, ord2 = [], seen = {}, queue = [root];
+        seen[root] = true;
+        while (queue.length) {
+          var fi = queue.shift();
+          solid.faceAdj[fi].forEach(function (link) {
+            if (seen[link.nb]) return;
+            seen[link.nb] = true;
+            p2[link.nb] = fi; a2[link.nb] = link.va; b2[link.nb] = link.vb;
+            ord2.push(link.nb); queue.push(link.nb);
+          });
+        }
+        return { root: root, parent: p2, va: a2, vb: b2, order: ord2 };
+      }
+      return null;
+    }
+    function netTransformsFromEdges(solid, e) {
+      var T = {};
+      T[e.root] = rootTransform(solid, e.root);
+      e.order.forEach(function (fi) {
+        T[fi] = unfoldStep(solid, T[e.parent[fi]], e.parent[fi], fi, e.va[fi], e.vb[fi]);
+      });
+      return T;
+    }
+    function netTreeFromEdges(solid, e) {
+      var T = netTransformsFromEdges(solid, e);
+      var ang = {};
+      e.order.forEach(function (fi) {
+        var Tp = T[e.parent[fi]];
+        var Pa = tApply(Tp, solid.V[e.va[fi]]), Pb = tApply(Tp, solid.V[e.vb[fi]]);
+        var axis = vnorm(vsub(Pb, Pa));
+        var ni = tRotApply(Tp, solid.N[e.parent[fi]]);
+        var nj = tRotApply(Tp, solid.N[fi]);
+        var cr = vcross(nj, ni);
+        ang[fi] = Math.atan2(vdot(cr, axis), vdot(nj, ni));
+      });
+      return { root: e.root, parent: e.parent, va: e.va, vb: e.vb, ang: ang, order: e.order };
+    }
     function buildNet(solid, spine) {
+      var ce = customNetEdges(solid, spine);
+      if (ce) return netTransformsFromEdges(solid, ce);
       // 가장 넓은 면을 뿌리로 BFS 전개. spine(최단 경로가 지나는 면 순서)이 있으면
       // 그 면들을 뿌리로 삼아 경로 순서대로 먼저 펼치고 나머지를 BFS로 붙인다 →
       // 전개도 위에서 최단 경로가 하나의 직선이 된다.
@@ -6181,6 +6434,8 @@
       return T;
     }
     function buildNetTree(solid, spine) {
+      var ce2 = customNetEdges(solid, spine);
+      if (ce2) return netTreeFromEdges(solid, ce2);
       // BFS로 펼치되, 면마다 부모·접는 간선·펼침 각도를 기록.
       // spine(최단 경로가 지나는 면 순서)이 있으면 그 면들을 뿌리 사슬로 먼저 연결한다.
       // 경로 면들이 경첩으로 이어져야 펼친 상태에서 경로 구간이 면 경계에서 끊기지 않고
@@ -6731,6 +6986,26 @@
           ctx.stroke();
         }
       }
+      // 원기둥·원뿔대 실루엣선: 프레임/숨은선 모드에서는 옆면 띠 간선이 그려지지 않으므로,
+      // 투영에서 가장 왼쪽·오른쪽에 오는 둘레점을 윗면·아랫면 둘레와 이어 실루엣을 그린다.
+      if ((solid.netKind === 'cylinder' || solid.netKind === 'frustum') && !S && !cutting && explodeT <= 0.001 && (mode === 'wire' || mode === 'hidden')) {
+        var botP = [], topP = [];
+        for (var ri = 0; ri < solid.seg; ri++) {
+          botP.push(project(rotatePoint(solid.V[ri]), {}));
+          topP.push(project(rotatePoint(solid.V[solid.seg + ri]), {}));
+        }
+        var iMin = 0, iMax = 0;
+        for (var rj = 1; rj < solid.seg; rj++) {
+          if (botP[rj].x < botP[iMin].x) iMin = rj;
+          if (botP[rj].x > botP[iMax].x) iMax = rj;
+        }
+        ctx.strokeStyle = mode === 'wire' ? bodyHex : th.text;
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.moveTo(botP[iMin].x, botP[iMin].y); ctx.lineTo(topP[iMin].x, topP[iMin].y);
+        ctx.moveTo(botP[iMax].x, botP[iMax].y); ctx.lineTo(topP[iMax].x, topP[iMax].y);
+        ctx.stroke();
+      }
       // 꼭짓점 표시 (펼친 상태에서는 생략)
       if (showVerts && !S) {
         solid.V.forEach(function (p) {
@@ -6814,7 +7089,7 @@
       stack: { x: 0.85, y: 0.7 },
       revolve: { x: 0.35, y: 0.8 }
     };
-    var stackBoxEl, revBoxEl, viewsEl, stackCountEl, revResultEl;
+    var stackBoxEl, revBoxEl, viewsEl, stackCountEl, revResultEl, sphereBoxEl;
     function nearestAngle(cur, base) {
       var d = (base - cur) % (Math.PI * 2);
       if (d > Math.PI) d -= Math.PI * 2;
@@ -6859,7 +7134,7 @@
       stackBoxEl.hidden = scene !== 'stack';
       revBoxEl.hidden = scene !== 'revolve';
       viewsEl.hidden = scene !== 'stack';
-      if (!isSolid) { applyTool(null); closeNetInstant(); syncNetUI(); }
+      if (!isSolid) { applyTool(null); closeNetInstant(); syncNetUI(); if (sphereBoxEl) sphereBoxEl.hidden = true; }
       if (scene === 'stack') {
         updateStackInfo();
         hintEl.textContent = '드래그로 회전 · 바닥이나 블록 면을 눌러 쌓기';
@@ -7501,6 +7776,42 @@
         pts.forEach(function (p) { minx = Math.min(minx, p[0]); maxx = Math.max(maxx, p[0]); miny = Math.min(miny, p[1]); maxy = Math.max(maxy, p[1]); });
         polys.push(pts);
       });
+      // 2D 전개도 방향 맞추기(인쇄·PNG용): 원뿔은 부채꼴이 위, 원이 아래에 오게 하고,
+      // 원기둥·원뿔대는 옆면이 가로 직사각형(고리 부채꼴)이 되고 윗면 원이 왼쪽 위,
+      // 아랫면 원이 오른쪽 아래에 오게 돌리거나 뒤집는다. 종이를 뒤집는 것과 같아 전개도로서 유효하다.
+      (function () {
+        var kind = solid.netKind;
+        if (kind !== 'cone' && kind !== 'cylinder' && kind !== 'frustum') return;
+        function cenOf(pts) { var sx = 0, sy = 0; pts.forEach(function (p) { sx += p[0]; sy += p[1]; }); return [sx / pts.length, sy / pts.length]; }
+        function allCen() { var sx = 0, sy = 0, n = 0; polys.forEach(function (pts) { pts.forEach(function (p) { sx += p[0]; sy += p[1]; n++; }); }); return [sx / n, sy / n]; }
+        function rotateAbout(cc, ang) {
+          var cs = Math.cos(ang), sn = Math.sin(ang);
+          polys.forEach(function (pts) { pts.forEach(function (p) { var dx = p[0] - cc[0], dy = p[1] - cc[1]; p[0] = cc[0] + dx * cs - dy * sn; p[1] = cc[1] + dx * sn + dy * cs; }); });
+        }
+        function reflectX(cc) { polys.forEach(function (pts) { pts.forEach(function (p) { p[0] = 2 * cc[0] - p[0]; }); }); }
+        function reflectY(cc) { polys.forEach(function (pts) { pts.forEach(function (p) { p[1] = 2 * cc[1] - p[1]; }); }); }
+        var cc = allCen();
+        if (kind === 'cone') {
+          var baseC = cenOf(polys[solid.F.length - 1]);
+          var secC = [0, 0];
+          for (var i2 = 0; i2 < solid.cone.rim; i2++) { var tc = cenOf(polys[i2]); secC[0] += tc[0]; secC[1] += tc[1]; }
+          secC[0] /= solid.cone.rim; secC[1] /= solid.cone.rim;
+          var vx = secC[0] - baseC[0], vy = secC[1] - baseC[1];
+          rotateAbout(cc, -Math.PI / 2 - Math.atan2(vy, vx));
+        } else {
+          var firstC = cenOf(polys[0]), lastC = cenOf(polys[solid.seg - 1]);
+          var ax = lastC[0] - firstC[0], ay = lastC[1] - firstC[1];
+          rotateAbout(cc, -Math.atan2(ay, ax));
+          var midC = allCen();
+          var topC = cenOf(polys[solid.topFace]);
+          if (topC[1] > midC[1]) reflectY(midC); // 윗면 원이 위쪽에 오게
+          midC = allCen();
+          topC = cenOf(polys[solid.topFace]);
+          if (topC[0] > midC[0]) reflectX(midC); // 윗면 원이 왼쪽에 오게
+        }
+        minx = Infinity; miny = Infinity; maxx = -Infinity; maxy = -Infinity;
+        polys.forEach(function (pts) { pts.forEach(function (p) { minx = Math.min(minx, p[0]); maxx = Math.max(maxx, p[0]); miny = Math.min(miny, p[1]); maxy = Math.max(maxy, p[1]); }); });
+      })();
       var sc = Math.min((w - 36) / (maxx - minx), (h - 36) / (maxy - miny));
       var ox = (w - (maxx - minx) * sc) / 2 - minx * sc;
       var oy = (h - (maxy - miny) * sc) / 2 - miny * sc;
@@ -7537,6 +7848,64 @@
           c2.stroke();
         }
       });
+      // 교과서 전개도 이름표: 각 부분(밑면·윗면·아랫면·옆면)을 글자로 표시한다.
+      (function () {
+        var kind = solid.netKind;
+        if (!kind || kind === 'sphere') return;
+        function centroid(pts) { var cx = 0, cy = 0; pts.forEach(function (p) { cx += p[0]; cy += p[1]; }); return [cx / pts.length, cy / pts.length]; }
+        function toXY(p) { return [p[0] * sc + ox, p[1] * sc + oy]; }
+        var labels = [];
+        if (kind === 'cone') {
+          var bc = toXY(centroid(polys[solid.F.length - 1]));
+          labels.push({ x: bc[0], y: bc[1], text: '밑면' });
+          var mc = toXY(centroid(polys[Math.floor(solid.cone.rim / 2)]));
+          labels.push({ x: mc[0], y: mc[1], text: '옆면' });
+        } else if (kind === 'cylinder' || kind === 'frustum') {
+          var tc = toXY(centroid(polys[solid.topFace]));
+          labels.push({ x: tc[0], y: tc[1], text: kind === 'frustum' ? '윗면' : '밑면' });
+          var oc = toXY(centroid(polys[solid.botFace]));
+          labels.push({ x: oc[0], y: oc[1], text: kind === 'frustum' ? '아랫면' : '밑면' });
+          var lc = toXY(centroid(polys[Math.floor(solid.seg / 2)]));
+          labels.push({ x: lc[0], y: lc[1], text: '옆면' });
+        } else if (kind === 'pyramid' || kind === 'pyrFrustum') {
+          var pc = toXY(centroid(polys[solid.baseFace || 0]));
+          labels.push({ x: pc[0], y: pc[1], text: '밑면' });
+          if (kind === 'pyrFrustum') {
+            var qc = toXY(centroid(polys[solid.topFace]));
+            labels.push({ x: qc[0], y: qc[1], text: '윗면' });
+          }
+          var best = -1, bestY = Infinity;
+          solid.F.forEach(function (f, fi) {
+            if (fi === (solid.baseFace || 0) || fi === solid.topFace) return;
+            var cc = toXY(centroid(polys[fi]));
+            if (cc[1] < bestY) { bestY = cc[1]; best = fi; }
+          });
+          if (best >= 0) { var sc2 = toXY(centroid(polys[best])); labels.push({ x: sc2[0], y: sc2[1], text: '옆면' }); }
+        } else return;
+        var fs = Math.max(12, Math.min(scaleUp ? 30 : 18, sc * 0.14));
+        c2.font = '700 ' + fs + 'px "Noto Sans KR", sans-serif';
+        c2.textAlign = 'center'; c2.textBaseline = 'middle';
+        labels.forEach(function (lb) {
+          var tw = c2.measureText(lb.text).width + fs * 1.1;
+          var th2 = fs * 1.75;
+          var x0 = lb.x - tw / 2, y0 = lb.y - th2 / 2;
+          c2.beginPath();
+          c2.moveTo(x0 + 7, y0);
+          c2.lineTo(x0 + tw - 7, y0);
+          c2.arc(x0 + tw - 7, y0 + th2 / 2, th2 / 2 - 0, -Math.PI / 2, Math.PI / 2);
+          c2.lineTo(x0 + 7, y0 + th2);
+          c2.arc(x0 + 7, y0 + th2 / 2, th2 / 2, Math.PI / 2, Math.PI * 3 / 2);
+          c2.closePath();
+          c2.fillStyle = scaleUp ? 'rgba(255,255,255,0.9)' : (th.dark ? 'rgba(20,30,36,0.85)' : 'rgba(255,255,255,0.9)');
+          c2.fill();
+          c2.strokeStyle = scaleUp ? '#9fb0b6' : th.line;
+          c2.lineWidth = 1;
+          c2.stroke();
+          c2.fillStyle = scaleUp ? '#172126' : th.text;
+          c2.fillText(lb.text, lb.x, lb.y + 1);
+        });
+        c2.textAlign = 'left'; c2.textBaseline = 'alphabetic';
+      })();
       // 최단 경로가 있으면 같은 전개 위에 표시한다. 경로는 경로 면 기준 전개라
       // A·B를 잇는 하나의 직선이 되고, 면 경계에서 끊기지 않는다.
       if (distResult && pickA && pickB) {
@@ -7718,7 +8087,511 @@
         ('면 ' + solid.F.length + '개 · 꼭짓점 ' + solid.V.length + '개 · 모서리 ' + solid.E.length + '개 · ' + comp +
         ' · V−E+F=' + (solid.V.length - solid.E.length + solid.F.length));
       fitInfoStats();
+      // 구를 고르면 겉넓이·부피 메뉴를 보여주고, 구에는 전개도가 없으므로 전개도 버튼을 끈다.
+      if (sphereBoxEl) sphereBoxEl.hidden = !DEFS[idx].sphere;
+      if (DEFS[idx].sphere) updateSphereInfo();
+      var netBtn = document.getElementById('p3BarNet');
+      if (netBtn) {
+        netBtn.disabled = !!DEFS[idx].noNet;
+        netBtn.title = DEFS[idx].noNet ? '구는 전개도가 없습니다' : '';
+      }
       render();
+    }
+
+    // 구: 반지름을 바꾸면 공식에 수를 대입한 계산값을 바로 보여준다.
+    function updateSphereInfo() {
+      var r = SPHERE_R;
+      var area = 4 * Math.PI * r * r, vol = 4 / 3 * Math.PI * r * r * r;
+      var cylVol = 2 * Math.PI * r * r * r;
+      var areaEl = document.getElementById('p3SphereArea');
+      var volEl = document.getElementById('p3SphereVol');
+      var cylEl = document.getElementById('p3SphereCyl');
+      if (areaEl) areaEl.textContent = '겉넓이  S = 4πr² = 4π × ' + r.toFixed(2) + '² ≈ ' + area.toFixed(2);
+      if (volEl) volEl.textContent = '부피  V = 4/3πr³ = 4/3π × ' + r.toFixed(2) + '³ ≈ ' + vol.toFixed(2);
+      if (cylEl) cylEl.textContent = '감싸는 원기둥(반지름 r, 높이 2r)의 부피 ≈ ' + cylVol.toFixed(2) + ' — 구의 부피는 그 3분의 2, 옆넓이는 구의 겉넓이와 같습니다.';
+      var rVal = document.getElementById('p3SphereRVal');
+      if (rVal) rVal.textContent = 'r = ' + r.toFixed(2);
+      drawSphereLab();
+    }
+
+    /* ================= 구 직관 활동 (겉넓이·부피) =================
+       공식 암기가 아니라 눈으로 보고 직접 움직이며 이해하는 활동.
+       겉넓이: 조각 채우기(교과서)·원기둥 펼치기·얇은 띠 펼치기·껍질 벗기기
+       부피: 모래 붓기(교과서)·원기둥−원뿔·단면 비교(카발리에리)·얇은 원판·작은 뿔 나누기 */
+    var labMethod = 'pieces', labT = 0, labPlaying = false, labRaf = 0, labLast = 0;
+    var labHfrac = 0, labN = 16; // 단면 높이 비율(-1..1), 원판 개수
+    var LAB_W = 340, LAB_H = 250;
+    var labCanvas = null, labCtx = null;
+    function labEase(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+    function labStage(t, a, b) { return Math.max(0, Math.min(1, (t - a) / (b - a))); }
+    function labLerp(a, b, p) { return a + (b - a) * p; }
+    function labSetup() {
+      if (!labCanvas) labCanvas = document.getElementById('p3SphereLab');
+      if (!labCanvas) return false;
+      if (!labCtx) {
+        labCtx = labCanvas.getContext('2d');
+        var dpr = Math.min(2, window.devicePixelRatio || 1);
+        labCanvas.width = LAB_W * dpr;
+        labCanvas.height = LAB_H * dpr;
+        labCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      return true;
+    }
+    function labLabel(c, text, x, y, size, color, align, weight) {
+      c.font = (weight || '700 ') + size + 'px "Noto Sans KR", sans-serif';
+      c.textAlign = align || 'center';
+      c.textBaseline = 'middle';
+      c.fillStyle = color;
+      c.fillText(text, x, y);
+    }
+    function labCircle(c, x, y, r, fill, stroke, lw) {
+      c.beginPath();
+      c.arc(x, y, r, 0, Math.PI * 2);
+      if (fill) { c.fillStyle = fill; c.fill(); }
+      if (stroke) { c.strokeStyle = stroke; c.lineWidth = lw || 1.5; c.stroke(); }
+    }
+    function labSetText(id, str) { var el = document.getElementById(id); if (el) el.textContent = str; }
+    function labFmt(x) { return x.toFixed(2); }
+    function labDrawPieces(c, th, t) {
+      var R = 46, cx = 78, cy = 112;
+      var circles = [[222, 70], [292, 70], [222, 140], [292, 140]], cr = 30;
+      var split = labStage(t, 0.18, 0.38);
+      var fly = labEase(labStage(t, 0.4, 0.95));
+      var fade = 1 - labStage(t, 0.4, 0.62);
+      // 네 개의 원(밑그림)
+      circles.forEach(function (cc) {
+        labCircle(c, cc[0], cc[1], cr, null, th.line, 1.4);
+        labLabel(c, 'πr²', cc[0], cc[1] - cr - 10, 11, th.text, 'center', '600 ');
+      });
+      labLabel(c, '같은 반지름의 원 4개', 257, 26, 12, th.text);
+      // 반구 두 개 (갈라지는 단계)
+      if (fade > 0.02) {
+        c.save();
+        c.globalAlpha = fade;
+        var off = 24 * split;
+        c.beginPath(); c.arc(cx - off, cy, R, Math.PI, 0); c.closePath();
+        c.fillStyle = 'rgba(231,143,179,0.45)'; c.fill(); c.strokeStyle = th.text; c.lineWidth = 1.5; c.stroke();
+        c.beginPath(); c.arc(cx + off, cy, R, 0, Math.PI); c.closePath();
+        c.fillStyle = 'rgba(231,143,179,0.45)'; c.fill(); c.stroke();
+        c.restore();
+      }
+      if (t < 0.18) {
+        labCircle(c, cx, cy, R, 'rgba(231,143,179,0.35)', th.text, 1.5);
+        c.setLineDash([4, 4]);
+        c.beginPath(); c.moveTo(cx - R, cy); c.lineTo(cx + R, cy); c.strokeStyle = th.line; c.stroke(); c.setLineDash([]);
+      }
+      labLabel(c, '구', cx, cy + R + 14, 12, th.text);
+      // 잘게 자른 조각(점)들이 원으로 이동한다
+      var total = 96, per = 24;
+      for (var i = 0; i < total; i++) {
+        var upper = i < total / 2;
+        var k = i % per;
+        var ang = Math.PI * ((k % 12) + 0.5) / 12;
+        var rho = 0.25 + 0.7 * (Math.floor(k / 12) / 1);
+        var sx = cx + (upper ? -24 * split : 24 * split) + rho * R * Math.cos(ang);
+        var sy = cy + (upper ? -rho * R * Math.sin(ang) : rho * R * Math.sin(ang));
+        var ci = i % 4, kk = Math.floor(i / 4);
+        var ta = kk * 2.39996, tr = cr * 0.82 * Math.sqrt((kk + 0.5) / per);
+        var tx = circles[ci][0] + tr * Math.cos(ta), ty = circles[ci][1] + tr * Math.sin(ta);
+        var px = labLerp(sx, tx, fly), py = labLerp(sy, ty, fly) - Math.sin(fly * Math.PI) * 16;
+        c.beginPath();
+        c.arc(px, py, 3.1, 0, Math.PI * 2);
+        c.fillStyle = fly > 0.02 ? '#d96a9b' : 'rgba(217,106,155,0.85)';
+        c.fill();
+      }
+      if (t >= 0.99) circles.forEach(function (cc) {
+        c.beginPath(); c.arc(cc[0], cc[1], cr - 2, 0, Math.PI * 2);
+        c.fillStyle = 'rgba(231,143,179,0.35)'; c.fill();
+      });
+      labLabel(c, '반구 2개분', cx, 208, 12, th.text);
+      labLabel(c, '= 원 4개분', 257, 208, 12, th.text);
+    }
+    function labDrawCyl(c, th, t) {
+      var R = 42, cx = 80, cy = 125, p = labEase(t);
+      var bands = ['#e78fb3', '#f4b8cd', '#e78fb3', '#f4b8cd', '#e78fb3', '#f4b8cd'];
+      // 구 + 외접 원기둥 (띠 색을 맞춘다)
+      c.save();
+      c.beginPath(); c.arc(cx, cy, R, 0, Math.PI * 2); c.clip();
+      for (var i = 0; i < 6; i++) {
+        c.fillStyle = bands[i];
+        c.globalAlpha = 0.55;
+        c.fillRect(cx - R, cy - R + i * (2 * R / 6), 2 * R, 2 * R / 6);
+      }
+      c.restore();
+      c.globalAlpha = 1;
+      labCircle(c, cx, cy, R, null, th.text, 1.5);
+      c.strokeStyle = th.text; c.lineWidth = 1.5;
+      c.strokeRect(cx - R, cy - R, 2 * R, 2 * R);
+      c.beginPath(); c.ellipse(cx, cy - R, R, 8, 0, 0, Math.PI * 2); c.stroke();
+      c.beginPath(); c.ellipse(cx, cy + R, R, 8, 0, Math.PI, 0); c.stroke();
+      labLabel(c, '구', cx, cy + R + 14, 12, th.text);
+      labLabel(c, '높이 2r', cx - R - 4, cy, 11, th.text, 'right', '600 ');
+      // 펼친 옆면: 가로가 커지며 나타난다
+      var ux = 158, uw = 172, uh = 2 * R;
+      c.save();
+      c.setLineDash([5, 4]);
+      c.strokeStyle = th.line; c.lineWidth = 1.2;
+      c.strokeRect(ux, cy - R, uw, uh);
+      c.restore();
+      var w2 = uw * p;
+      c.save();
+      c.beginPath(); c.rect(ux, cy - R, Math.max(0, w2), uh); c.clip();
+      for (var j = 0; j < 6; j++) {
+        c.fillStyle = bands[j]; c.globalAlpha = 0.55;
+        c.fillRect(ux, cy - R + j * (uh / 6), uw, uh / 6);
+      }
+      c.restore();
+      c.globalAlpha = 1;
+      if (w2 > 2) { c.strokeStyle = th.text; c.lineWidth = 1.5; c.strokeRect(ux, cy - R, w2, uh); }
+      c.beginPath(); c.moveTo(cx + R + 6, cy - 20); c.lineTo(ux - 6, cy - 20);
+      c.strokeStyle = th.text; c.lineWidth = 1.5; c.stroke();
+      c.beginPath(); c.moveTo(ux - 6, cy - 20); c.lineTo(ux - 14, cy - 25); c.moveTo(ux - 6, cy - 20); c.lineTo(ux - 14, cy - 15); c.stroke();
+      labLabel(c, '옆면을 펼치면', 244, 30, 12, th.text);
+      labLabel(c, '가로 2πr', 244, cy - R - 12, 11, th.text, 'center', '600 ');
+      labLabel(c, '세로 2r', ux + uw + 4, cy, 11, th.text, 'left', '600 ');
+      labLabel(c, '띠 높이가 같으면 넓이가 같아요', 170, 208, 12, th.text);
+    }
+    function labDrawBands(c, th, t) {
+      var R = 46, cx = 72, cy = 125, n = 8, bh = 2 * R / n;
+      var cols = ['#e78fb3', '#f4b8cd', '#d96a9b', '#f9cfe0', '#e78fb3', '#f4b8cd', '#d96a9b', '#f9cfe0'];
+      // 구 윤곽 + 띠
+      c.save();
+      c.beginPath(); c.arc(cx, cy, R, 0, Math.PI * 2); c.clip();
+      for (var i = 0; i < n; i++) { c.fillStyle = cols[i]; c.globalAlpha = 0.5; c.fillRect(cx - R, cy - R + i * bh, 2 * R, bh); }
+      c.restore();
+      c.globalAlpha = 1;
+      labCircle(c, cx, cy, R, null, th.text, 1.5);
+      labLabel(c, '구', cx, cy + R + 14, 12, th.text);
+      // 펼친 띠: 구에서 오른쪽 쌓는 자리로 이동한다
+      var stackX = 252, stackTop = cy - R;
+      for (var k = 0; k < n; k++) {
+        var hc = -R + (k + 0.5) * bh;
+        var rho = Math.sqrt(Math.max(0, R * R - hc * hc));
+        var p = labEase(labStage(t, k * 0.05, 0.45 + k * 0.05));
+        var x0 = cx, y0 = cy + hc, w0 = 2 * rho;
+        var w1 = 150 * rho / R, x1 = stackX, y1 = stackTop + k * bh + bh / 2;
+        var x = labLerp(x0, x1, p), y = labLerp(y0, y1, p), w = labLerp(w0, w1, p);
+        c.fillStyle = cols[k];
+        c.globalAlpha = 0.35 + 0.6 * p;
+        c.beginPath();
+        c.rect(x - w / 2, y - bh / 2 + 0.5, w, bh - 1);
+        c.fill();
+        c.globalAlpha = 1;
+        c.strokeStyle = th.text; c.lineWidth = 1;
+        c.stroke();
+      }
+      c.save();
+      c.setLineDash([5, 4]);
+      c.strokeStyle = th.line; c.lineWidth = 1.2;
+      c.strokeRect(stackX - 75, stackTop, 150, 2 * R);
+      c.restore();
+      labLabel(c, '띠를 펼치면', stackX, 30, 12, th.text);
+      labLabel(c, '가로 = 각 띠의 원주', stackX, 48, 11, th.text, 'center', '600 ');
+      labLabel(c, '합치면 2πr × 2r', stackX, 208, 12, th.text);
+    }
+    function labDrawPeel(c, th, t) {
+      var R = 46, cx = 78, cy = 125;
+      var fade = 1 - 0.6 * labEase(t);
+      c.save();
+      c.globalAlpha = fade;
+      labCircle(c, cx, cy, R, 'rgba(231,143,179,0.4)', th.text, 1.5);
+      for (var e = 0; e < 3; e++) {
+        var rx = R * (1 - e * 0.33);
+        c.beginPath(); c.ellipse(cx, cy, Math.max(4, rx), R, 0, 0, Math.PI * 2);
+        c.strokeStyle = th.text; c.lineWidth = 1; c.stroke();
+      }
+      c.restore();
+      // 벗긴 껍질 조각 6개를 옆에 눕힌다
+      for (var k = 0; k < 6; k++) {
+        var p = labEase(labStage(t, k * 0.07, 0.5 + k * 0.07));
+        var fx = 178 + k * 27, fy = cy;
+        var sx = cx - 20 + k * 8, sy = cy;
+        var x = labLerp(sx, fx, p), y = labLerp(sy, fy, p);
+        var hgt = labLerp(30, 92, p), wd = labLerp(20, 11, p);
+        c.beginPath();
+        c.moveTo(x, y - hgt / 2);
+        c.quadraticCurveTo(x + wd, y, x, y + hgt / 2);
+        c.quadraticCurveTo(x - wd, y, x, y - hgt / 2);
+        c.closePath();
+        c.fillStyle = 'rgba(231,143,179,' + (0.35 + 0.55 * p) + ')';
+        c.fill();
+        c.strokeStyle = th.text; c.lineWidth = 1.2; c.stroke();
+      }
+      labLabel(c, '구 껍질', cx, cy + R + 14, 12, th.text);
+      labLabel(c, '껍질을 벗겨 펼치면', 256, 30, 12, th.text);
+      labLabel(c, '조각 넓이의 합 = 4πr²', 256, 208, 12, th.text);
+    }
+    function labDrawSand(c, th, t) {
+      var R = 44, cx = 82, cy = 108, rimY = cy - R;
+      // 구 모양 그릇: 아래쪽 반구만 그리고, 모래가 줄어든다
+      c.save();
+      c.beginPath();
+      c.moveTo(cx - R, rimY);
+      c.arc(cx, cy, R, 0, Math.PI);
+      c.closePath();
+      c.clip();
+      var sandH = 2 * R * (1 - labEase(t));
+      c.fillStyle = '#e8862e'; c.globalAlpha = 0.9;
+      c.fillRect(cx - R, cy + R - sandH, 2 * R, sandH);
+      c.restore();
+      c.globalAlpha = 1;
+      c.beginPath();
+      c.moveTo(cx - R, rimY);
+      c.arc(cx, cy, R, 0, Math.PI);
+      c.closePath();
+      c.strokeStyle = th.text; c.lineWidth = 1.5; c.stroke();
+      c.beginPath(); c.ellipse(cx, rimY, R, 7, 0, 0, Math.PI * 2); c.stroke();
+      labLabel(c, '구 모양 그릇', cx, cy + R + 14, 12, th.text);
+      // 원기둥 그릇: 2/3까지 찬다
+      var gx = 218, gw = 84, gy = 58, gh = 128;
+      var level = gh * (2 / 3) * labEase(t);
+      c.fillStyle = '#e8862e'; c.globalAlpha = 0.9;
+      c.fillRect(gx, gy + gh - level, gw, level);
+      c.globalAlpha = 1;
+      c.strokeStyle = th.text; c.lineWidth = 1.5;
+      c.strokeRect(gx, gy, gw, gh);
+      c.beginPath(); c.ellipse(gx + gw / 2, gy, gw / 2, 7, 0, 0, Math.PI * 2); c.stroke();
+      c.beginPath(); c.ellipse(gx + gw / 2, gy + gh, gw / 2, 7, 0, 0, Math.PI); c.stroke();
+      c.save();
+      c.setLineDash([4, 4]);
+      c.strokeStyle = th.danger || '#d64545'; c.lineWidth = 1.2;
+      c.beginPath(); c.moveTo(gx - 8, gy + gh / 3); c.lineTo(gx + gw + 8, gy + gh / 3); c.stroke();
+      c.restore();
+      labLabel(c, '2/3', gx + gw + 14, gy + gh / 3, 11, th.danger || '#d64545', 'left', '700 ');
+      labLabel(c, '원기둥 그릇 (높이 = 지름)', gx + gw / 2, gy + gh + 14, 12, th.text);
+      // 붓는 모래 줄기
+      if (t > 0.05 && t < 0.95) {
+        c.fillStyle = '#e8862e';
+        for (var d = 0; d < 5; d++) {
+          var yy = 78 + ((d * 17 + t * 90) % 52);
+          c.beginPath(); c.arc(150, yy, 2.6, 0, Math.PI * 2); c.fill();
+        }
+        labLabel(c, '부어요', 150, 62, 11, th.text, 'center', '600 ');
+      }
+      if (t >= 0.99) labLabel(c, '딱 2/3만큼 찼어요!', 170, 224, 13, th.danger || '#d64545');
+    }
+    function labDrawCylCone(c, th, t) {
+      var gx = 80, gw = 100, gy = 52, gh = 132, cx = gx + gw / 2, cy = gy + gh / 2;
+      var out = labEase(labStage(t, 0, 0.55));
+      var show = labStage(t, 0.4, 1);
+      // 원기둥
+      c.strokeStyle = th.text; c.lineWidth = 1.5;
+      c.strokeRect(gx, gy, gw, gh);
+      c.beginPath(); c.ellipse(cx, gy, gw / 2, 7, 0, 0, Math.PI * 2); c.stroke();
+      c.beginPath(); c.ellipse(cx, gy + gh, gw / 2, 7, 0, 0, Math.PI); c.stroke();
+      // 쌍원뿔이 옆으로 빠져나간다
+      c.save();
+      c.globalAlpha = 1 - out;
+      var ox = 120 * out;
+      c.fillStyle = 'rgba(74,111,214,0.45)';
+      c.beginPath(); c.moveTo(gx + ox, gy); c.lineTo(gx + gw + ox, gy); c.lineTo(cx + ox, cy); c.closePath(); c.fill(); c.stroke();
+      c.beginPath(); c.moveTo(gx + ox, gy + gh); c.lineTo(gx + gw + ox, gy + gh); c.lineTo(cx + ox, cy); c.closePath(); c.fill(); c.stroke();
+      c.restore();
+      // 구가 나타난다
+      c.save();
+      c.globalAlpha = show;
+      labCircle(c, cx, cy, gw / 2, 'rgba(231,143,179,0.5)', th.text, 1.5);
+      c.restore();
+      labLabel(c, '원기둥', gx - 6, cy, 11, th.text, 'right', '600 ');
+      labLabel(c, '원뿔 2개 빼기', gx + gw + 118, cy - 30, 11, th.text);
+      labLabel(c, '남는 부피 = 구의 부피', 170, 224, 12, th.text);
+    }
+    function labDrawCavalieri(c, th) {
+      var cx = 78, cy = 125, R = 52, h = labHfrac * R;
+      var y = cy - h;
+      // 겹친 단면 그림: 원기둥(직사각형) + 쌍원뿔 + 구(원)
+      c.strokeStyle = th.text; c.lineWidth = 1.5;
+      c.strokeRect(cx - R, cy - R, 2 * R, 2 * R);
+      c.beginPath(); c.moveTo(cx - R, cy - R); c.lineTo(cx + R, cy - R); c.lineTo(cx, cy); c.closePath();
+      c.strokeStyle = '#4a6fd6'; c.stroke();
+      c.beginPath(); c.moveTo(cx - R, cy + R); c.lineTo(cx + R, cy + R); c.lineTo(cx, cy); c.closePath(); c.stroke();
+      labCircle(c, cx, cy, R, null, '#d96a9b', 1.5);
+      c.save();
+      c.setLineDash([4, 4]);
+      c.strokeStyle = th.danger || '#d64545'; c.lineWidth = 1.4;
+      c.beginPath(); c.moveTo(cx - R - 8, y); c.lineTo(cx + R + 8, y); c.stroke();
+      c.restore();
+      labCircle(c, cx + R + 8, y, 3.5, th.danger || '#d64545', null);
+      labLabel(c, '높이 h', cx - R - 12, y, 11, th.danger || '#d64545', 'right', '700 ');
+      labLabel(c, '단면을 자르면', cx, 30, 12, th.text);
+      // 세 단면 원
+      var discR = 34;
+      var rho = Math.sqrt(Math.max(0, 1 - labHfrac * labHfrac));
+      var specs = [
+        { x: 226, yy: 62, r: discR * rho, col: '#e78fb3', name: '구 단면' },
+        { x: 226, yy: 128, r: discR, col: '#b9c6e8', name: '원기둥 단면' },
+        { x: 226, yy: 194, r: discR * Math.abs(labHfrac), col: '#9db4e8', name: '원뿔 단면' }
+      ];
+      specs.forEach(function (s) {
+        if (s.r > 0.5) labCircle(c, s.x, s.yy, s.r, s.col, th.text, 1.2);
+        else { c.beginPath(); c.arc(s.x, s.yy, 2, 0, Math.PI * 2); c.strokeStyle = th.text; c.stroke(); }
+        labLabel(c, s.name, s.x + 52, s.yy, 11, th.text, 'left', '600 ');
+      });
+      labLabel(c, '구 단면 = 원기둥 단면 − 원뿔 단면', 226, 224, 11, th.text);
+    }
+    function labDrawDisks(c, th, t) {
+      var R = 48, cx = 76, cy = 125, n = labN, bh = 2 * R / n;
+      var stackX = 250;
+      c.save();
+      c.beginPath(); c.arc(cx, cy, R, 0, Math.PI * 2); c.clip();
+      for (var i = 0; i < n; i++) {
+        c.fillStyle = i % 2 ? 'rgba(231,143,179,0.55)' : 'rgba(244,184,205,0.55)';
+        c.fillRect(cx - R, cy - R + i * bh, 2 * R, bh);
+      }
+      c.restore();
+      labCircle(c, cx, cy, R, null, th.text, 1.5);
+      labLabel(c, '구', cx, cy + R + 14, 12, th.text);
+      for (var k = 0; k < n; k++) {
+        var hc = -R + (k + 0.5) * bh;
+        var rho = Math.sqrt(Math.max(0, R * R - hc * hc));
+        var p = labEase(labStage(t, k * 0.03, 0.5 + k * 0.03));
+        var x = labLerp(cx, stackX, p);
+        var y = labLerp(cy + hc, cy - R + k * bh + bh / 2, p);
+        var w = labLerp(2 * rho, 2 * rho * 0.92, p);
+        c.fillStyle = k % 2 ? 'rgba(231,143,179,0.85)' : 'rgba(244,184,205,0.85)';
+        c.beginPath(); c.rect(x - w / 2, y - bh / 2 + 0.5, w, Math.max(1, bh - 0.6)); c.fill();
+        c.strokeStyle = th.text; c.lineWidth = 0.8; c.stroke();
+      }
+      labLabel(c, '원판 ' + n + '개로 자르기', stackX, 30, 12, th.text);
+      labLabel(c, '얇을수록 구에 가까워져요', 170, 224, 12, th.text);
+    }
+    function labDrawPyramids(c, th, t) {
+      var R = 48, cx = 80, cy = 125, N = 12;
+      var p = labEase(t);
+      // 구를 부채꼴 조각으로 나눈다
+      for (var i = 0; i < N; i++) {
+        var a0 = -Math.PI / 2 + i * (Math.PI * 2 / N);
+        var a1 = a0 + Math.PI * 2 / N;
+        c.beginPath();
+        c.moveTo(cx, cy);
+        c.arc(cx, cy, R, a0, a1);
+        c.closePath();
+        c.fillStyle = i === 0 ? 'rgba(217,106,155,0.75)' : 'rgba(231,143,179,0.25)';
+        c.fill();
+        c.strokeStyle = th.text; c.lineWidth = 1; c.stroke();
+      }
+      labCircle(c, cx, cy, 3.5, th.text, null);
+      labLabel(c, '중심', cx, cy + 16, 11, th.text, 'center', '600 ');
+      labLabel(c, '구', cx, cy + R + 14, 12, th.text);
+      // 한 조각을 꺼내 작은 뿔로 보여준다
+      var ox = 120 * p, oy = -18 * p;
+      var bx = cx + ox + 52, by = cy + oy;
+      c.save();
+      c.globalAlpha = 0.25 + 0.75 * p;
+      c.beginPath();
+      c.moveTo(bx - 58, by - 26); c.lineTo(bx - 58, by + 26); c.lineTo(bx + 34, by);
+      c.closePath();
+      c.fillStyle = 'rgba(217,106,155,0.6)'; c.fill();
+      c.strokeStyle = th.text; c.lineWidth = 1.5; c.stroke();
+      c.restore();
+      labLabel(c, '작은 뿔', bx - 58, by - 40, 11, th.text, 'center', '600 ');
+      labLabel(c, '밑면 = 겉면 조각', bx - 58, by + 42, 11, th.text);
+      labLabel(c, '높이 = r', bx + 6, by - 6, 11, th.text, 'left', '600 ');
+      labLabel(c, '모든 뿔의 부피 합 = 1/3 × 겉넓이 × r', 170, 224, 12, th.text);
+    }
+    function labCaption() {
+      var r = SPHERE_R;
+      var area = 4 * Math.PI * r * r, vol = 4 / 3 * Math.PI * r * r * r, cylVol = 2 * Math.PI * r * r * r;
+      var t = labT, m = labMethod;
+      var text = '', formula = '';
+      if (m === 'pieces') {
+        if (t < 0.18) text = '① 구를 반으로 자르면 반구 2개가 됩니다. 반구의 겉면을 잘게 잘라 보세요.';
+        else if (t < 0.4) text = '② 반구 2개를 나란히 놓고, 겉면을 잘게 자른 조각들을 모읍니다.';
+        else if (t < 0.99) text = '③ 자른 조각으로 같은 반지름의 원을 채워 보세요. 조각이 원을 빈틈없이 채웁니다.';
+        else text = '④ 반구 2개분 조각이 원 4개를 가득 채웠어요. 그래서 구의 겉넓이는 원 넓이의 4배입니다.';
+        formula = 'S = 4 × πr² = 4π × ' + labFmt(r) + '² ≈ ' + labFmt(area);
+      } else if (m === 'cyl') {
+        text = '구를 딱 감싸는 원기둥을 생각해 보세요. 같은 높이로 자른 띠는 구에서도 원기둥에서도 넓이가 같습니다. 그래서 구의 겉넓이는 원기둥 옆면 넓이와 같아요. 옆면을 펼치면 가로 2πr, 세로 2r인 직사각형이 됩니다.';
+        formula = 'S = 2πr × 2r = 4πr² ≈ ' + labFmt(area);
+      } else if (m === 'bands') {
+        text = '구를 가로로 얇게 띠를 내어 자른 뒤, 띠를 하나씩 펼쳐 나란히 쌓아 보세요. 띠의 가로는 그 높이에서의 원주입니다. 띠를 아주 얇게 자르면 쌓은 모양이 가로 2πr, 세로 2r인 직사각형에 가까워집니다.';
+        formula = 'S = (띠 넓이의 합) = 2πr × 2r = 4πr² ≈ ' + labFmt(area);
+      } else if (m === 'peel') {
+        text = '귤 껍질을 벗기듯 구의 겉면을 조각조각 벗겨 평평하게 펼쳐 보세요. 조각들을 모두 펼친 넓이가 바로 구의 겉넓이입니다. 조각이 잘게 잘릴수록 평평해지고, 넓이의 합은 변하지 않아요.';
+        formula = 'S = (껍질 조각 넓이의 합) = 4πr² ≈ ' + labFmt(area);
+      } else if (m === 'sand') {
+        if (t < 0.05) text = '① 구 모양 그릇에 모래를 가득 채웁니다.';
+        else if (t < 0.95) text = '② 채운 모래를 구에 꼭 맞게 들어가는 원기둥 모양 그릇(높이 = 지름)에 붓습니다.';
+        else text = '③ 원기둥 그릇의 3분의 2만큼 찼어요. 구의 부피는 원기둥 부피의 2/3입니다.';
+        formula = 'V = 2/3 × (πr² × 2r) = 2/3 × 2πr³ = 4/3πr³ ≈ ' + labFmt(vol);
+      } else if (m === 'cylcone') {
+        text = '원기둥에서 원뿔 2개(꼭짓점이 중심에서 만나고 밑면이 원기둥 위·아래 면인 원뿔)를 빼면 남는 부분의 부피가 구의 부피와 같습니다. 어느 높이에서 잘라도 단면 넓이가 같기 때문이에요.';
+        formula = 'V = 2πr³ − 2/3πr³ = 4/3πr³ ≈ ' + labFmt(vol);
+      } else if (m === 'cavalieri') {
+        var hVal = labHfrac * r;
+        var aS = Math.PI * (r * r - hVal * hVal), aC = Math.PI * r * r, aK = Math.PI * hVal * hVal;
+        text = '높이 h에서 자른 단면을 비교해 보세요. 슬라이더를 움직이면 세 단면의 크기가 함께 변합니다. 어느 높이에서나 구 단면 = 원기둥 단면 − 원뿔 단면이므로, 부피도 똑같이 구 = 원기둥 − 원뿔이 됩니다.';
+        formula = 'h = ' + labFmt(hVal) + ' · 구 단면 π(r²−h²) ≈ ' + labFmt(aS) + ' = πr² ≈ ' + labFmt(aC) + ' − πh² ≈ ' + labFmt(aK);
+      } else if (m === 'disks') {
+        text = '구를 가로로 얇은 원판 ' + labN + '개로 자른 뒤 원판을 쌓아 보세요. 원판을 얇게(개수를 많게) 자를수록 쌓은 모양이 구에 가까워지고, 원판 부피의 합은 4/3πr³에 가까워집니다. 슬라이더로 개수를 바꿔 보세요.';
+        formula = 'V ≈ Σ π(r²−h²) × (두께) → 4/3πr³ ≈ ' + labFmt(vol);
+      } else if (m === 'pyramids') {
+        text = '구 겉면을 잘게 나누고, 각 조각과 구의 중심을 이으면 작은 뿔이 됩니다. 작은 뿔 하나의 부피는 1/3 × (조각 넓이) × r이고, 모든 뿔을 합치면 1/3 × (겉넓이) × r이 됩니다.';
+        formula = 'V = 1/3 × S × r = 1/3 × 4πr² × r = 4/3πr³ ≈ ' + labFmt(vol) + ' (원기둥 부피 ' + labFmt(cylVol) + '의 2/3)';
+      }
+      labSetText('p3SphereLabText', text);
+      labSetText('p3SphereLabFormula', formula);
+    }
+    function drawSphereLab() {
+      if (!sphereBoxEl || sphereBoxEl.hidden) return;
+      if (!labSetup()) return;
+      var c = labCtx, th = theme();
+      c.clearRect(0, 0, LAB_W, LAB_H);
+      if (labMethod === 'pieces') labDrawPieces(c, th, labT);
+      else if (labMethod === 'cyl') labDrawCyl(c, th, labT);
+      else if (labMethod === 'bands') labDrawBands(c, th, labT);
+      else if (labMethod === 'peel') labDrawPeel(c, th, labT);
+      else if (labMethod === 'sand') labDrawSand(c, th, labT);
+      else if (labMethod === 'cylcone') labDrawCylCone(c, th, labT);
+      else if (labMethod === 'cavalieri') labDrawCavalieri(c, th);
+      else if (labMethod === 'disks') labDrawDisks(c, th, labT);
+      else if (labMethod === 'pyramids') labDrawPyramids(c, th, labT);
+      labCaption();
+    }
+    function labSyncControls() {
+      var extraRow = document.getElementById('p3LabExtraRow');
+      var playRow = document.getElementById('p3LabPlayRow');
+      var extra = document.getElementById('p3LabExtra');
+      var extraLabel = document.getElementById('p3LabExtraLabel');
+      var extraVal = document.getElementById('p3LabExtraVal');
+      if (!extraRow) return;
+      if (labMethod === 'cavalieri') {
+        playRow.hidden = true;
+        extraRow.hidden = false;
+        extra.min = 0; extra.max = 100; extra.value = String(Math.round((labHfrac + 1) * 50));
+        extraLabel.textContent = '단면 높이 h';
+        if (extraVal) extraVal.textContent = 'h = ' + labFmt(labHfrac * SPHERE_R);
+      } else if (labMethod === 'disks') {
+        playRow.hidden = false;
+        extraRow.hidden = false;
+        extra.min = 0; extra.max = 100; extra.value = String(Math.round((labN - 4) / 36 * 100));
+        extraLabel.textContent = '원판 개수';
+        if (extraVal) extraVal.textContent = labN + '개';
+      } else {
+        playRow.hidden = false;
+        extraRow.hidden = true;
+      }
+      var tSlider = document.getElementById('p3LabT');
+      if (tSlider) tSlider.value = String(Math.round(labT * 100));
+    }
+    function labStop() {
+      labPlaying = false;
+      if (labRaf) cancelAnimationFrame(labRaf);
+      labRaf = 0;
+      var b = document.getElementById('p3LabPlay');
+      if (b) b.textContent = '▶ 재생';
+    }
+    function labPlayStep(now) {
+      if (!labPlaying) return;
+      if (!labLast) labLast = now;
+      var dt = Math.min(100, now - labLast);
+      labLast = now;
+      labT = Math.min(1, labT + dt / 2600);
+      var tSlider = document.getElementById('p3LabT');
+      if (tSlider) tSlider.value = String(Math.round(labT * 100));
+      drawSphereLab();
+      if (labT >= 1) { labStop(); return; }
+      labRaf = requestAnimationFrame(labPlayStep);
     }
 
     function syncNetUI() {
@@ -7762,7 +8635,22 @@
       netTarget = 0; netT = 0; netAnimating = false;
       syncNetUI();
     }
+    // 전개도를 펼칠 때 펼친 면이 화면 정면을 향하도록 시점을 맞춘다.
+    // 뿌리 면의 법선이 카메라를 향하는 회전각을 구한다 (밑면처럼 아래를 향한
+    // 면은 뒤집어 위에서 보도록 한다). 이렇게 해야 부채꼴·직사각형 전개도가
+    // 비스듬한 평면에 눕지 않고 교과서 그림처럼 정면으로 보인다.
+    function netViewAngles() {
+      if (!netTreeCache) netTreeCache = buildNetTree(solid, pathSpine());
+      var n = solid.N[netTreeCache.root];
+      var d = [n[0], n[1], n[2]];
+      if (d[1] < 0) d = [-d[0], -d[1], -d[2]];
+      var Y = Math.atan2(-d[0], d[2]);
+      var z1 = -d[0] * Math.sin(Y) + d[2] * Math.cos(Y);
+      var X = Math.atan2(d[1], z1);
+      return [X, Y];
+    }
     function toggleNet() {
+      if (DEFS[cur].noNet) return; // 구는 전개도가 없다
       var opening = netTarget === 0;
       // 최단거리가 선택된 상태에서는 전개도를 펼쳐도 찍은 점과 최단 경로를 유지한다.
       // (전개는 경로가 지나는 면들을 기준으로 펼쳐져, 펼친 상태에서 경로가 직선으로 보인다.)
@@ -7775,6 +8663,10 @@
       }
       netTarget = opening ? 1 : 0;
       syncNetUI();
+      if (opening) {
+        var va = netViewAngles();
+        flyTo(va[0], nearestAngle(rotY, va[1]));
+      }
       if (reducedMotion) { netT = netTarget; netAnimating = false; render(); return; }
       netAnimFrom = netT;
       netAnimStart = performance.now();
@@ -7836,6 +8728,7 @@
       cutResultEl = document.getElementById('p3CutResult');
       stackBoxEl = document.getElementById('p3StackBox');
       revBoxEl = document.getElementById('p3RevBox');
+      sphereBoxEl = document.getElementById('p3SphereBox');
       viewsEl = document.getElementById('p3Views');
       stackCountEl = document.getElementById('p3StackCount');
       revResultEl = document.getElementById('p3RevResult');
@@ -7953,6 +8846,50 @@
       });
       // 면 분리 · 투명도 · 회전 속도 슬라이더
       document.getElementById('p3Explode').addEventListener('input', function () { explodeT = this.value / 100; render(); });
+      // 구 반지름: 바꾸면 그 반지름의 구를 다시 만들어 계산값과 함께 보여준다
+      document.getElementById('p3SphereR').addEventListener('input', function () {
+        SPHERE_R = parseFloat(this.value);
+        delete builtCache[cur];
+        solid = getSolid(cur);
+        netCache = null; netTreeCache = null;
+        updateSphereInfo();
+        render();
+      });
+      // 구 직관 활동: 방법 고르기 · 재생 · 진행 슬라이더 · 조절 슬라이더
+      Array.prototype.forEach.call(document.querySelectorAll('#p3SphereBox [data-lab]'), function (btn) {
+        btn.addEventListener('click', function () {
+          labMethod = btn.getAttribute('data-lab');
+          labT = 0; labStop();
+          Array.prototype.forEach.call(document.querySelectorAll('#p3SphereBox [data-lab]'), function (b) {
+            var on = b === btn;
+            b.classList.toggle('active', on);
+            b.setAttribute('aria-pressed', String(on));
+          });
+          labSyncControls();
+          drawSphereLab();
+        });
+      });
+      document.getElementById('p3LabPlay').addEventListener('click', function () {
+        if (labPlaying) { labStop(); return; }
+        if (labT >= 1) labT = 0;
+        labPlaying = true; labLast = 0;
+        this.textContent = '❚❚ 멈춤';
+        labRaf = requestAnimationFrame(labPlayStep);
+      });
+      document.getElementById('p3LabReset').addEventListener('click', function () {
+        labT = 0; labStop(); labSyncControls(); drawSphereLab();
+      });
+      document.getElementById('p3LabT').addEventListener('input', function () {
+        labT = this.value / 100; labStop(); drawSphereLab();
+      });
+      document.getElementById('p3LabExtra').addEventListener('input', function () {
+        var v = parseFloat(this.value);
+        if (labMethod === 'cavalieri') labHfrac = v / 50 - 1;
+        else if (labMethod === 'disks') labN = 4 + Math.round(v / 100 * 36);
+        labSyncControls();
+        drawSphereLab();
+      });
+      labSyncControls();
       document.getElementById('p3Opacity').addEventListener('input', function () { faceAlpha = this.value / 100; render(); });
       document.getElementById('p3SpinSpeed').addEventListener('input', function () { spinSpeed = this.value * 0.0011; });
       // 두 번 누르면 등각 시점으로 초기화
@@ -8174,9 +9111,14 @@
           return;
         }
         // 어떤 도구 모드에서도 드래그는 회전. 점 찍기는 작은 움직임(탭)으로만 판정한다.
+        // 위아래 회전(rotX)에 제한을 두지 않아 전개도를 펼친 상태에서도 한 바퀴(360°) 돌릴 수 있다.
+        // 각도는 2π 주기로 접어 두어 시점 고정·초기화 애니메이션이 멀리 돌아가지 않게 한다.
         rotY += dx * 0.008;
         rotX += dy * 0.008;
-        rotX = Math.max(-Math.PI / 2 + 0.05, Math.min(Math.PI / 2 - 0.05, rotX));
+        if (rotX > Math.PI) rotX -= Math.PI * 2;
+        if (rotX < -Math.PI) rotX += Math.PI * 2;
+        if (rotY > Math.PI) rotY -= Math.PI * 2;
+        if (rotY < -Math.PI) rotY += Math.PI * 2;
         scheduleRender();
       });
       function endPointer(e) {
