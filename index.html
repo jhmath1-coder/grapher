@@ -6098,7 +6098,8 @@
     }
     // 곡면 입체(원기둥·원뿔대·구) 공통 마무리: coneSolid과 같은 방식(중심 이동→정규화→
     // 1.21배)으로 크기를 맞추고 면·간선·인접 정보를 계산한다. opts.absScale이 있으면
-    // 그 배율을 그대로 쓰고, opts.bottom이면 밑면을 기둥 밑면 높이에 정확히 맞춘다(구).
+    // 그 배율을 그대로 쓰고, opts.bottom이면 뿔처럼 들어 올리지 않고 밑면을 기둥 밑면
+    // 높이에 정확히 맞춘다(구·원기둥).
     function finishCurvedSolid(raw, Fin, skipKeys, extra, opts) {
       opts = opts || {};
       var cen = [0, 0, 0];
@@ -6182,7 +6183,9 @@
       var skip = {};
       for (k = 0; k < N; k++) skip[k + '_' + (N + k)] = 1;
       // 원기둥은 처음 보일 때 화면을 가득 채우지 않도록 0.65배로 줄여 한눈에 들어오게 한다.
-      return finishCurvedSolid(raw, F, skip, { netKind: 'cylinder', topFace: N, botFace: N + 1, seg: N }, { scale: 0.65 });
+      // 기둥이므로 뿔처럼 들어 올리지 않고, 각기둥과 같은 높이에서 시작하도록
+      // 밑면을 기둥 밑면 높이에 정확히 맞춘다(bottom: true).
+      return finishCurvedSolid(raw, F, skip, { netKind: 'cylinder', topFace: N, botFace: N + 1, seg: N }, { scale: 0.65, bottom: true });
     }
     function frustumSolid() {
       // 원뿔대(절두체): 아랫면 반지름 1, 윗면 반지름 0.5, 높이 1.7. 옆면은 사다리꼴 띠 48개,
