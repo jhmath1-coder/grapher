@@ -6203,7 +6203,10 @@
       F.push(bot);
       var skip = {};
       for (k = 0; k < N; k++) skip[k + '_' + (N + k)] = 1;
-      return finishCurvedSolid(raw, F, skip, { netKind: 'frustum', topFace: N, botFace: N + 1, seg: N });
+      // 원뿔대는 그대로 두면 아랫면 지름이 1.84로 원뿔(1.37)·각뿔대(1.68)보다
+      // 훨씬 크게 나와 화면을 가득 채우므로 0.75배로 줄인다. 줄인 뒤 아랫면
+      // 지름은 원뿔과 같아지고(1.38), 밑면 높이도 뿔들과 같은 규칙(groundToPrismBase)으로 맞춘다.
+      return finishCurvedSolid(raw, F, skip, { netKind: 'frustum', topFace: N, botFace: N + 1, seg: N }, { scale: 0.75 });
     }
     function pyrFrustumStats(nn) {
       var names = { 3: '삼각형', 4: '사각형', 5: '오각형', 6: '육각형', 7: '칠각형', 8: '팔각형' };
@@ -6303,12 +6306,12 @@
       { group: '각뿔', name: '육각뿔', build: function () { return pyramidSolid(6); } },
       { group: '각뿔', name: '원뿔', build: function () { return coneSolid(); }, counts: { F: 2, V: 1, E: 0 }, stats: '면 2개 · 꼭짓점 1개 · 모서리 0개 · 밑면은 원 1개 · 옆면은 곡면 1개' },
       { group: '각뿔', name: '원뿔대', build: function () { return frustumSolid(); }, counts: { F: 3, V: 0, E: 2 }, stats: '면 3개 · 꼭짓점 0개 · 모서리 2개 · 윗면·아랫면은 원 2개 · 옆면은 곡면 1개' },
-      { group: '각뿔대', name: '삼각뿔대', build: function () { return pyrFrustumSolid(3); }, stats: pyrFrustumStats(3) },
-      { group: '각뿔대', name: '사각뿔대', build: function () { return pyrFrustumSolid(4); }, stats: pyrFrustumStats(4) },
-      { group: '각뿔대', name: '오각뿔대', build: function () { return pyrFrustumSolid(5); }, stats: pyrFrustumStats(5) },
-      { group: '각뿔대', name: '육각뿔대', build: function () { return pyrFrustumSolid(6); }, stats: pyrFrustumStats(6) },
-      { group: '각뿔대', name: '칠각뿔대', build: function () { return pyrFrustumSolid(7); }, stats: pyrFrustumStats(7) },
-      { group: '각뿔대', name: '팔각뿔대', build: function () { return pyrFrustumSolid(8); }, stats: pyrFrustumStats(8) },
+      { group: '각뿔', name: '삼각뿔대', build: function () { return pyrFrustumSolid(3); }, stats: pyrFrustumStats(3) },
+      { group: '각뿔', name: '사각뿔대', build: function () { return pyrFrustumSolid(4); }, stats: pyrFrustumStats(4) },
+      { group: '각뿔', name: '오각뿔대', build: function () { return pyrFrustumSolid(5); }, stats: pyrFrustumStats(5) },
+      { group: '각뿔', name: '육각뿔대', build: function () { return pyrFrustumSolid(6); }, stats: pyrFrustumStats(6) },
+      { group: '각뿔', name: '칠각뿔대', build: function () { return pyrFrustumSolid(7); }, stats: pyrFrustumStats(7) },
+      { group: '각뿔', name: '팔각뿔대', build: function () { return pyrFrustumSolid(8); }, stats: pyrFrustumStats(8) },
       { group: '구', name: '구', build: function () { return sphereSolid(SPHERE_R); }, counts: { F: 1, V: 0, E: 0 }, stats: '면 1개(곡면) · 꼭짓점 0개 · 모서리 0개 · 반지름 r로 겉넓이·부피가 정해집니다', noNet: true, sphere: true },
       { group: '쌍각뿔', name: '삼각 쌍뿔', build: function () { return bipyramidSolid(3); } },
       { group: '쌍각뿔', name: '오각 쌍뿔', build: function () { return bipyramidSolid(5); } }
@@ -6843,9 +6846,11 @@
       }
       function facing(fi) {
         // 전개도는 종이 양면에서 읽는 그림이라, 법선이 카메라를 향하든 반대든
-        // 평면이 정면을 향하면 이름표를 붙인다 (옆에서 볼 때만 숨긴다)
+        // 평면이 정면을 향하면 이름표를 붙인다. 다만 옆으로 60° 넘게 기울어
+        // 종이가 옆모습이 되면 모든 면 중심이 한 선 위에 겹쳐 이름표가
+        // 서로 포개지므로, 그때는 이름표를 숨긴다 (|법선 z| > 0.45).
         var rn = rotateDir(tRotApply(S[fi], solid.N[fi]));
-        return Math.abs(rn[2]) > 0.02;
+        return Math.abs(rn[2]) > 0.45;
       }
       if (kind === 'cone') {
         labels.push({ fi: solid.F.length - 1, text: '밑면' });
@@ -6967,6 +6972,24 @@
           });
         });
         curFit = Math.max(0.05, Math.min(1, 0.84 * Math.min((cssW / 2) / maxDx, (cssH / 2) / maxDy)));
+        // 펼친 그림을 기울여 돌리면 원근 때문에 가까운 쪽이 커지고 먼 쪽이
+        // 작아져, 꼭짓점 평균 중심이 화면 중심과 어긋나 그림이 한쪽으로
+        // 밀리거나 끝이 잘린다. 축소한 뒤 투영된 그림의 실제 바깥 상자
+        // 중심을 재서 화면 가운데로 다시 맞춘다 (한 번만 보정해도 충분하다).
+        var minSx = Infinity, maxSx = -Infinity, minSy = Infinity, maxSy = -Infinity;
+        solid.F.forEach(function (f, fi) {
+          f.forEach(function (idx) {
+            var sp = project(rotatePoint(tApply(S[fi], solid.V[idx])), {});
+            if (sp.x < minSx) minSx = sp.x; if (sp.x > maxSx) maxSx = sp.x;
+            if (sp.y < minSy) minSy = sp.y; if (sp.y > maxSy) maxSy = sp.y;
+          });
+        });
+        var kRef = CAM_D / Math.max(1, CAM_D - ro[2]);
+        var sPx = Math.min(cssW, cssH) * 0.40 * zoom * curFit * kRef;
+        if (sPx > 0 && isFinite(minSx)) {
+          curOffX += ((minSx + maxSx) / 2 - cssW / 2) / sPx;
+          curOffY -= ((minSy + maxSy) / 2 - cssH / 2) / sPx;
+        }
       }
       solid.F.forEach(function (f, fi) {
         var offv = (!cutting && explodeT > 0) ? vscale(solid.N[fi], explodeT * 0.38) : null;
@@ -9373,6 +9396,10 @@
         renderRafId = requestAnimationFrame(function () { renderRafId = 0; render(); });
       }
       canvas.addEventListener('pointerdown', function (e) {
+        // 시점 이동 애니메이션(flyTo) 도중에 드래그를 시작하면, 애니메이션이
+        // 매 프레임 회전각을 덮어써 드래그가 튕겨 나가므로(전개도를 연 직후
+        // 돌릴 때 특히 심하다) 드래그가 이기게 애니메이션을 끊는다.
+        camAnim = null;
         canvas.setPointerCapture(e.pointerId);
         pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
         if (pointers.size === 1) { downX = e.clientX; downY = e.clientY; }
