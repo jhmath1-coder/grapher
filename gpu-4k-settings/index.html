@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>4K AAA 게임 설정 가이드 100개 — 발매일순 · 메타크리틱 · 9070 XT 70–80fps / RTX 5080 90fps+</title>
+<title>4K AAA 게임 설정 가이드 100개 — 발매일순 · 메타크리틱 · 9070 XT / 5080 / F1 7640HS</title>
 <meta name="description" content="Ryzen 5 5600+RX 9070 XT(4K 70-80fps)와 Ryzen 7 5700X3D+RTX 5080(4K 90fps+) 두 본체용 AAA 게임별 최적 설정. 발매일 내림차순(최신작 맨 위), 게임별 발매일·메타크리틱 점수 포함, 2026년 11월까지 출시작 위주.">
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:#0b0f14;color:#e8edf2;line-height:1.6}
@@ -31,6 +31,8 @@ button.on{background:#e11d48;border-color:#e11d48;color:#fff;font-weight:700}
 .mc-hi{background:#14532d;color:#bbf7d0}.mc-good{background:#1e3a5f;color:#bfdbfe}.mc-mid{background:#713f12;color:#fde68a}.mc-low{background:#7f1d1d;color:#fecaca}.mc-na{background:#1f2937;color:#9ca3af}
 .spec{border:1px solid #243244;border-radius:10px;padding:12px;margin-top:10px;background:#0f151d}
 .spec-b{border-color:#1d4ed8}
+.spec-c{border-color:#166534}
+.badge-c{background:#14532d;color:#bbf7d0}
 .spec-title{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px}
 .badge-a,.badge-b{font-size:12px;font-weight:800;padding:3px 8px;border-radius:999px}.badge-a{background:#7f1d1d;color:#fecaca}.badge-b{background:#1e3a8a;color:#bfdbfe}
 .grade{font-size:12px;color:#c6d2de}.fps{font-size:15px;margin:4px 0 8px}.fps b{font-size:19px;color:#fff}.fps-note{font-size:12px;color:#9fb0c0}
@@ -42,21 +44,26 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
 </style></head><body>
 <header>
 <h1>4K AAA 게임 설정 가이드<br>9070 XT는 70–80fps, 5080은 90fps+</h1>
-<p class="sub">발매일 내림차순(최신작 맨 위) · 게임 이름 옆에 발매일·메타크리틱 점수 표시 · 2026년 11월까지 출시된 AAA 위주 · 100개 게임 · 같은 게임, 두 본체 설정을 나란히 비교합니다.</p>
-<p><span class="build">빌드 2026-11-11 09:00 KST · v3 · 발매일순 100개</span></p>
+<p class="sub">발매일 내림차순(최신작 맨 위) · 게임 이름 옆에 발매일·메타크리틱 점수 표시 · 2026년 11월까지 출시된 AAA 위주 · 100개 게임 · 같은 게임, 세 본체(A 9070 XT 4K / B 5080 4K / C F1 7640HS 1080p) 설정을 나란히 비교합니다.</p>
+<p><span class="build">빌드 2026-11-11 10:14 KST · v4 · 발매일순 + F1 7640HS</span></p>
 </header>
 <main>
+<section class="panel"><h2>🆕 v4 업데이트 — F1(7640HS) 추가 (2026-11-11)</h2>
+<ul><li><b>C본체가 추가됐습니다:</b> FIREBAT F1(Ryzen 5 7640HS + Radeon 780M 내장그래픽 + 24GB)의 예상 프레임입니다. <b>1080p 기준</b>으로 적었고, 4K 수치는 아닙니다.</li>
+<li><b>솔직한 결론부터:</b> 780M은 1080p Low 기준 사이버펑크 약 40fps, 발더스 게이트 3 약 40fps, 1080p High 평균 약 26fps 수준입니다. <b>4K는 10–20fps라 AAA는 사실상 불가</b>입니다. 4K 모니터에서는 해상도를 1080p로 낮춰서 플레이하세요.</li>
+<li><b>어느 게임이 되나:</b> 가벼운 게임(T1)은 1080p 60–90, 보통(T2)은 40–55, 무거운 게임(T3)은 30–45, 극한 게임(T4)은 720p까지 내려야 합니다. 60fps 캡 게임(엘든 링·철권 8 등)은 1080p로 60 고정이 됩니다.</li>
+<li><b>주의:</b> 7640HS 일반판은 780M(12CU)입니다. PRO 7640HS는 760M(8CU)이라 더 느리니 혼동하지 마세요. 내장그래픽은 램을 나눠 쓰니, 가능하면 BIOS에서 UMA 버퍼를 4GB 이상으로 잡고 램이 듀얼 채널인지 확인하세요. F1의 본업은 테라박스·LDPlayer라는 점도 그대로입니다.</li></ul></section>
 <section class="panel"><h2>🆕 v3 업데이트 (2026-11-11)</h2>
 <ul><li><b>정렬 변경:</b> 인기순 → <b>발매일 내림차순</b>으로 바꿨습니다. 가장 위에 있는 게 최신작입니다. 맨 위 버튼으로 인기순 보기로도 바꿀 수 있습니다.</li>
 <li><b>발매일·메타크리틱 추가:</b> 게임 이름 바로 아래에 <b>PC판 발매일</b>과 <b>메타크리틱 점수(2026-11-11 기준 스냅샷)</b>를 달았습니다. 초록 90+ · 파랑 75–89 · 주황 60–74 · 빨강 60 미만입니다.</li>
 <li><b>최근 확인:</b> 11월 신작 중 PC로 나온 AAA급 싱글 신작은 없어 목록은 100개 그대로입니다. GTA VI는 11월 19일 콘솔 전용 출시라 PC 가이드에서 제외했고, 월드 오브 워크래프트: 포에버는 MMO라 제외했습니다. 블랙 옵스 7은 메타크리틱 PC 점수가 65까지 떨어져 있으니 참고하세요.</li></ul></section>
-<section class="panel"><h2>두 본체, 무엇이 다른가</h2>
-<table><tr><th>구분</th><th>A · 9070 XT 본체</th><th>B · RTX 5080 본체</th></tr>
-<tr><td>사양</td><td>Ryzen 5 5600 + DDR4 16GB + RX 9070 XT 16GB</td><td>Ryzen 7 5700X3D + DDR4 32GB + RTX 5080 16GB</td></tr>
-<tr><td>4K 목표</td><td><b>70–80fps</b> (실제 렌더 기준)</td><td><b>90fps+</b> (아래 ‘표시 fps’ 주의 참조)</td></tr>
-<tr><td>업스케일</td><td>FSR 4 (Quality / Balanced)</td><td>DLSS 4 (Quality / Balanced)</td></tr>
-<tr><td>프레임 생성</td><td>FSR FG · AFMF 2 (싱글 위주)</td><td>DLSS FG 2x · MFG 3–4x (싱글 위주)</td></tr>
-<tr><td>강점 / 약점</td><td>래스터 강함, RT·패스 트레이싱 약함. 16GB RAM이라 백그라운드 정리가 프레임보다 먼저일 때가 있다.</td><td>RT·패스 트레이싱 강함, 5700X3D + 32GB라 도시·군중 구간이 유리하다. 그래도 네이티브 4K 풀 RT 90+는 안 된다.</td></tr></table>
+<section class="panel"><h2>세 본체, 무엇이 다른가</h2>
+<table><tr><th>구분</th><th>A · 9070 XT 본체</th><th>B · RTX 5080 본체</th><th>C · F1 7640HS</th></tr>
+<tr><td>사양</td><td>Ryzen 5 5600 + DDR4 16GB + RX 9070 XT 16GB</td><td>Ryzen 7 5700X3D + DDR4 32GB + RTX 5080 16GB</td><td>Ryzen 5 7640HS + DDR5 24GB + Radeon 780M 내장 (12CU)</td></tr>
+<tr><td>목표</td><td><b>4K 70–80fps</b> (실제 렌더 기준)</td><td><b>4K 90fps+</b> (아래 ‘표시 fps’ 주의 참조)</td><td><b>1080p 30–60fps</b> (4K는 불가)</td></tr>
+<tr><td>업스케일</td><td>FSR 4 (Quality / Balanced)</td><td>DLSS 4 (Quality / Balanced)</td><td>FSR 4 (Quality / Balanced / Performance)</td></tr>
+<tr><td>프레임 생성</td><td>FSR FG · AFMF 2 (싱글 위주)</td><td>DLSS FG 2x · MFG 3–4x (싱글 위주)</td><td>AFMF 2만 가능 (DLSS 없음, RT 사실상 불가)</td></tr>
+<tr><td>강점 / 약점</td><td>래스터 강함, RT·패스 트레이싱 약함. 16GB RAM이라 백그라운드 정리가 프레임보다 먼저일 때가 있다.</td><td>RT·패스 트레이싱 강함, 5700X3D + 32GB라 도시·군중 구간이 유리하다. 그래도 네이티브 4K 풀 RT 90+는 안 된다.</td><td>미니PC라 조용하고 상시 가동에 맞다. 게임은 보너스 — 780M은 GTX 1650급이라 최신 AAA 4K는 안 되고, 무거운 게임은 720p까지 내려야 한다. 본업은 테라박스·LDPlayer.</td></tr></table>
 <p><b>공통 원칙:</b> 텍스처는 웬만하면 최고로 두고, 그림자·볼류메트릭·구름·RT부터 내린다. 텍스처는 VRAM만 버티면 프레임이 거의 안 떨어지고, 그림자·RT는 내리는 즉시 프레임이 오른다.</p></section>
 
 <section class="panel warn"><h2>⚠ ‘90fps’의 함정 — 표시 fps와 실제 fps를 구분하세요</h2>
@@ -68,7 +75,7 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
 <div class="controls">
 <input id="q" type="search" placeholder="게임 이름으로 검색 (예: 사이버펑크, 와일즈, 스타필드)">
 <div class="btns" id="specBtns">
-<button data-spec="all" class="on">둘 다 보기</button><button data-spec="a">A · 9070 XT만</button><button data-spec="b">B · 5080만</button>
+<button data-spec="all" class="on">세 본체 보기</button><button data-spec="a">A · 9070 XT만</button><button data-spec="b">B · 5080만</button><button data-spec="c">C · F1만</button>
 </div>
 <div class="btns" id="gradeBtns" style="margin-top:8px">
 <button data-grade="all" class="on">전체 등급</button><button data-grade="easy">🟢 여유만</button><button data-grade="ok">🔵 달성 포함</button><button data-grade="cond">🟡 조건부만</button><button data-grade="fg">🟠 FG 필요만</button>
@@ -81,7 +88,7 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
 
 <div class="grid" id="grid">
 
-<article class="card" data-name="팬텀 블레이드 제로 Phantom Blade Zero" data-date="2026-10-29" data-pop="7" data-ga="cond" data-gb="cond">
+<article class="card" data-name="팬텀 블레이드 제로 Phantom Blade Zero" data-date="2026-10-29" data-pop="7" data-ga="cond" data-gb="cond" data-gc="cond">
   <div class="card-head">
     <div class="rank">1</div>
     <div class="title">
@@ -116,9 +123,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">5080 수치도 추정치다. FG 끄고 실제 90+를 노리려면 DLSS Balanced + RT 낮음이 필요하다.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="기어스 오브 워: E-데이 Gears of War: E-Day" data-date="2026-10-06" data-pop="37" data-ga="cond" data-gb="fg">
+<article class="card" data-name="기어스 오브 워: E-데이 Gears of War: E-Day" data-date="2026-10-06" data-pop="37" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">2</div>
     <div class="title">
@@ -153,9 +173,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + FG 2x로 표시 90+를 노리되 실제 40–50대 유지를 먼저 확인할 것. 2026년작이라 자료가 적다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 720p 타협 필요</span></div>
+    <div class="fps">예상 <b>1080p 25–35</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>720p–1080p Low (최저 옵션)</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Performance</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT·PT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 켬</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>최고 프리셋 금지, 전부 Low</dd></div>
+      <div><dt>유지할 것</dt><dd>해상도 1080p 유지가 한계</dd></div>
+    </dl>
+    <p class="note">이 게임은 F1으로 즐기기 어렵다. 720p + FSR Performance까지 내려야 30을 넘긴다. 4K는 10fps 안팎으로 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="어쌔신 크리드 블랙 플래그 리싱크드 Assassin&#x27;s Creed Black Flag Resynced" data-date="2026-07-09" data-pop="82" data-ga="cond" data-gb="fg">
+<article class="card" data-name="어쌔신 크리드 블랙 플래그 리싱크드 Assassin&#x27;s Creed Black Flag Resynced" data-date="2026-07-09" data-pop="82" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">3</div>
     <div class="title">
@@ -190,9 +223,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + FG 2x로 표시 90+ 추정치. FG 끄면 실제 60–70fps로 본다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="포르자 호라이즌 6 Forza Horizon 6" data-date="2026-05-19" data-pop="36" data-ga="easy" data-gb="easy">
+<article class="card" data-name="포르자 호라이즌 6 Forza Horizon 6" data-date="2026-05-19" data-pop="36" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">4</div>
     <div class="title">
@@ -227,9 +273,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">네이티브에 가깝게 돌려도 90을 크게 넘긴다. 레이싱은 FG를 끄는 게 조작감이 낫다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="크림슨 데저트 Crimson Desert" data-date="2026-03-19" data-pop="26" data-ga="cond" data-gb="fg">
+<article class="card" data-name="크림슨 데저트 Crimson Desert" data-date="2026-03-19" data-pop="26" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">5</div>
     <div class="title">
@@ -264,9 +323,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + FG 2x로 표시 90+를 노리되, 실제 렌더 50대 유지를 먼저 확인할 것. 자료가 아직 적어 추정치다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 720p 타협 필요</span></div>
+    <div class="fps">예상 <b>1080p 25–35</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>720p–1080p Low (최저 옵션)</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Performance</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT·PT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 켬</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>최고 프리셋 금지, 전부 Low</dd></div>
+      <div><dt>유지할 것</dt><dd>해상도 1080p 유지가 한계</dd></div>
+    </dl>
+    <p class="note">이 게임은 F1으로 즐기기 어렵다. 720p + FSR Performance까지 내려야 30을 넘긴다. 4K는 10fps 안팎으로 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="레지던트 이블 레퀴엠 Resident Evil Requiem" data-date="2026-02-27" data-pop="13" data-ga="ok" data-gb="easy">
+<article class="card" data-name="레지던트 이블 레퀴엠 Resident Evil Requiem" data-date="2026-02-27" data-pop="13" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">6</div>
     <div class="title">
@@ -301,9 +373,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">5080 수치도 출시 초기 추정치다. 레이트레이싱을 최고로 올리면 FG 2x를 고려할 것.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="콜 오브 듀티: 블랙 옵스 7 Call of Duty: Black Ops 7" data-date="2025-11-14" data-pop="35" data-ga="ok" data-gb="easy">
+<article class="card" data-name="콜 오브 듀티: 블랙 옵스 7 Call of Duty: Black Ops 7" data-date="2025-11-14" data-pop="35" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">7</div>
     <div class="title">
@@ -338,9 +423,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">멀티 FG 금지. DLSS Quality만으로 90+ 가능. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="아크 레이더스 ARC Raiders" data-date="2025-10-30" data-pop="34" data-ga="cond" data-gb="fg">
+<article class="card" data-name="아크 레이더스 ARC Raiders" data-date="2025-10-30" data-pop="34" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">8</div>
     <div class="title">
@@ -375,9 +473,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">멀티 FG 금지 원칙. DLSS Quality + High로 실제 80–90대를 노리고, FG는 싱글 연습 모드에서만 고려할 것. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="배틀필드 6 Battlefield 6" data-date="2025-10-10" data-pop="10" data-ga="ok" data-gb="easy">
+<article class="card" data-name="배틀필드 6 Battlefield 6" data-date="2025-10-10" data-pop="10" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">9</div>
     <div class="title">
@@ -412,9 +523,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">Overkill 프리셋은 5080으로도 4K에서 크게 떨어진다. High 프리셋이 90+의 정석. Reflex 켜기는 필수.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="다잉 라이트: 더 비스트 Dying Light: The Beast" data-date="2025-09-18" data-pop="32" data-ga="cond" data-gb="fg">
+<article class="card" data-name="다잉 라이트: 더 비스트 Dying Light: The Beast" data-date="2025-09-18" data-pop="32" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">10</div>
     <div class="title">
@@ -449,9 +573,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + FG 2x로 표시 90+. FG 끄면 실제 60–70fps. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="보더랜드 4 Borderlands 4" data-date="2025-09-12" data-pop="33" data-ga="cond" data-gb="fg">
+<article class="card" data-name="보더랜드 4 Borderlands 4" data-date="2025-09-12" data-pop="33" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">11</div>
     <div class="title">
@@ -486,9 +623,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">FG 2x로 표시 90+. 다만 슈터라 FG의 지연이 거슬리면 DLSS Balanced + FG 끔으로 실제 80대를 노릴 것. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="스텔라 블레이드 Stellar Blade" data-date="2025-06-11" data-pop="38" data-ga="ok" data-gb="easy">
+<article class="card" data-name="스텔라 블레이드 Stellar Blade" data-date="2025-06-11" data-pop="38" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">12</div>
     <div class="title">
@@ -523,9 +673,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality만으로 90+ 가능. FG는 필요 없다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="레인보우 식스 시즈 X Tom Clancy&#x27;s Rainbow Six Siege X" data-date="2025-06-10" data-pop="83" data-ga="easy" data-gb="easy">
+<article class="card" data-name="레인보우 식스 시즈 X Tom Clancy&#x27;s Rainbow Six Siege X" data-date="2025-06-10" data-pop="83" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">13</div>
     <div class="title">
@@ -560,9 +723,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">멀티 FG 금지. DLSS Quality + 최고로 120+ 수준. Reflex 켜기는 필수. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="듄: 어웨이크닝 Dune: Awakening" data-date="2025-06-10" data-pop="97" data-ga="cond" data-gb="fg">
+<article class="card" data-name="듄: 어웨이크닝 Dune: Awakening" data-date="2025-06-10" data-pop="97" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">14</div>
     <div class="title">
@@ -597,9 +773,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">FG 2x로 표시 90+. MMO라 FG의 지연보다 서버 환경이 체감에 더 크다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="엘든 링: 나이트레인 Elden Ring Nightreign" data-date="2025-05-30" data-pop="42" data-ga="ok" data-gb="easy">
+<article class="card" data-name="엘든 링: 나이트레인 Elden Ring Nightreign" data-date="2025-05-30" data-pop="42" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">15</div>
     <div class="title">
@@ -634,9 +823,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality로 90+ 가능. 다만 협동 게임이라 프레임보다 연결 안정성이 체감에 더 크다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="F1 25 F1 25" data-date="2025-05-30" data-pop="91" data-ga="easy" data-gb="easy">
+<article class="card" data-name="F1 25 F1 25" data-date="2025-05-30" data-pop="91" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">16</div>
     <div class="title">
@@ -671,9 +873,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + Ultra + RT 중간으로 120+ 수준. FG는 끄는 쪽을 권장. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="둠: 다크 에이지스 DOOM: The Dark Ages" data-date="2025-05-15" data-pop="22" data-ga="ok" data-gb="easy">
+<article class="card" data-name="둠: 다크 에이지스 DOOM: The Dark Ages" data-date="2025-05-15" data-pop="22" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">17</div>
     <div class="title">
@@ -708,9 +923,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">PT 최고 + 표시 90+를 원하면 FG 2x를 켤 것. PT를 낮추면 FG 없이 실제 90+다.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="클레르 옵스퀴르: 익스페디션 33 Clair Obscur: Expedition 33" data-date="2025-04-24" data-pop="18" data-ga="ok" data-gb="easy">
+<article class="card" data-name="클레르 옵스퀴르: 익스페디션 33 Clair Obscur: Expedition 33" data-date="2025-04-24" data-pop="18" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">18</div>
     <div class="title">
@@ -745,9 +973,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">5080 본체에서는 Epic 풀옵션으로도 FG 없이 90+다.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="더 라스트 오브 어스 파트 II 리마스터드 The Last of Us Part II Remastered" data-date="2025-04-03" data-pop="43" data-ga="cond" data-gb="fg">
+<article class="card" data-name="더 라스트 오브 어스 파트 II 리마스터드 The Last of Us Part II Remastered" data-date="2025-04-03" data-pop="43" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">19</div>
     <div class="title">
@@ -782,9 +1023,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">FG 2x로 표시 90+. FG 끄면 실제 60–70fps. 32GB RAM이 끊김 방지에 유리하다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="어쌔신 크리드 섀도우스 Assassin&#x27;s Creed Shadows" data-date="2025-03-20" data-pop="12" data-ga="cond" data-gb="fg">
+<article class="card" data-name="어쌔신 크리드 섀도우스 Assassin&#x27;s Creed Shadows" data-date="2025-03-20" data-pop="12" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">20</div>
     <div class="title">
@@ -819,9 +1073,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">FG 끄면 실제 60–70fps. 싱글 게임이라 FG 2x 체감이 나쁘지 않지만, 실제 렌더 60을 밑돌면 FG를 켜도 끊기는 느낌이 남는다.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="GTA V 인핸스드 Grand Theft Auto V Enhanced" data-date="2025-03-04" data-pop="9" data-ga="easy" data-gb="easy">
+<article class="card" data-name="GTA V 인핸스드 Grand Theft Auto V Enhanced" data-date="2025-03-04" data-pop="9" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">21</div>
     <div class="title">
@@ -856,9 +1123,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">5080 본체에서는 RT를 켜고도 90을 크게 넘긴다.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="몬스터 헌터 와일즈 Monster Hunter Wilds" data-date="2025-02-28" data-pop="6" data-ga="cond" data-gb="ok">
+<article class="card" data-name="몬스터 헌터 와일즈 Monster Hunter Wilds" data-date="2025-02-28" data-pop="6" data-ga="cond" data-gb="ok" data-gc="cond">
   <div class="card-head">
     <div class="rank">22</div>
     <div class="title">
@@ -893,9 +1173,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">패치로 최적화가 개선됐지만 여전히 무거운 편. FG를 켜면 표시 90+는 쉽지만, 타이밍 판정이 있는 게임이라 실제 70–80으로 즐기는 게 낫다.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="킹덤 컴: 딜리버런스 2 Kingdom Come: Deliverance II" data-date="2025-02-04" data-pop="11" data-ga="cond" data-gb="ok">
+<article class="card" data-name="킹덤 컴: 딜리버런스 2 Kingdom Come: Deliverance II" data-date="2025-02-04" data-pop="11" data-ga="cond" data-gb="ok" data-gc="cond">
   <div class="card-head">
     <div class="rank">23</div>
     <div class="title">
@@ -930,9 +1223,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">Experimental까지 켜려면 DLSS Balanced + FG 2x가 필요하다. 일반 Ultra면 FG 없이 90+다.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="마블 스파이더맨 2 Marvel&#x27;s Spider-Man 2" data-date="2025-01-30" data-pop="16" data-ga="ok" data-gb="fg">
+<article class="card" data-name="마블 스파이더맨 2 Marvel&#x27;s Spider-Man 2" data-date="2025-01-30" data-pop="16" data-ga="ok" data-gb="fg" data-gc="ok">
   <div class="card-head">
     <div class="rank">24</div>
     <div class="title">
@@ -967,9 +1273,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">RT를 ‘높음’으로 낮추면 FG 없이 실제 90+도 노려볼 수 있다. RT 최고를 고집할 때만 FG 2x를 켤 것.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="파이널 판타지 VII 리버스 Final Fantasy VII Rebirth" data-date="2025-01-23" data-pop="54" data-ga="cond" data-gb="fg">
+<article class="card" data-name="파이널 판타지 VII 리버스 Final Fantasy VII Rebirth" data-date="2025-01-23" data-pop="54" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">25</div>
     <div class="title">
@@ -1004,9 +1323,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">FG 2x로 표시 90+. FG 끄면 실제 60–70fps. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="인디아나 존스: 그레이트 서클 Indiana Jones and the Great Circle" data-date="2024-12-09" data-pop="30" data-ga="cond" data-gb="fg">
+<article class="card" data-name="인디아나 존스: 그레이트 서클 Indiana Jones and the Great Circle" data-date="2024-12-09" data-pop="30" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">26</div>
     <div class="title">
@@ -1041,9 +1373,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">PT + DLSS Quality만으로는 실제 50대 수준. MFG 3–4x로 표시 90+를 만들되 싱글·탐험 위주로 즐길 것. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 720p 타협 필요</span></div>
+    <div class="fps">예상 <b>1080p 25–35</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>720p–1080p Low (최저 옵션)</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Performance</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT·PT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 켬</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>최고 프리셋 금지, 전부 Low</dd></div>
+      <div><dt>유지할 것</dt><dd>해상도 1080p 유지가 한계</dd></div>
+    </dl>
+    <p class="note">이 게임은 F1으로 즐기기 어렵다. 720p + FSR Performance까지 내려야 30을 넘긴다. 4K는 10fps 안팎으로 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="스토커 2 S.T.A.L.K.E.R. 2: Heart of Chornobyl" data-date="2024-11-20" data-pop="21" data-ga="cond" data-gb="fg">
+<article class="card" data-name="스토커 2 S.T.A.L.K.E.R. 2: Heart of Chornobyl" data-date="2024-11-20" data-pop="21" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">27</div>
     <div class="title">
@@ -1078,9 +1423,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">FG 끄면 실제 60–70fps. FPS 게임이라 FG의 입력 지연이 거슬리면 DLSS Balanced + FG 끔으로 실제 80대를 노릴 것.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="마이크로소프트 플라이트 시뮬레이터 2024 Microsoft Flight Simulator 2024" data-date="2024-11-19" data-pop="96" data-ga="cond" data-gb="fg">
+<article class="card" data-name="마이크로소프트 플라이트 시뮬레이터 2024 Microsoft Flight Simulator 2024" data-date="2024-11-19" data-pop="96" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">28</div>
     <div class="title">
@@ -1115,9 +1473,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">5700X3D가 공항 구간에서 유리하다. FG 2x로 표시 90+를 노리되, 실제 50대 유지를 먼저 확인할 것. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 720p 타협 필요</span></div>
+    <div class="fps">예상 <b>1080p 20–30 (공항·대도시)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>720p–1080p Low (최저 옵션)</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Performance</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT·PT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 켬</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>최고 프리셋 금지, 전부 Low</dd></div>
+      <div><dt>유지할 것</dt><dd>해상도 1080p 유지가 한계</dd></div>
+    </dl>
+    <p class="note">스트리밍 + CPU + 내장그래픽이 모두 걸린다. 1080p Low + FSR Performance가 출발점. 이 게임은 F1보다 M8+eGPU(3070)가 맞다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="드래곤 에이지: 베일가드 Dragon Age: The Veilguard" data-date="2024-10-31" data-pop="40" data-ga="ok" data-gb="easy">
+<article class="card" data-name="드래곤 에이지: 베일가드 Dragon Age: The Veilguard" data-date="2024-10-31" data-pop="40" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">29</div>
     <div class="title">
@@ -1152,9 +1523,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + RT 중간으로 90+ 가능. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="호라이즌 제로 던 리마스터드 Horizon Zero Dawn Remastered" data-date="2024-10-31" data-pop="50" data-ga="easy" data-gb="easy">
+<article class="card" data-name="호라이즌 제로 던 리마스터드 Horizon Zero Dawn Remastered" data-date="2024-10-31" data-pop="50" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">30</div>
     <div class="title">
@@ -1189,9 +1573,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + Very High로 120+ 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="콜 오브 듀티: 블랙 옵스 6 Call of Duty: Black Ops 6" data-date="2024-10-25" data-pop="27" data-ga="ok" data-gb="easy">
+<article class="card" data-name="콜 오브 듀티: 블랙 옵스 6 Call of Duty: Black Ops 6" data-date="2024-10-25" data-pop="27" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">31</div>
     <div class="title">
@@ -1226,9 +1623,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">멀티 FG 금지. DLSS Quality만으로 90을 크게 넘긴다. Reflex 켜기는 필수. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="드래곤볼 스파킹! 제로 Dragon Ball: Sparking! Zero" data-date="2024-10-11" data-pop="67" data-ga="ok" data-gb="easy">
+<article class="card" data-name="드래곤볼 스파킹! 제로 Dragon Ball: Sparking! Zero" data-date="2024-10-11" data-pop="67" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">32</div>
     <div class="title">
@@ -1263,9 +1673,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality로 95–115 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="사일런트 힐 2 Silent Hill 2" data-date="2024-10-08" data-pop="39" data-ga="cond" data-gb="fg">
+<article class="card" data-name="사일런트 힐 2 Silent Hill 2" data-date="2024-10-08" data-pop="39" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">33</div>
     <div class="title">
@@ -1300,9 +1723,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">FG 2x로 표시 90+. FG 끄면 실제 60–70fps. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="EA 스포츠 FC 25 EA Sports FC 25" data-date="2024-09-27" data-pop="93" data-ga="easy" data-gb="easy">
+<article class="card" data-name="EA 스포츠 FC 25 EA Sports FC 25" data-date="2024-09-27" data-pop="93" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">34</div>
     <div class="title">
@@ -1337,9 +1773,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">네이티브 최고로 모니터 한계까지 나온다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="갓 오브 워 라그나로크 God of War Ragnarök" data-date="2024-09-19" data-pop="15" data-ga="easy" data-gb="easy">
+<article class="card" data-name="갓 오브 워 라그나로크 God of War Ragnarök" data-date="2024-09-19" data-pop="15" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">35</div>
     <div class="title">
@@ -1374,9 +1823,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">5080 본체는 네이티브에 가깝게 돌려도 90을 넘긴다.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="파이널 판타지 XVI Final Fantasy XVI" data-date="2024-09-17" data-pop="31" data-ga="cond" data-gb="fg">
+<article class="card" data-name="파이널 판타지 XVI Final Fantasy XVI" data-date="2024-09-17" data-pop="31" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">36</div>
     <div class="title">
@@ -1411,9 +1873,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">FG 2x로 표시 90+ 가능. FG 끄면 실제 60–70fps로, 액션 게임이라 실제 프레임 유지를 우선할 것. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="워해머 40,000: 스페이스 마린 2 Warhammer 40,000: Space Marine 2" data-date="2024-09-09" data-pop="24" data-ga="cond" data-gb="fg">
+<article class="card" data-name="워해머 40,000: 스페이스 마린 2 Warhammer 40,000: Space Marine 2" data-date="2024-09-09" data-pop="24" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">37</div>
     <div class="title">
@@ -1448,9 +1923,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">FG 끄면 실제 60–70fps. 떼 장면은 FG 2x를 켜도 실제 렌더가 밑받침돼야 끊기지 않는다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="스타워즈 아웃로스 Star Wars Outlaws" data-date="2024-08-30" data-pop="89" data-ga="cond" data-gb="fg">
+<article class="card" data-name="스타워즈 아웃로스 Star Wars Outlaws" data-date="2024-08-30" data-pop="89" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">38</div>
     <div class="title">
@@ -1485,9 +1973,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">FG 2x로 표시 90+. FG 끄면 실제 60–70fps. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="블랙 미스: 오공 Black Myth: Wukong" data-date="2024-08-20" data-pop="1" data-ga="cond" data-gb="fg">
+<article class="card" data-name="블랙 미스: 오공 Black Myth: Wukong" data-date="2024-08-20" data-pop="1" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">39</div>
     <div class="title">
@@ -1522,9 +2023,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">FG 끄면 실제 55–65fps. RT 최고 + Cinematic은 MFG 3–4x를 켜야 표시 90+가 되며, 그 경우 조작감보다 화면 위주로 즐기는 싱글용.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="원스 휴먼 Once Human" data-date="2024-07-09" data-pop="98" data-ga="ok" data-gb="easy">
+<article class="card" data-name="원스 휴먼 Once Human" data-date="2024-07-09" data-pop="98" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">40</div>
     <div class="title">
@@ -1559,9 +2073,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality로 95–115 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="고스트 오브 쓰시마 Ghost of Tsushima Director&#x27;s Cut" data-date="2024-05-16" data-pop="14" data-ga="easy" data-gb="easy">
+<article class="card" data-name="고스트 오브 쓰시마 Ghost of Tsushima Director&#x27;s Cut" data-date="2024-05-16" data-pop="14" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">41</div>
     <div class="title">
@@ -1596,9 +2123,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">90+를 FG 없이 달성하는 가벼운 편. DLSS Quality만으로 충분하다.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="드래곤즈 도그마 2 Dragon&#x27;s Dogma 2" data-date="2024-03-22" data-pop="25" data-ga="cond" data-gb="fg">
+<article class="card" data-name="드래곤즈 도그마 2 Dragon&#x27;s Dogma 2" data-date="2024-03-22" data-pop="25" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">42</div>
     <div class="title">
@@ -1633,9 +2173,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">5700X3D가 도시 구간에서 유리하다. 그래도 대도시는 80대를 기대하는 게 맞다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="호라이즌 포비든 웨스트 Horizon Forbidden West" data-date="2024-03-21" data-pop="19" data-ga="ok" data-gb="easy">
+<article class="card" data-name="호라이즌 포비든 웨스트 Horizon Forbidden West" data-date="2024-03-21" data-pop="19" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">43</div>
     <div class="title">
@@ -1670,9 +2223,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">5080 본체는 DLSS Quality만으로 100을 넘긴다.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="헬다이버즈 2 Helldivers 2" data-date="2024-02-08" data-pop="28" data-ga="ok" data-gb="easy">
+<article class="card" data-name="헬다이버즈 2 Helldivers 2" data-date="2024-02-08" data-pop="28" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">44</div>
     <div class="title">
@@ -1707,9 +2273,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">FG 없이 90+ 가능. 다만 서버·동접 환경에 따라 프레임이 흔들릴 수 있다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="용과 같이 8 Like a Dragon: Infinite Wealth" data-date="2024-01-26" data-pop="56" data-ga="easy" data-gb="easy">
+<article class="card" data-name="용과 같이 8 Like a Dragon: Infinite Wealth" data-date="2024-01-26" data-pop="56" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">45</div>
     <div class="title">
@@ -1744,9 +2323,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">네이티브 최고로 120+ 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="철권 8 Tekken 8" data-date="2024-01-26" data-pop="58" data-ga="easy" data-gb="easy">
+<article class="card" data-name="철권 8 Tekken 8" data-date="2024-01-26" data-pop="58" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">46</div>
     <div class="title">
@@ -1781,9 +2373,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">대전 60fps 고정. 최고 + 네이티브로 여유 있다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>60 고정 (대전 60fps 캡)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">대전 60fps 고정 게임. 1080p High로도 60을 지킨다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="아바타: 프론티어 오브 판도라 Avatar: Frontiers of Pandora" data-date="2023-12-07" data-pop="90" data-ga="cond" data-gb="fg">
+<article class="card" data-name="아바타: 프론티어 오브 판도라 Avatar: Frontiers of Pandora" data-date="2023-12-07" data-pop="90" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">47</div>
     <div class="title">
@@ -1818,9 +2423,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">FG 2x로 표시 90+. FG 끄면 실제 55–65fps. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="앨런 웨이크 2 Alan Wake 2" data-date="2023-10-27" data-pop="20" data-ga="cond" data-gb="fg">
+<article class="card" data-name="앨런 웨이크 2 Alan Wake 2" data-date="2023-10-27" data-pop="20" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">48</div>
     <div class="title">
@@ -1855,9 +2473,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">RT Ultra + DLSS Quality만으로는 실제 49fps 수준. FG 2x가 사실상 필수이며, Full RT는 MFG 3x + 표시 90+ (실제 40대)로 타협해야 한다.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="시티즈: 스카이라인 II Cities: Skylines II" data-date="2023-10-24" data-pop="94" data-ga="cond" data-gb="fg">
+<article class="card" data-name="시티즈: 스카이라인 II Cities: Skylines II" data-date="2023-10-24" data-pop="94" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">49</div>
     <div class="title">
@@ -1892,9 +2523,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">5700X3D + 32GB가 큰 도시에서 확실히 유리하다. 그래픽 설정보다 시뮬레이션·인구 규모가 체감을 좌우한다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 720p 타협 필요</span></div>
+    <div class="fps">예상 <b>1080p 25–40 (도시 규모에 따라)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>720p–1080p Low (최저 옵션)</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Performance</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT·PT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 켬</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>최고 프리셋 금지, 전부 Low</dd></div>
+      <div><dt>유지할 것</dt><dd>해상도 1080p 유지가 한계</dd></div>
+    </dl>
+    <p class="note">GPU보다 CPU·RAM이 먼저 걸린다. 1080p Low로도 큰 도시는 시뮬레이션 속도가 떨어진다. 도시 규모 조절이 설정보다 먼저다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="포르자 모터스포츠 Forza Motorsport" data-date="2023-10-10" data-pop="92" data-ga="easy" data-gb="easy">
+<article class="card" data-name="포르자 모터스포츠 Forza Motorsport" data-date="2023-10-10" data-pop="92" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">50</div>
     <div class="title">
@@ -1929,9 +2573,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + Ultra + RT 중간으로 120+ 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="어쌔신 크리드 미라지 Assassin&#x27;s Creed Mirage" data-date="2023-10-05" data-pop="81" data-ga="easy" data-gb="easy">
+<article class="card" data-name="어쌔신 크리드 미라지 Assassin&#x27;s Creed Mirage" data-date="2023-10-05" data-pop="81" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">51</div>
     <div class="title">
@@ -1966,9 +2623,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + Ultra로 120+ 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="모탈 컴뱃 1 Mortal Kombat 1" data-date="2023-09-19" data-pop="60" data-ga="easy" data-gb="easy">
+<article class="card" data-name="모탈 컴뱃 1 Mortal Kombat 1" data-date="2023-09-19" data-pop="60" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">52</div>
     <div class="title">
@@ -2003,9 +2673,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">대전 60fps 고정. 최고 + 네이티브로 여유 있다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>60 고정 (대전 60fps 캡)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">대전 60fps 고정 게임. 1080p High로도 60을 지킨다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="P의 거짓 Lies of P" data-date="2023-09-18" data-pop="70" data-ga="ok" data-gb="easy">
+<article class="card" data-name="P의 거짓 Lies of P" data-date="2023-09-18" data-pop="70" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">53</div>
     <div class="title">
@@ -2040,9 +2723,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + 최고로 95–115 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="스타필드 Starfield" data-date="2023-09-06" data-pop="17" data-ga="cond" data-gb="ok">
+<article class="card" data-name="스타필드 Starfield" data-date="2023-09-06" data-pop="17" data-ga="cond" data-gb="ok" data-gc="cond">
   <div class="card-head">
     <div class="rank">54</div>
     <div class="title">
@@ -2077,9 +2773,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">5700X3D가 도시 구간에서 5600보다 확실히 유리하다. 그래도 도시는 80대를 기대하는 게 맞다.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="아머드 코어 VI Armored Core VI: Fires of Rubicon" data-date="2023-08-25" data-pop="68" data-ga="ok" data-gb="easy">
+<article class="card" data-name="아머드 코어 VI Armored Core VI: Fires of Rubicon" data-date="2023-08-25" data-pop="68" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">55</div>
     <div class="title">
@@ -2114,9 +2823,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + 최고로 95–115 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="발더스 게이트 3 Baldur&#x27;s Gate 3" data-date="2023-08-03" data-pop="5" data-ga="ok" data-gb="easy">
+<article class="card" data-name="발더스 게이트 3 Baldur&#x27;s Gate 3" data-date="2023-08-03" data-pop="5" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">56</div>
     <div class="title">
@@ -2151,9 +2873,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">5700X3D의 3D V-Cache가 도시 구간에서 특히 유리하다. 90+를 가장 쉽게 달성하는 AAA 중 하나.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="라쳇 &amp; 클랭크: 리프트 어파트 Ratchet &amp; Clank: Rift Apart" data-date="2023-07-26" data-pop="47" data-ga="ok" data-gb="easy">
+<article class="card" data-name="라쳇 &amp; 클랭크: 리프트 어파트 Ratchet &amp; Clank: Rift Apart" data-date="2023-07-26" data-pop="47" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">57</div>
     <div class="title">
@@ -2188,9 +2923,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + RT 높음으로 90+ 가능. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="디아블로 IV Diablo IV" data-date="2023-06-06" data-pop="41" data-ga="easy" data-gb="easy">
+<article class="card" data-name="디아블로 IV Diablo IV" data-date="2023-06-06" data-pop="41" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">58</div>
     <div class="title">
@@ -2225,9 +2973,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">네이티브 최고로도 120+ 수준. RT를 켜도 FG 없이 90+를 유지한다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="스트리트 파이터 6 Street Fighter 6" data-date="2023-06-02" data-pop="59" data-ga="easy" data-gb="easy">
+<article class="card" data-name="스트리트 파이터 6 Street Fighter 6" data-date="2023-06-02" data-pop="59" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">59</div>
     <div class="title">
@@ -2262,9 +3023,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">대전 60fps 고정. 최고 + 네이티브로 여유 있다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>60 고정 (대전 60fps 캡)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">대전 60fps 고정 게임. 1080p High로도 60을 지킨다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="스타워즈 제다이: 서바이버 Star Wars Jedi: Survivor" data-date="2023-04-28" data-pop="87" data-ga="cond" data-gb="fg">
+<article class="card" data-name="스타워즈 제다이: 서바이버 Star Wars Jedi: Survivor" data-date="2023-04-28" data-pop="87" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">60</div>
     <div class="title">
@@ -2299,9 +3073,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">FG 2x로 표시 90+. FG 끄면 실제 60–70fps. 셰이더 컴파일 구간은 첫 플레이 때만 나타난다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="더 라스트 오브 어스 파트 I The Last of Us Part I" data-date="2023-03-28" data-pop="44" data-ga="ok" data-gb="easy">
+<article class="card" data-name="더 라스트 오브 어스 파트 I The Last of Us Part I" data-date="2023-03-28" data-pop="44" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">61</div>
     <div class="title">
@@ -2336,9 +3123,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality로 90+ 가능. 텍스처 Ultra는 VRAM 16GB로 충분하다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="바이오하자드 4 리메이크 Resident Evil 4" data-date="2023-03-24" data-pop="23" data-ga="easy" data-gb="easy">
+<article class="card" data-name="바이오하자드 4 리메이크 Resident Evil 4" data-date="2023-03-24" data-pop="23" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">62</div>
     <div class="title">
@@ -2373,9 +3173,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">5080 본체에서는 RT를 켜고도 120을 넘긴다.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="리터널 Returnal" data-date="2023-02-15" data-pop="48" data-ga="ok" data-gb="easy">
+<article class="card" data-name="리터널 Returnal" data-date="2023-02-15" data-pop="48" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">63</div>
     <div class="title">
@@ -2410,9 +3223,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + RT 중간으로 90+ 가능. FG 없이 즐기는 게 조작감이 낫다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="호그와트 레거시 Hogwarts Legacy" data-date="2023-02-10" data-pop="4" data-ga="ok" data-gb="easy">
+<article class="card" data-name="호그와트 레거시 Hogwarts Legacy" data-date="2023-02-10" data-pop="4" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">64</div>
     <div class="title">
@@ -2447,9 +3273,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">RT 울트라 + FG 2x면 표시 120+까지 가지만, 실제 렌더만으로도 90을 넘기 때문에 FG 없이 즐기는 쪽이 조작감이 낫다.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="워해머 40,000: 다크타이드 Warhammer 40,000: Darktide" data-date="2022-11-30" data-pop="99" data-ga="cond" data-gb="fg">
+<article class="card" data-name="워해머 40,000: 다크타이드 Warhammer 40,000: Darktide" data-date="2022-11-30" data-pop="99" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">65</div>
     <div class="title">
@@ -2484,9 +3323,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">FG 2x로 표시 90+. FG 끄면 실제 60–70fps. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="마블 스파이더맨: 마일즈 모랄레스 Marvel&#x27;s Spider-Man: Miles Morales" data-date="2022-11-18" data-pop="53" data-ga="easy" data-gb="easy">
+<article class="card" data-name="마블 스파이더맨: 마일즈 모랄레스 Marvel&#x27;s Spider-Man: Miles Morales" data-date="2022-11-18" data-pop="53" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">66</div>
     <div class="title">
@@ -2521,9 +3373,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + RT 높음으로 110+ 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="페르소나 5 로열 Persona 5 Royal" data-date="2022-10-21" data-pop="57" data-ga="easy" data-gb="easy">
+<article class="card" data-name="페르소나 5 로열 Persona 5 Royal" data-date="2022-10-21" data-pop="57" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">67</div>
     <div class="title">
@@ -2558,9 +3423,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">네이티브 최고로 모니터 한계까지 나온다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="언차티드: 레거시 오브 시브즈 컬렉션 Uncharted: Legacy of Thieves Collection" data-date="2022-10-19" data-pop="45" data-ga="easy" data-gb="easy">
+<article class="card" data-name="언차티드: 레거시 오브 시브즈 컬렉션 Uncharted: Legacy of Thieves Collection" data-date="2022-10-19" data-pop="45" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">68</div>
     <div class="title">
@@ -2595,9 +3473,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + 최고로 120+ 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="마블 스파이더맨 리마스터드 Marvel&#x27;s Spider-Man Remastered" data-date="2022-08-12" data-pop="52" data-ga="easy" data-gb="easy">
+<article class="card" data-name="마블 스파이더맨 리마스터드 Marvel&#x27;s Spider-Man Remastered" data-date="2022-08-12" data-pop="52" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">69</div>
     <div class="title">
@@ -2632,9 +3523,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + RT 높음으로 110+ 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="데스 스트랜딩 디렉터스 컷 Death Stranding Director&#x27;s Cut" data-date="2022-03-30" data-pop="49" data-ga="easy" data-gb="easy">
+<article class="card" data-name="데스 스트랜딩 디렉터스 컷 Death Stranding Director&#x27;s Cut" data-date="2022-03-30" data-pop="49" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">70</div>
     <div class="title">
@@ -2669,9 +3573,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">네이티브 최고로 120+ 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="엘든 링 Elden Ring" data-date="2022-02-25" data-pop="3" data-ga="easy" data-gb="easy">
+<article class="card" data-name="엘든 링 Elden Ring" data-date="2022-02-25" data-pop="3" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">71</div>
     <div class="title">
@@ -2706,9 +3623,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">5080 본체도 결과는 같다. 캡 해제 모드는 멀티플레이 동기화·밴 위험이 있어 권장하지 않는다.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>60 고정 (게임 내 60fps 캡)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">60fps 캡 게임이라 1080p에서도 목표는 60 유지. Low–Medium이면 여유 있다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="토탈 워: 워해머 III Total War: Warhammer III" data-date="2022-02-17" data-pop="100" data-ga="cond" data-gb="fg">
+<article class="card" data-name="토탈 워: 워해머 III Total War: Warhammer III" data-date="2022-02-17" data-pop="100" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">72</div>
     <div class="title">
@@ -2743,9 +3673,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">5700X3D가 대규모 전투에서 유리하다. 그래픽보다 부대 규모·전투 규모 설정이 체감을 좌우한다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="갓 오브 워 (2018) God of War" data-date="2022-01-14" data-pop="51" data-ga="easy" data-gb="easy">
+<article class="card" data-name="갓 오브 워 (2018) God of War" data-date="2022-01-14" data-pop="51" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">73</div>
     <div class="title">
@@ -2780,9 +3723,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + Ultra로 120+ 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="파이널 판타지 VII 리메이크 인터그레이드 Final Fantasy VII Remake Intergrade" data-date="2021-12-16" data-pop="55" data-ga="ok" data-gb="easy">
+<article class="card" data-name="파이널 판타지 VII 리메이크 인터그레이드 Final Fantasy VII Remake Intergrade" data-date="2021-12-16" data-pop="55" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">74</div>
     <div class="title">
@@ -2817,9 +3773,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality로 95–115 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="파 크라이 6 Far Cry 6" data-date="2021-10-07" data-pop="75" data-ga="ok" data-gb="easy">
+<article class="card" data-name="파 크라이 6 Far Cry 6" data-date="2021-10-07" data-pop="75" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">75</div>
     <div class="title">
@@ -2854,9 +3823,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + Ultra + RT 중간으로 95–115 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="테일즈 오브 어라이즈 Tales of Arise" data-date="2021-09-10" data-pop="69" data-ga="easy" data-gb="easy">
+<article class="card" data-name="테일즈 오브 어라이즈 Tales of Arise" data-date="2021-09-10" data-pop="69" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">76</div>
     <div class="title">
@@ -2891,9 +3873,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + 최고로 120+ 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="데이즈 곤 Days Gone" data-date="2021-05-18" data-pop="46" data-ga="easy" data-gb="easy">
+<article class="card" data-name="데이즈 곤 Days Gone" data-date="2021-05-18" data-pop="46" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">77</div>
     <div class="title">
@@ -2928,9 +3923,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">네이티브 최고로 120+ 수준. 떼 구간은 5700X3D가 유리하다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="매스 이펙트 레전더리 에디션 Mass Effect Legendary Edition" data-date="2021-05-14" data-pop="85" data-ga="easy" data-gb="easy">
+<article class="card" data-name="매스 이펙트 레전더리 에디션 Mass Effect Legendary Edition" data-date="2021-05-14" data-pop="85" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">78</div>
     <div class="title">
@@ -2965,9 +3973,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">네이티브 최고로 120+ 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="바이오하자드 빌리지 Resident Evil Village" data-date="2021-05-07" data-pop="64" data-ga="easy" data-gb="easy">
+<article class="card" data-name="바이오하자드 빌리지 Resident Evil Village" data-date="2021-05-07" data-pop="64" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">79</div>
     <div class="title">
@@ -3002,9 +4023,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">RT 높음 + DLSS Quality로 120+ 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="메트로 엑소더스 인핸스드 에디션 Metro Exodus Enhanced Edition" data-date="2021-05-06" data-pop="74" data-ga="cond" data-gb="fg">
+<article class="card" data-name="메트로 엑소더스 인핸스드 에디션 Metro Exodus Enhanced Edition" data-date="2021-05-06" data-pop="74" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">80</div>
     <div class="title">
@@ -3039,9 +4073,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + FG 2x로 표시 90+를 노리되, 실제 50대 유지를 먼저 확인할 것. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 720p 타협 필요</span></div>
+    <div class="fps">예상 <b>1080p 25–35</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>720p–1080p Low (최저 옵션)</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Performance</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT·PT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 켬</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>최고 프리셋 금지, 전부 Low</dd></div>
+      <div><dt>유지할 것</dt><dd>해상도 1080p 유지가 한계</dd></div>
+    </dl>
+    <p class="note">이 게임은 F1으로 즐기기 어렵다. 720p + FSR Performance까지 내려야 30을 넘긴다. 4K는 10fps 안팎으로 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="사이버펑크 2077 Cyberpunk 2077" data-date="2020-12-10" data-pop="2" data-ga="ok" data-gb="fg">
+<article class="card" data-name="사이버펑크 2077 Cyberpunk 2077" data-date="2020-12-10" data-pop="2" data-ga="ok" data-gb="fg" data-gc="ok">
   <div class="card-head">
     <div class="rank">81</div>
     <div class="title">
@@ -3076,9 +4123,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">RT 끄고 Ultra면 실제 90+도 가능. 패스 트레이싱은 DLSS Quality + MFG 4x로 표시 120–135(실제 약 40). MFG 4x는 싱글·패드 위주일 때만.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="어쌔신 크리드 발할라 Assassin&#x27;s Creed Valhalla" data-date="2020-11-10" data-pop="78" data-ga="ok" data-gb="easy">
+<article class="card" data-name="어쌔신 크리드 발할라 Assassin&#x27;s Creed Valhalla" data-date="2020-11-10" data-pop="78" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">82</div>
     <div class="title">
@@ -3113,9 +4173,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + Ultra로 95–115 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="왓치 독스: 리전 Watch Dogs: Legion" data-date="2020-10-29" data-pop="77" data-ga="ok" data-gb="easy">
+<article class="card" data-name="왓치 독스: 리전 Watch Dogs: Legion" data-date="2020-10-29" data-pop="77" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">83</div>
     <div class="title">
@@ -3150,9 +4223,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + RT 중간으로 95–115 수준. 시내는 CPU 구간이라 80대를 기대할 것. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="바이오하자드 RE:3 Resident Evil 3" data-date="2020-04-03" data-pop="62" data-ga="easy" data-gb="easy">
+<article class="card" data-name="바이오하자드 RE:3 Resident Evil 3" data-date="2020-04-03" data-pop="62" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">84</div>
     <div class="title">
@@ -3187,9 +4273,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">최고 + DLSS Quality로 120+ 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="스타워즈 제다이: 폴른 오더 Star Wars Jedi: Fallen Order" data-date="2019-11-15" data-pop="88" data-ga="ok" data-gb="easy">
+<article class="card" data-name="스타워즈 제다이: 폴른 오더 Star Wars Jedi: Fallen Order" data-date="2019-11-15" data-pop="88" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">85</div>
     <div class="title">
@@ -3224,9 +4323,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + 최고로 95–115 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="레드 데드 리뎀션 2 Red Dead Redemption 2" data-date="2019-11-05" data-pop="8" data-ga="easy" data-gb="easy">
+<article class="card" data-name="레드 데드 리뎀션 2 Red Dead Redemption 2" data-date="2019-11-05" data-pop="8" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">86</div>
     <div class="title">
@@ -3261,9 +4373,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">90+를 네이티브에 가깝게 달성하는 대표작. DLSS를 굳이 켤 필요가 없다.</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="컨트롤 Control" data-date="2019-08-27" data-pop="73" data-ga="cond" data-gb="fg">
+<article class="card" data-name="컨트롤 Control" data-date="2019-08-27" data-pop="73" data-ga="cond" data-gb="fg" data-gc="cond">
   <div class="card-head">
     <div class="rank">87</div>
     <div class="title">
@@ -3298,9 +4423,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">RT 높음 + DLSS Quality + FG 2x로 표시 90+. FG 끄면 실제 55–65fps. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
+    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
+    </dl>
+    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="세키로: 섀도우 다이 트와이스 Sekiro: Shadows Die Twice" data-date="2019-03-22" data-pop="71" data-ga="easy" data-gb="easy">
+<article class="card" data-name="세키로: 섀도우 다이 트와이스 Sekiro: Shadows Die Twice" data-date="2019-03-22" data-pop="71" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">88</div>
     <div class="title">
@@ -3335,9 +4473,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">60fps 캡. 최고 + 네이티브로 여유 있다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>60 고정 (게임 내 60fps 캡)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">60fps 캡 게임이라 1080p에서도 목표는 60 유지. Low–Medium이면 여유 있다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="톰 클랜시의 디비전 2 Tom Clancy&#x27;s The Division 2" data-date="2019-03-15" data-pop="84" data-ga="ok" data-gb="easy">
+<article class="card" data-name="톰 클랜시의 디비전 2 Tom Clancy&#x27;s The Division 2" data-date="2019-03-15" data-pop="84" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">89</div>
     <div class="title">
@@ -3372,9 +4523,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + Ultra로 95–115 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="데빌 메이 크라이 5 Devil May Cry 5" data-date="2019-03-08" data-pop="65" data-ga="easy" data-gb="easy">
+<article class="card" data-name="데빌 메이 크라이 5 Devil May Cry 5" data-date="2019-03-08" data-pop="65" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">90</div>
     <div class="title">
@@ -3409,9 +4573,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">네이티브 최고로 120+ 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="바이오하자드 RE:2 Resident Evil 2" data-date="2019-01-25" data-pop="61" data-ga="easy" data-gb="easy">
+<article class="card" data-name="바이오하자드 RE:2 Resident Evil 2" data-date="2019-01-25" data-pop="61" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">91</div>
     <div class="title">
@@ -3446,9 +4623,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">최고 + DLSS Quality로 120+ 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="어쌔신 크리드 오디세이 Assassin&#x27;s Creed Odyssey" data-date="2018-10-05" data-pop="79" data-ga="ok" data-gb="easy">
+<article class="card" data-name="어쌔신 크리드 오디세이 Assassin&#x27;s Creed Odyssey" data-date="2018-10-05" data-pop="79" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">92</div>
     <div class="title">
@@ -3483,9 +4673,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + Ultra로 95–115 수준. 도시는 80대를 기대할 것. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="몬스터 헌터: 월드 Monster Hunter: World" data-date="2018-08-09" data-pop="66" data-ga="easy" data-gb="easy">
+<article class="card" data-name="몬스터 헌터: 월드 Monster Hunter: World" data-date="2018-08-09" data-pop="66" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">93</div>
     <div class="title">
@@ -3520,9 +4723,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + 최고로 120+ 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="파 크라이 5 Far Cry 5" data-date="2018-03-27" data-pop="76" data-ga="easy" data-gb="easy">
+<article class="card" data-name="파 크라이 5 Far Cry 5" data-date="2018-03-27" data-pop="76" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">94</div>
     <div class="title">
@@ -3557,9 +4773,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">네이티브 최고로 120+ 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="어쌔신 크리드 오리진 Assassin&#x27;s Creed Origins" data-date="2017-10-27" data-pop="80" data-ga="easy" data-gb="easy">
+<article class="card" data-name="어쌔신 크리드 오리진 Assassin&#x27;s Creed Origins" data-date="2017-10-27" data-pop="80" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">95</div>
     <div class="title">
@@ -3594,9 +4823,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality + Ultra로 120+ 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="바이오하자드 7 Resident Evil 7: Biohazard" data-date="2017-01-24" data-pop="63" data-ga="easy" data-gb="easy">
+<article class="card" data-name="바이오하자드 7 Resident Evil 7: Biohazard" data-date="2017-01-24" data-pop="63" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">96</div>
     <div class="title">
@@ -3631,9 +4873,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">네이티브 최고로 120+ 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="노 맨즈 스카이 No Man&#x27;s Sky" data-date="2016-08-12" data-pop="95" data-ga="ok" data-gb="easy">
+<article class="card" data-name="노 맨즈 스카이 No Man&#x27;s Sky" data-date="2016-08-12" data-pop="95" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">97</div>
     <div class="title">
@@ -3668,9 +4923,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">DLSS Quality로 95–115 수준. 행성 표면은 CPU 구간이라 80대를 기대할 것. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="다크 소울 III Dark Souls III" data-date="2016-04-12" data-pop="72" data-ga="easy" data-gb="easy">
+<article class="card" data-name="다크 소울 III Dark Souls III" data-date="2016-04-12" data-pop="72" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">98</div>
     <div class="title">
@@ -3705,9 +4973,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">60fps 캡. 최고 + 네이티브로 여유 있다. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>60 고정 (게임 내 60fps 캡)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">60fps 캡 게임이라 1080p에서도 목표는 60 유지. Low–Medium이면 여유 있다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="더 위쳐 3: 와일드 헌트 The Witcher 3: Wild Hunt" data-date="2015-05-19" data-pop="29" data-ga="ok" data-gb="easy">
+<article class="card" data-name="더 위쳐 3: 와일드 헌트 The Witcher 3: Wild Hunt" data-date="2015-05-19" data-pop="29" data-ga="ok" data-gb="easy" data-gc="ok">
   <div class="card-head">
     <div class="rank">99</div>
     <div class="title">
@@ -3742,9 +5023,22 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">RT Ultra + DLSS Quality로도 90+를 노릴 수 있지만, 노비그라드 시내는 CPU 구간이라 80대를 기대할 것. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
+    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
+    </dl>
+    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 
-<article class="card" data-name="드래곤 에이지: 인퀴지션 Dragon Age: Inquisition" data-date="2014-11-18" data-pop="86" data-ga="easy" data-gb="easy">
+<article class="card" data-name="드래곤 에이지: 인퀴지션 Dragon Age: Inquisition" data-date="2014-11-18" data-pop="86" data-ga="easy" data-gb="easy" data-gc="easy">
   <div class="card-head">
     <div class="rank">100</div>
     <div class="title">
@@ -3779,6 +5073,19 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
     </dl>
     <p class="note">네이티브 최고로 120+ 수준. [티어 추정치]</p>
   </div>
+  <div class="spec spec-c" data-spec="c">
+    <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
+    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <dl>
+      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
+      <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
+      <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
+      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+    </dl>
+    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+  </div>
 </article>
 </div>
 
@@ -3792,13 +5099,19 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
 <ul><li><b>NVIDIA 앱:</b> 최신 드라이버 유지, DLSS 오버라이드(최신 Transformer 모델)를 켜두면 구형 DLSS 게임 화질이 좋아집니다.</li>
 <li><b>Reflex:</b> FG를 켤 때는 Reflex(저지연 모드)도 함께 켜세요. 끄면 FG의 지연이 더 크게 느껴집니다.</li>
 <li><b>G-Sync + 프레임 제한:</b> 모니터 주사율보다 3fps 낮게 제한(예: 144Hz → 141)하면 FG 사용 시 끊김이 줄어듭니다.</li>
-<li><b>32GB RAM:</b> 백그라운드에 여유가 있지만, 그래도 게임 중 녹화·스트리밍을 동시에 돌리면 프레임이 흔들릴 수 있습니다.</li></ul></section>
+<li><b>32GB RAM:</b> 백그라운드에 여유가 있지만, 그래도 게임 중 녹화·스트리밍을 동시에 돌리면 프레임이 흔들릴 수 있습니다.</li></ul>
+<h3 style="font-size:15px">C · F1 7640HS 미니PC (780M 내장그래픽)</h3>
+<ul><li><b>해상도가 곧 프레임입니다:</b> 4K는 내려놓고 1080p로 시작하세요. 4K 모니터라면 게임 내 해상도를 1920×1080으로 낮추고, FSR Quality를 켜는 게 제일 먼저 할 일입니다.</li>
+<li><b>공유 메모리 설정:</b> 780M은 시스템 램을 나눠 씁니다. BIOS에 UMA Frame Buffer 설정이 있으면 4GB 이상으로 잡고, 램이 듀얼 채널인지 확인하세요. 싱글 채널이면 프레임이 눈에 띄게 떨어집니다.</li>
+<li><b>전원·발열:</b> 미니PC는 TDP가 낮아 오래 돌리면 클럭이 내려갑니다. 통풍이 되는 곳에 두고, 게임 중에는 LDPlayer·테라박스 같은 백그라운드 작업을 잠시 멈추는 게 프레임에 도움됩니다.</li>
+<li><b>RT는 끄세요:</b> 780M에 레이트레이싱은 없습니다. RT 옵션이 보이는 게임은 끄는 게 출발점이고, FSR Performance + AFMF 2 조합이 무거운 게임의 마지막 수단입니다.</li></ul></section>
 
 <section class="panel"><h2>정렬·인기순·메타크리틱 점수에 대하여</h2>
 <p><b>이 페이지는 발매일 내림차순입니다.</b> 1번이 가장 최신작(팬텀 블레이드 제로, 2026-10-29)이고, 아래로 갈수록 오래된 게임입니다. 카드에 적힌 ‘인기 #N’은 이전 버전의 인기순 순위이고, 화면 위 버튼으로 인기순 보기로 바꿀 수 있습니다.</p>
 <p><b>메타크리틱 점수는 2026-11-11 기준 PC판 스냅샷</b>입니다. 리뷰가 추가되면 점수가 달라질 수 있습니다. GTA V 인핸스드는 메타크리틱에 비평가 리뷰가 4건 미만이라 점수가 없고, 레지던트 이블 레퀴엠은 PC 비평가 페이지 92 / 통합 페이지 89로 표기가 갈려 PC 기준 92로 적었습니다. 블랙 옵스 7은 출시 초기 84점에서 현재 65점으로 크게 떨어진 상태입니다. 점수는 참고용이고, 이 페이지의 설정 가이드와는 별개입니다.</p>
 <p>인기순은 누적 판매량 + 스팀 동시접속자 피크 + 2026년 화제성을 종합한 <b>대략적인 순서</b>입니다. 정확한 순위가 아니라 ‘많이 팔리고, 많이 플레이된 순서’라는 안내로 봐주세요. 확인된 스팀 피크(싱글 기준): 오공 약 241만, 사이버펑크 약 105만, 엘든 링 약 95만, 호그와트 약 88만, 발더스 게이트 3 약 88만, 팬텀 블레이드 제로 약 72만, 레지던트 이블 레퀴엠 약 34만, 스타필드 약 33만. 판매량은 호그와트·사이버펑크·엘든 링·오공이 3,000만 장급, 발더스 게이트 3이 2,000만 장 이상으로 보도됐습니다.</p>
 <p><b>1–23번과 24–100번은 성격이 다릅니다:</b> 1–23번은 공개 벤치마크를 근거로 게임별로 적었고, 24–100번은 엔진·무게감으로 나눈 티어(T1 가벼움 ~ T4 극한 RT/PT) 추정치입니다. 24–100번 카드에는 ‘[티어 추정치]’라고 적혀 있습니다. 개별 게임 실측이 아니라 범위 추정치이니, 가지고 있는 게임은 그 게임의 최신 벤치를 한 번 더 확인하는 게 정확합니다. 인디 게임은 제외했고(전작 지시), PC로 안 나온 게임(고스트 오브 요테이, GTA VI)과 순수 e스포츠·F2P(CS2·발로란트·포트나이트 등)도 제외했습니다.</p>
+<p><b>C본체(F1) 수치에 대하여:</b> C본체 수치는 1080p 기준 티어 추정치입니다. 780M 공개 벤치(1080p Low 사이버펑크 약 40fps, 발더스 게이트 3 약 40fps, 1080p High 평균 약 26fps)를 기준으로 가벼움(T1)부터 극한(T4)까지 나눈 것이고, F1 실기 실측이 아니니 실제 프레임은 램 구성·TDP·드라이버에 따라 달라집니다.</p>
 <p><b>FPS 수치에 대하여:</b> 표 수치는 실측이 아니라 공개 벤치마크를 jh의 두 사양에 맞게 낮춰 조정한 <b>추정치</b>입니다. 벤치 대부분이 9800X3D + DDR5 32GB 기준이라, 5600 + DDR4 16GB 본체는 CPU가 걸리는 장면에서 표보다 5–15fps 낮게 나올 수 있습니다. 패치·드라이버 업데이트로 수치는 달라집니다. 2026년 신작 2종(팬텀 블레이드 제로, 레지던트 이블 레퀴엠)은 벤치 자료가 적어 ‘추정’이라고 따로 표기했습니다.</p></section>
 
 <section class="panel"><h2>출처</h2>
@@ -3811,16 +5124,18 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
 <a href="https://samlover.com/2026/10/30/phantom-blade-zero-concurrent-players/" target="_blank" rel="noopener">SteamDB 피크 정리 · 팬텀 블레이드 제로 외</a> ·
 <a href="https://www.kitguru.net/gaming/joao-silva/black-myth-wukong-reaches-30-million-sales-milestone/" target="_blank" rel="noopener">KitGuru · 오공 3,000만 장</a> ·
 <a href="https://playday.one/2025/12/29/here-are-the-top-100-sellers-on-steam-in-2025/" target="_blank" rel="noopener">Steam 2025년 판매 상위 100</a> ·
-<a href="https://www.metacritic.com/browse/games/" target="_blank" rel="noopener">Metacritic · 게임 점수 (PC판 기준 스냅샷 2026-11-11)</a>
+<a href="https://www.metacritic.com/browse/games/" target="_blank" rel="noopener">Metacritic · 게임 점수 (PC판 기준 스냅샷 2026-11-11)</a> ·
+<a href="https://minipcdeals.net/best-steam-machine-alternatives/" target="_blank" rel="noopener">MiniPCDeals · 780M 실측 정리 (1080p Low 사이버펑크 44.1 / BG3 41.1fps)</a> ·
+<a href="https://fpsvibe.com/gpu/amd-radeon-780m/" target="_blank" rel="noopener">FPSVibe · Radeon 780M (1080p High 평균 약 26fps, 4K 비권장)</a>
 </p></section>
 </main>
-<footer>이 페이지는 jh의 두 본체(5600+9070 XT / 5700X3D+5080) 전용 가이드입니다. 다른 사양에는 그대로 적용되지 않습니다.</footer>
+<footer>이 페이지는 jh의 세 본체(5600+9070 XT / 5700X3D+5080 / F1 7640HS) 전용 가이드입니다. 다른 사양에는 그대로 적용되지 않습니다.</footer>
 <script>
 var spec='all',grade='all',q='',sortMode='date';
 function apply(){var n=0;document.querySelectorAll('.card').forEach(function(c){
 var ok=true;
 if(q && c.dataset.name.toLowerCase().indexOf(q)===-1) ok=false;
-if(grade!=='all'){var g=spec==='b'?c.dataset.gb:spec==='a'?c.dataset.ga:(c.dataset.ga===grade||c.dataset.gb===grade?'__match__':'');if(spec==='all'){if(!(c.dataset.ga===grade||c.dataset.gb===grade)) ok=false;}else if(g!==grade) ok=false;}
+if(grade!=='all'){var g=spec==='b'?c.dataset.gb:spec==='a'?c.dataset.ga:spec==='c'?c.dataset.gc:(c.dataset.ga===grade||c.dataset.gb===grade||c.dataset.gc===grade?'__match__':'');if(spec==='all'){if(!(c.dataset.ga===grade||c.dataset.gb===grade||c.dataset.gc===grade)) ok=false;}else if(g!==grade) ok=false;}
 c.classList.toggle('hide',!ok);
 c.querySelectorAll('.spec').forEach(function(s){s.classList.toggle('hide',spec!=='all'&&s.dataset.spec!==spec);});
 if(ok)n++;});
