@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>뮤즈에 설치된 MCP 정리</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", "Noto Sans KR", sans-serif; background: #f4f6fb; color: #1f2430; line-height: 1.6; padding: 24px 16px 48px; }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  header { background: linear-gradient(135deg, #1e5eff, #6a5cff); color: #fff; border-radius: 16px; padding: 28px 24px; margin-bottom: 20px; }
+  header h1 { font-size: 26px; margin-bottom: 6px; }
+  header p { opacity: .92; font-size: 15px; }
+  .stats { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+  .stat { flex: 1; min-width: 140px; background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 1px 4px rgba(20,30,60,.08); text-align: center; }
+  .stat b { display: block; font-size: 30px; line-height: 1.1; }
+  .stat span { font-size: 13px; color: #5a6478; }
+  .stat .ok { color: #0a8a4b; } .stat .run { color: #d97706; } .stat .all { color: #1e5eff; }
+  h2 { font-size: 19px; margin: 26px 0 12px; }
+  .card { background: #fff; border-radius: 14px; padding: 20px; margin-bottom: 14px; box-shadow: 0 1px 4px rgba(20,30,60,.08); }
+  .card h3 { font-size: 18px; margin-bottom: 4px; }
+  .card h3 a { color: #1e5eff; text-decoration: none; }
+  .card h3 a:hover { text-decoration: underline; }
+  .sub { color: #5a6478; font-size: 14px; margin-bottom: 10px; }
+  .badge { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 10px; border-radius: 999px; vertical-align: middle; margin-left: 8px; }
+  .badge.ok { background: #dcfce7; color: #0a8a4b; }
+  .badge.run { background: #fef3c7; color: #b45309; }
+  .badge.hold { background: #e0e7ff; color: #4338ca; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 8px; }
+  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid #eef1f6; vertical-align: top; }
+  th { color: #5a6478; font-size: 13px; width: 110px; white-space: nowrap; }
+  .tools { font-size: 13px; color: #374151; }
+  .tools b { color: #0a8a4b; } .tools i { color: #dc2626; font-style: normal; }
+  .note { background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 16px 18px; font-size: 14px; margin-top: 20px; }
+  .note b { color: #92400e; }
+  footer { margin-top: 28px; text-align: center; color: #8a94a6; font-size: 13px; }
+  @media (max-width: 600px) {
+    header h1 { font-size: 21px; }
+    th { width: 84px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🔌 뮤즈에 설치된 MCP 정리</h1>
+    <p>지금까지 Muse에 들여온 MCP 서버·스킬 목록. 전부 로컬에서 돌아가고, 쓸 때만 불러오는 방식이라 평소 토큰은 0원.</p>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><b class="ok">3</b><span>설치 완료</span></div>
+    <div class="stat"><b class="run">7</b><span>설치 중</span></div>
+    <div class="stat"><b class="all">10</b><span>전체</span></div>
+  </div>
+
+  <h2>✅ 설치 완료</h2>
+
+  <div class="card">
+    <h3><a href="https://github.com/morluto/rea" target="_blank" rel="noopener">REA — Reverse Engineer Anything</a><span class="badge ok">설치 완료</span></h3>
+    <p class="sub">바이너리·JS·Electron·.NET·웹을 뜯어보는 리버스엔지니어링 MCP. GSP 분석의 출발점.</p>
+    <table>
+      <tr><th>버전</th><td>rea-agents@6.5.0 (MIT) · 2026-10-16 설치</td></tr>
+      <tr><th>도구</th><td class="tools">전체 207개 · 허용 <b>137개</b> · 차단 <i>70개</i></td></tr>
+      <tr><th>허용 범위</th><td>읽기 전용 정적 분석만 (analyze·inspect·search·decompile 계열)</td></tr>
+      <tr><th>차단</th><td>capture_*·observe_*·start_*·set_*·gdb/rizin 등 실행·디버거 계열</td></tr>
+      <tr><th>위치</th><td><code>~/workspace/custom-connectors/custom.rea/</code></td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3><a href="https://github.com/LaurieWired/GhidraMCP" target="_blank" rel="noopener">GhidraMCP</a><span class="badge ok">설치 완료</span></h3>
+    <p class="sub">Ghidra를 헤드리스로 돌려 네이티브 바이너리를 깊게 분석. gsp5.exe 디컴파일에 사용 중.</p>
+    <table>
+      <tr><th>버전</th><td>2.0 (Apache-2.0, 커밋 1e98025) · 2026-10-23 설치 · Ghidra 12.1.4 + Temurin JDK 21.0.13</td></tr>
+      <tr><th>도구</th><td class="tools">전체 28개 · 허용 <b>20개</b> · 차단 <i>8개</i></td></tr>
+      <tr><th>허용 범위</th><td>디컴파일·디스어셈블·참조 추적·호출 그래프 등 읽기 전용</td></tr>
+      <tr><th>차단</th><td>rename_*·set_* (프로젝트 DB 수정) — 호출 시 거부</td></tr>
+      <tr><th>위치</th><td><code>~/workspace/custom-connectors/custom.ghidra/</code></td></tr>
+      <tr><th>검증</th><td>테스트 ELF 디컴파일 정답 · gsp5.exe 함수 13,627개 분석 완료</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3><a href="https://github.com/storytold/craft-anything" target="_blank" rel="noopener">Craft Anything</a><span class="badge ok">설치 완료</span></h3>
+    <p class="sub">순수 Rust 조사 엔진. 웹사이트·앱·게임을 관찰하고 클린룸으로 다시 만드는 도구 — 여기는 조사용만.</p>
+    <table>
+      <tr><th>버전</th><td>0.6.0 (MIT OR Apache-2.0, 커밋 899b4ebd) · 2026-11-11 설치 · 공식 프리빌드 SHA-256 검증</td></tr>
+      <tr><th>도구</th><td class="tools">전체 322개 · 허용 <b>217개</b> · 차단 <i>106개</i></td></tr>
+      <tr><th>허용 범위</th><td>Study·검사 계열만 (네이티브·포맷·브라우저 관찰·읽기 전용 딥 검사)</td></tr>
+      <tr><th>차단</th><td>rebuild_* 전부, 빌드 파일 쓰기, 프로젝트 실행·복사·삭제, 에이전트 호출, npm 설치</td></tr>
+      <tr><th>위치</th><td><code>~/workspace/custom-connectors/custom.craft-anything/</code></td></tr>
+      <tr><th>한계</th><td>빌드·재생성은 Claude Code 로그인이 필요해서 이 환경에서 불가 · 웹사이트 라이브 관찰 불가(Chromium 없음) · early alpha라 버전이 빨리 오름</td></tr>
+    </table>
+  </div>
+
+  <h2>⏳ 설치 중 (2026-11-15 요청)</h2>
+
+  <div class="card">
+    <h3>GitHub MCP (공식)<span class="badge run">설치 중</span></h3>
+    <p class="sub">깃헙 저장소·이슈·PR·커밋 조회. 읽기 전용으로 제한 예정.</p>
+  </div>
+  <div class="card">
+    <h3>Playwright MCP (공식)<span class="badge run">설치 중</span></h3>
+    <p class="sub">헤드리스 브라우저로 라이브 페이지 검증·모니터링. 격리 프로필만, 로그인 프로필 연결 금지.</p>
+  </div>
+  <div class="card">
+    <h3>Context7<span class="badge run">설치 중</span></h3>
+    <p class="sub">최신 라이브러리 문서 조회. 무료 키 사용.</p>
+  </div>
+  <div class="card">
+    <h3>Excel MCP Server<span class="badge run">설치 중</span></h3>
+    <p class="sub">엑셀 직접 읽기·쓰기 (채점표·명단용). 허용 폴더는 ~/workspace 로 한정.</p>
+  </div>
+  <div class="card">
+    <h3>ffmpeg 스킬<span class="badge run">설치 중</span></h3>
+    <p class="sub">로컬 영상 편집용 FFmpeg 도구 42개 (홍보 영상 작업용).</p>
+  </div>
+  <div class="card">
+    <h3>Chrome DevTools MCP (공식)<span class="badge run">설치 중</span></h3>
+    <p class="sub">Chrome을 직접 열고 클릭·디버깅. Playwright와 역할이 겹쳐 둘 중 하나만 쓰면 됨.</p>
+  </div>
+  <div class="card">
+    <h3>github-codemunch-mcp<span class="badge run">설치 중</span></h3>
+    <p class="sub">저장소 코드를 함수·클래스 단위로만 뽑아오는 조회 도구 (토큰 절약용).</p>
+  </div>
+
+  <h2>📌 그 외 연결 상태</h2>
+  <div class="card">
+    <table>
+      <tr><th>Padlet MCP</th><td>연결됨 · 읽기 전용 4개 도구 · 패들렛 제출 체크에 사용 중</td></tr>
+      <tr><th>시놀로지 NAS MCP</th><td><span class="badge hold">보류</span> &nbsp;보안 정리 완료, 전용 계정 미생성으로 연결 직전 중단 — 사용자 결정 대기 중</td></tr>
+    </table>
+  </div>
+
+  <div class="note">
+    <b>토큰 비용:</b> 이 MCP들은 서버를 상주시키는 게 아니라 부를 때만 띄우는 방식이라, 안 쓸 때는 토큰이 0원 나가. 쓸 때는 호출 결과가 돌아오는 만큼만 한 번 세져. Craft Anything처럼 안에서 또 에이전트를 돌리는 워크플로는 설치 범위에서 막아둠.
+  </div>
+
+  <footer>마지막 업데이트: 2026-11-15 · 설치 중 7개는 완료되는 대로 이 페이지에 반영됨</footer>
+</div>
+</body>
+</html>
