@@ -45,9 +45,14 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
 <header>
 <h1>4K AAA 게임 설정 가이드<br>9070 XT는 70–80fps, 5080은 90fps+</h1>
 <p class="sub">발매일 내림차순(최신작 맨 위) · 게임 이름 옆에 발매일·메타크리틱 점수 표시 · 2026년 11월까지 출시된 AAA 위주 · 100개 게임 · 같은 게임, 세 본체(A 9070 XT 4K / B 5080 4K / C F1 7640HS 1080p) 설정을 나란히 비교합니다.</p>
-<p><span class="build">빌드 2026-11-11 10:14 KST · v4 · 발매일순 + F1 7640HS</span></p>
+<p><span class="build">빌드 2026-11-15 23:34 KST · v5 · 발매일순 + F1 760M</span></p>
 </header>
 <main>
+<section class="panel"><h2>🆕 v5 업데이트 — F1(7640HS) 760M 정정 (2026-11-15)</h2>
+<ul><li><b>정정:</b> jh의 F1 실기는 일반판 7640HS의 780M(12CU)이 아니라 <b>760M(8CU)</b>입니다. C본체 수치를 전부 760M 기준으로 다시 잡았습니다.</li>
+<li><b>환산 방식:</b> 780M 추정치에 약 ×0.68을 곱했습니다. 티어별 1080p 예상 프레임은 <b>T1 가벼움 40–60, T2 보통 27–37, T3 무거움 20–31, T4 극한 17–24</b>입니다. 4K는 7–14fps라 더더욱 불가입니다.</li>
+<li><b>캡 게임도 조정:</b> 엘든 링·세키로·다크 소울 III는 Low로 낮춰야 60에 가깝고(45–60), 철권 8·스트리트 파이터 6·모탈 컴뱃 1은 55 전후로 잡았습니다.</li>
+<li><b>주의:</b> 일반판 7640HS의 780M(12CU)은 이 페이지의 760M 수치보다 약 30% 빠릅니다. 이 페이지는 jh의 F1(760M) 기준입니다.</li></ul></section>
 <section class="panel"><h2>🆕 v4 업데이트 — F1(7640HS) 추가 (2026-11-11)</h2>
 <ul><li><b>C본체가 추가됐습니다:</b> FIREBAT F1(Ryzen 5 7640HS + Radeon 780M 내장그래픽 + 24GB)의 예상 프레임입니다. <b>1080p 기준</b>으로 적었고, 4K 수치는 아닙니다.</li>
 <li><b>솔직한 결론부터:</b> 780M은 1080p Low 기준 사이버펑크 약 40fps, 발더스 게이트 3 약 40fps, 1080p High 평균 약 26fps 수준입니다. <b>4K는 10–20fps라 AAA는 사실상 불가</b>입니다. 4K 모니터에서는 해상도를 1080p로 낮춰서 플레이하세요.</li>
@@ -59,11 +64,11 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
 <li><b>최근 확인:</b> 11월 신작 중 PC로 나온 AAA급 싱글 신작은 없어 목록은 100개 그대로입니다. GTA VI는 11월 19일 콘솔 전용 출시라 PC 가이드에서 제외했고, 월드 오브 워크래프트: 포에버는 MMO라 제외했습니다. 블랙 옵스 7은 메타크리틱 PC 점수가 65까지 떨어져 있으니 참고하세요.</li></ul></section>
 <section class="panel"><h2>세 본체, 무엇이 다른가</h2>
 <table><tr><th>구분</th><th>A · 9070 XT 본체</th><th>B · RTX 5080 본체</th><th>C · F1 7640HS</th></tr>
-<tr><td>사양</td><td>Ryzen 5 5600 + DDR4 16GB + RX 9070 XT 16GB</td><td>Ryzen 7 5700X3D + DDR4 32GB + RTX 5080 16GB</td><td>Ryzen 5 7640HS + DDR5 24GB + Radeon 780M 내장 (12CU)</td></tr>
-<tr><td>목표</td><td><b>4K 70–80fps</b> (실제 렌더 기준)</td><td><b>4K 90fps+</b> (아래 ‘표시 fps’ 주의 참조)</td><td><b>1080p 30–60fps</b> (4K는 불가)</td></tr>
+<tr><td>사양</td><td>Ryzen 5 5600 + DDR4 16GB + RX 9070 XT 16GB</td><td>Ryzen 7 5700X3D + DDR4 32GB + RTX 5080 16GB</td><td>Ryzen 5 7640HS + DDR5 24GB + Radeon 760M 내장 (8CU)</td></tr>
+<tr><td>목표</td><td><b>4K 70–80fps</b> (실제 렌더 기준)</td><td><b>4K 90fps+</b> (아래 ‘표시 fps’ 주의 참조)</td><td><b>1080p 20–60fps</b> (4K는 불가)</td></tr>
 <tr><td>업스케일</td><td>FSR 4 (Quality / Balanced)</td><td>DLSS 4 (Quality / Balanced)</td><td>FSR 4 (Quality / Balanced / Performance)</td></tr>
 <tr><td>프레임 생성</td><td>FSR FG · AFMF 2 (싱글 위주)</td><td>DLSS FG 2x · MFG 3–4x (싱글 위주)</td><td>AFMF 2만 가능 (DLSS 없음, RT 사실상 불가)</td></tr>
-<tr><td>강점 / 약점</td><td>래스터 강함, RT·패스 트레이싱 약함. 16GB RAM이라 백그라운드 정리가 프레임보다 먼저일 때가 있다.</td><td>RT·패스 트레이싱 강함, 5700X3D + 32GB라 도시·군중 구간이 유리하다. 그래도 네이티브 4K 풀 RT 90+는 안 된다.</td><td>미니PC라 조용하고 상시 가동에 맞다. 게임은 보너스 — 780M은 GTX 1650급이라 최신 AAA 4K는 안 되고, 무거운 게임은 720p까지 내려야 한다. 본업은 테라박스·LDPlayer.</td></tr></table>
+<tr><td>강점 / 약점</td><td>래스터 강함, RT·패스 트레이싱 약함. 16GB RAM이라 백그라운드 정리가 프레임보다 먼저일 때가 있다.</td><td>RT·패스 트레이싱 강함, 5700X3D + 32GB라 도시·군중 구간이 유리하다. 그래도 네이티브 4K 풀 RT 90+는 안 된다.</td><td>미니PC라 조용하고 상시 가동에 맞다. 게임은 보너스 — 760M은 GTX 1050 Ti급이라 최신 AAA 4K는 안 되고, 무거운 게임은 720p까지 내려야 한다. 본업은 테라박스·LDPlayer.</td></tr></table>
 <p><b>공통 원칙:</b> 텍스처는 웬만하면 최고로 두고, 그림자·볼류메트릭·구름·RT부터 내린다. 텍스처는 VRAM만 버티면 프레임이 거의 안 떨어지고, 그림자·RT는 내리는 즉시 프레임이 오른다.</p></section>
 
 <section class="panel warn"><h2>⚠ ‘90fps’의 함정 — 표시 fps와 실제 fps를 구분하세요</h2>
@@ -125,16 +130,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -175,7 +180,7 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 720p 타협 필요</span></div>
-    <div class="fps">예상 <b>1080p 25–35</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 17–24</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
       <div><dt>프리셋</dt><dd>720p–1080p Low (최저 옵션)</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Performance</dd></div>
@@ -184,7 +189,7 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
       <div><dt>먼저 내릴 것</dt><dd>최고 프리셋 금지, 전부 Low</dd></div>
       <div><dt>유지할 것</dt><dd>해상도 1080p 유지가 한계</dd></div>
     </dl>
-    <p class="note">이 게임은 F1으로 즐기기 어렵다. 720p + FSR Performance까지 내려야 30을 넘긴다. 4K는 10fps 안팎으로 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">이 게임은 F1으로 즐기기 어렵다. 720p + FSR Performance까지 내려야 20을 넘긴다. 4K는 7fps 안팎으로 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -225,16 +230,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -275,16 +280,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -325,7 +330,7 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 720p 타협 필요</span></div>
-    <div class="fps">예상 <b>1080p 25–35</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 17–24</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
       <div><dt>프리셋</dt><dd>720p–1080p Low (최저 옵션)</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Performance</dd></div>
@@ -334,7 +339,7 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
       <div><dt>먼저 내릴 것</dt><dd>최고 프리셋 금지, 전부 Low</dd></div>
       <div><dt>유지할 것</dt><dd>해상도 1080p 유지가 한계</dd></div>
     </dl>
-    <p class="note">이 게임은 F1으로 즐기기 어렵다. 720p + FSR Performance까지 내려야 30을 넘긴다. 4K는 10fps 안팎으로 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">이 게임은 F1으로 즐기기 어렵다. 720p + FSR Performance까지 내려야 20을 넘긴다. 4K는 7fps 안팎으로 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -375,16 +380,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -425,16 +430,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -475,16 +480,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -525,16 +530,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -575,16 +580,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -625,16 +630,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -675,16 +680,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -725,16 +730,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -775,16 +780,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -825,16 +830,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -875,16 +880,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -925,16 +930,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -975,16 +980,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -1025,16 +1030,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -1075,16 +1080,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -1125,16 +1130,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -1175,16 +1180,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -1225,16 +1230,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -1275,16 +1280,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -1325,16 +1330,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -1375,7 +1380,7 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 720p 타협 필요</span></div>
-    <div class="fps">예상 <b>1080p 25–35</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 17–24</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
       <div><dt>프리셋</dt><dd>720p–1080p Low (최저 옵션)</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Performance</dd></div>
@@ -1384,7 +1389,7 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
       <div><dt>먼저 내릴 것</dt><dd>최고 프리셋 금지, 전부 Low</dd></div>
       <div><dt>유지할 것</dt><dd>해상도 1080p 유지가 한계</dd></div>
     </dl>
-    <p class="note">이 게임은 F1으로 즐기기 어렵다. 720p + FSR Performance까지 내려야 30을 넘긴다. 4K는 10fps 안팎으로 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">이 게임은 F1으로 즐기기 어렵다. 720p + FSR Performance까지 내려야 20을 넘긴다. 4K는 7fps 안팎으로 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -1425,16 +1430,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -1475,7 +1480,7 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 720p 타협 필요</span></div>
-    <div class="fps">예상 <b>1080p 20–30 (공항·대도시)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 14–20 (공항·대도시)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
       <div><dt>프리셋</dt><dd>720p–1080p Low (최저 옵션)</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Performance</dd></div>
@@ -1525,16 +1530,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -1575,16 +1580,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -1625,16 +1630,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -1675,16 +1680,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -1725,16 +1730,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -1775,16 +1780,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -1825,16 +1830,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -1875,16 +1880,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -1925,16 +1930,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -1975,16 +1980,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -2025,16 +2030,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -2075,16 +2080,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -2125,16 +2130,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -2175,16 +2180,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -2225,16 +2230,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -2275,16 +2280,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -2325,16 +2330,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -2375,16 +2380,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>60 고정 (대전 60fps 캡)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 55 전후 (대전 60fps 캡)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">대전 60fps 고정 게임. 1080p High로도 60을 지킨다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">대전 60fps 고정 게임. 1080p Medium으로 55 전후를 지킨다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -2425,16 +2430,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -2475,16 +2480,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -2525,7 +2530,7 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 720p 타협 필요</span></div>
-    <div class="fps">예상 <b>1080p 25–40 (도시 규모에 따라)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 17–27 (도시 규모에 따라)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
       <div><dt>프리셋</dt><dd>720p–1080p Low (최저 옵션)</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Performance</dd></div>
@@ -2575,16 +2580,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -2625,16 +2630,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -2675,16 +2680,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>60 고정 (대전 60fps 캡)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 55 전후 (대전 60fps 캡)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">대전 60fps 고정 게임. 1080p High로도 60을 지킨다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">대전 60fps 고정 게임. 1080p Medium으로 55 전후를 지킨다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -2725,16 +2730,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -2775,16 +2780,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -2825,16 +2830,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -2875,16 +2880,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -2925,16 +2930,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -2975,16 +2980,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -3025,16 +3030,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>60 고정 (대전 60fps 캡)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 55 전후 (대전 60fps 캡)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">대전 60fps 고정 게임. 1080p High로도 60을 지킨다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">대전 60fps 고정 게임. 1080p Medium으로 55 전후를 지킨다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -3075,16 +3080,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -3125,16 +3130,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -3175,16 +3180,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -3225,16 +3230,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -3275,16 +3280,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -3325,16 +3330,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -3375,16 +3380,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -3425,16 +3430,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -3475,16 +3480,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -3525,16 +3530,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -3575,16 +3580,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -3625,16 +3630,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>60 고정 (게임 내 60fps 캡)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 45–60 (게임 내 60fps 캡)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">60fps 캡 게임이라 1080p에서도 목표는 60 유지. Low–Medium이면 여유 있다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">60fps 캡 게임이라 1080p에서도 목표는 60 유지. Low로 낮춰야 60에 가깝다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -3675,16 +3680,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -3725,16 +3730,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -3775,16 +3780,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -3825,16 +3830,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -3875,16 +3880,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -3925,16 +3930,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -3975,16 +3980,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -4025,16 +4030,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -4075,7 +4080,7 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 720p 타협 필요</span></div>
-    <div class="fps">예상 <b>1080p 25–35</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 17–24</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
       <div><dt>프리셋</dt><dd>720p–1080p Low (최저 옵션)</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Performance</dd></div>
@@ -4084,7 +4089,7 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
       <div><dt>먼저 내릴 것</dt><dd>최고 프리셋 금지, 전부 Low</dd></div>
       <div><dt>유지할 것</dt><dd>해상도 1080p 유지가 한계</dd></div>
     </dl>
-    <p class="note">이 게임은 F1으로 즐기기 어렵다. 720p + FSR Performance까지 내려야 30을 넘긴다. 4K는 10fps 안팎으로 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">이 게임은 F1으로 즐기기 어렵다. 720p + FSR Performance까지 내려야 20을 넘긴다. 4K는 7fps 안팎으로 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -4125,16 +4130,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -4175,16 +4180,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -4225,16 +4230,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -4275,16 +4280,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -4325,16 +4330,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -4375,16 +4380,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -4425,16 +4430,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-cond">🟡 조건부 · 1080p 조건부</span></div>
-    <div class="fps">예상 <b>1080p 30–45</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 20–31</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low 위주</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Balanced</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>AFMF 2 고려</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT·그림자·볼류메트릭 전부 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium 유지</dd></div>
     </dl>
-    <p class="note">30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 20대로 떨어진다. 4K는 10–20대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">20–30fps를 목표로 타협하는 구간. FSR Balanced + Low가 출발점이고, 장면에 따라 10대로 떨어진다. 4K는 7–14대로 플레이 불가. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -4475,16 +4480,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>60 고정 (게임 내 60fps 캡)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 45–60 (게임 내 60fps 캡)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">60fps 캡 게임이라 1080p에서도 목표는 60 유지. Low–Medium이면 여유 있다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">60fps 캡 게임이라 1080p에서도 목표는 60 유지. Low로 낮춰야 60에 가깝다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -4525,16 +4530,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -4575,16 +4580,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -4625,16 +4630,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -4675,16 +4680,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -4725,16 +4730,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -4775,16 +4780,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -4825,16 +4830,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -4875,16 +4880,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -4925,16 +4930,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -4975,16 +4980,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>60 고정 (게임 내 60fps 캡)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 45–60 (게임 내 60fps 캡)</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">60fps 캡 게임이라 1080p에서도 목표는 60 유지. Low–Medium이면 여유 있다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">60fps 캡 게임이라 1080p에서도 목표는 60 유지. Low로 낮춰야 60에 가깝다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -5025,16 +5030,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-ok">🔵 달성 · 1080p 달성</span></div>
-    <div class="fps">예상 <b>1080p 40–55</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 27–37</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p Medium–High 혼합</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Low–Medium 혼합</dd></div>
       <div><dt>업스케일</dt><dd>FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
-      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 1단계</dd></div>
+      <div><dt>먼저 내릴 것</dt><dd>그림자·볼류메트릭 낮춤</dd></div>
       <div><dt>유지할 것</dt><dd>텍스처 Medium–High</dd></div>
     </dl>
-    <p class="note">1080p Low–Medium + FSR Quality가 현실적이다. 40대를 지킨다. 4K Low는 15–25대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">1080p Low + FSR Quality가 현실적이다. 30대 전후를 지킨다. 4K Low는 10–17대로 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 
@@ -5075,16 +5080,16 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
   </div>
   <div class="spec spec-c" data-spec="c">
     <div class="spec-title"><span class="badge-c">C · F1 7640HS</span><span class="grade g-easy">🟢 여유 · 1080p 여유</span></div>
-    <div class="fps">예상 <b>1080p 60–90</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
+    <div class="fps">예상 <b>1080p 40–60</b> <span class="fps-note">1080p 기준 · 4K는 권장하지 않음</span></div>
     <dl>
-      <div><dt>프리셋</dt><dd>1080p High–최고</dd></div>
+      <div><dt>프리셋</dt><dd>1080p Medium–High</dd></div>
       <div><dt>업스케일</dt><dd>네이티브 또는 FSR 4 Quality</dd></div>
       <div><dt>레이 트레이싱</dt><dd>RT 끔</dd></div>
       <div><dt>프레임 생성</dt><dd>FG 끔</dd></div>
       <div><dt>먼저 내릴 것</dt><dd>RT만 끔</dd></div>
-      <div><dt>유지할 것</dt><dd>전부 높음</dd></div>
+      <div><dt>유지할 것</dt><dd>대부분 높음</dd></div>
     </dl>
-    <p class="note">가벼운 게임이라 1080p에서는 60을 넘긴다. FSR을 켜면 더 여유 있다. 4K Low는 20–30대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
+    <p class="note">가벼운 게임이라 1080p에서는 40–60을 오간다. FSR을 켜면 60에 더 가깝다. 4K Low는 15–20대라 권장하지 않는다. [티어 추정치 · 1080p 기준]</p>
   </div>
 </article>
 </div>
@@ -5100,18 +5105,18 @@ footer{font-size:12.5px;color:#8b9bab;padding:0 4px 30px}
 <li><b>Reflex:</b> FG를 켤 때는 Reflex(저지연 모드)도 함께 켜세요. 끄면 FG의 지연이 더 크게 느껴집니다.</li>
 <li><b>G-Sync + 프레임 제한:</b> 모니터 주사율보다 3fps 낮게 제한(예: 144Hz → 141)하면 FG 사용 시 끊김이 줄어듭니다.</li>
 <li><b>32GB RAM:</b> 백그라운드에 여유가 있지만, 그래도 게임 중 녹화·스트리밍을 동시에 돌리면 프레임이 흔들릴 수 있습니다.</li></ul>
-<h3 style="font-size:15px">C · F1 7640HS 미니PC (780M 내장그래픽)</h3>
+<h3 style="font-size:15px">C · F1 7640HS 미니PC (760M 내장그래픽)</h3>
 <ul><li><b>해상도가 곧 프레임입니다:</b> 4K는 내려놓고 1080p로 시작하세요. 4K 모니터라면 게임 내 해상도를 1920×1080으로 낮추고, FSR Quality를 켜는 게 제일 먼저 할 일입니다.</li>
-<li><b>공유 메모리 설정:</b> 780M은 시스템 램을 나눠 씁니다. BIOS에 UMA Frame Buffer 설정이 있으면 4GB 이상으로 잡고, 램이 듀얼 채널인지 확인하세요. 싱글 채널이면 프레임이 눈에 띄게 떨어집니다.</li>
+<li><b>공유 메모리 설정:</b> 760M은 시스템 램을 나눠 씁니다. BIOS에 UMA Frame Buffer 설정이 있으면 4GB 이상으로 잡고, 램이 듀얼 채널인지 확인하세요. 싱글 채널이면 프레임이 눈에 띄게 떨어집니다.</li>
 <li><b>전원·발열:</b> 미니PC는 TDP가 낮아 오래 돌리면 클럭이 내려갑니다. 통풍이 되는 곳에 두고, 게임 중에는 LDPlayer·테라박스 같은 백그라운드 작업을 잠시 멈추는 게 프레임에 도움됩니다.</li>
-<li><b>RT는 끄세요:</b> 780M에 레이트레이싱은 없습니다. RT 옵션이 보이는 게임은 끄는 게 출발점이고, FSR Performance + AFMF 2 조합이 무거운 게임의 마지막 수단입니다.</li></ul></section>
+<li><b>RT는 끄세요:</b> 760M에 레이트레이싱은 없습니다. RT 옵션이 보이는 게임은 끄는 게 출발점이고, FSR Performance + AFMF 2 조합이 무거운 게임의 마지막 수단입니다.</li></ul></section>
 
 <section class="panel"><h2>정렬·인기순·메타크리틱 점수에 대하여</h2>
 <p><b>이 페이지는 발매일 내림차순입니다.</b> 1번이 가장 최신작(팬텀 블레이드 제로, 2026-10-29)이고, 아래로 갈수록 오래된 게임입니다. 카드에 적힌 ‘인기 #N’은 이전 버전의 인기순 순위이고, 화면 위 버튼으로 인기순 보기로 바꿀 수 있습니다.</p>
 <p><b>메타크리틱 점수는 2026-11-11 기준 PC판 스냅샷</b>입니다. 리뷰가 추가되면 점수가 달라질 수 있습니다. GTA V 인핸스드는 메타크리틱에 비평가 리뷰가 4건 미만이라 점수가 없고, 레지던트 이블 레퀴엠은 PC 비평가 페이지 92 / 통합 페이지 89로 표기가 갈려 PC 기준 92로 적었습니다. 블랙 옵스 7은 출시 초기 84점에서 현재 65점으로 크게 떨어진 상태입니다. 점수는 참고용이고, 이 페이지의 설정 가이드와는 별개입니다.</p>
 <p>인기순은 누적 판매량 + 스팀 동시접속자 피크 + 2026년 화제성을 종합한 <b>대략적인 순서</b>입니다. 정확한 순위가 아니라 ‘많이 팔리고, 많이 플레이된 순서’라는 안내로 봐주세요. 확인된 스팀 피크(싱글 기준): 오공 약 241만, 사이버펑크 약 105만, 엘든 링 약 95만, 호그와트 약 88만, 발더스 게이트 3 약 88만, 팬텀 블레이드 제로 약 72만, 레지던트 이블 레퀴엠 약 34만, 스타필드 약 33만. 판매량은 호그와트·사이버펑크·엘든 링·오공이 3,000만 장급, 발더스 게이트 3이 2,000만 장 이상으로 보도됐습니다.</p>
 <p><b>1–23번과 24–100번은 성격이 다릅니다:</b> 1–23번은 공개 벤치마크를 근거로 게임별로 적었고, 24–100번은 엔진·무게감으로 나눈 티어(T1 가벼움 ~ T4 극한 RT/PT) 추정치입니다. 24–100번 카드에는 ‘[티어 추정치]’라고 적혀 있습니다. 개별 게임 실측이 아니라 범위 추정치이니, 가지고 있는 게임은 그 게임의 최신 벤치를 한 번 더 확인하는 게 정확합니다. 인디 게임은 제외했고(전작 지시), PC로 안 나온 게임(고스트 오브 요테이, GTA VI)과 순수 e스포츠·F2P(CS2·발로란트·포트나이트 등)도 제외했습니다.</p>
-<p><b>C본체(F1) 수치에 대하여:</b> C본체 수치는 1080p 기준 티어 추정치입니다. 780M 공개 벤치(1080p Low 사이버펑크 약 40fps, 발더스 게이트 3 약 40fps, 1080p High 평균 약 26fps)를 기준으로 가벼움(T1)부터 극한(T4)까지 나눈 것이고, F1 실기 실측이 아니니 실제 프레임은 램 구성·TDP·드라이버에 따라 달라집니다.</p>
+<p><b>C본체(F1) 수치에 대하여:</b> C본체 수치는 1080p 기준 티어 추정치입니다. 780M 공개 벤치(1080p Low 사이버펑크 약 40fps, 발더스 게이트 3 약 40fps, 1080p High 평균 약 26fps)에 약 ×0.68을 곱해 760M으로 환산한 값이고, F1 실기 실측이 아니니 실제 프레임은 램 구성·TDP·드라이버에 따라 달라집니다.</p>
 <p><b>FPS 수치에 대하여:</b> 표 수치는 실측이 아니라 공개 벤치마크를 jh의 두 사양에 맞게 낮춰 조정한 <b>추정치</b>입니다. 벤치 대부분이 9800X3D + DDR5 32GB 기준이라, 5600 + DDR4 16GB 본체는 CPU가 걸리는 장면에서 표보다 5–15fps 낮게 나올 수 있습니다. 패치·드라이버 업데이트로 수치는 달라집니다. 2026년 신작 2종(팬텀 블레이드 제로, 레지던트 이블 레퀴엠)은 벤치 자료가 적어 ‘추정’이라고 따로 표기했습니다.</p></section>
 
 <section class="panel"><h2>출처</h2>
