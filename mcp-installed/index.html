@@ -3,38 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
 <title>뮤즈에 설치된 MCP 정리</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, "Segoe UI", "Noto Sans KR", sans-serif; background: #f4f6fb; color: #1f2430; line-height: 1.6; padding: 24px 16px 48px; }
+  body { font-family: -apple-system, "Segoe UI", "Noto Sans KR", sans-serif; background: #0e1218; color: #e6e9f0; line-height: 1.6; padding: 24px 16px 48px; }
   .wrap { max-width: 960px; margin: 0 auto; }
   header { background: linear-gradient(135deg, #1e5eff, #6a5cff); color: #fff; border-radius: 16px; padding: 28px 24px; margin-bottom: 20px; }
   header h1 { font-size: 26px; margin-bottom: 6px; }
   header p { opacity: .92; font-size: 15px; }
   .stats { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
-  .stat { flex: 1; min-width: 140px; background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 1px 4px rgba(20,30,60,.08); text-align: center; }
+  .stat { flex: 1; min-width: 140px; background: #1a2130; border: 1px solid #2a3345; border-radius: 12px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.35); text-align: center; }
   .stat b { display: block; font-size: 30px; line-height: 1.1; }
-  .stat span { font-size: 13px; color: #5a6478; }
-  .stat .ok { color: #0a8a4b; } .stat .run { color: #d97706; } .stat .all { color: #1e5eff; }
+  .stat span { font-size: 13px; color: #9aa7bd; }
+  .stat .ok { color: #4ade80; } .stat .run { color: #fbbf24; } .stat .all { color: #7aa5ff; }
   h2 { font-size: 19px; margin: 26px 0 12px; }
-  .card { background: #fff; border-radius: 14px; padding: 20px; margin-bottom: 14px; box-shadow: 0 1px 4px rgba(20,30,60,.08); }
+  .card { background: #1a2130; border: 1px solid #2a3345; border-radius: 14px; padding: 20px; margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,.35); }
   .card h3 { font-size: 18px; margin-bottom: 4px; }
-  .card h3 a { color: #1e5eff; text-decoration: none; }
+  .card h3 a { color: #7aa5ff; text-decoration: none; }
   .card h3 a:hover { text-decoration: underline; }
-  .sub { color: #5a6478; font-size: 14px; margin-bottom: 10px; }
+  .sub { color: #9aa7bd; font-size: 14px; margin-bottom: 10px; }
   .badge { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 10px; border-radius: 999px; vertical-align: middle; margin-left: 8px; }
-  .badge.ok { background: #dcfce7; color: #0a8a4b; }
-  .badge.run { background: #fef3c7; color: #b45309; }
-  .badge.hold { background: #e0e7ff; color: #4338ca; }
-  .badge.warn { background: #fee2e2; color: #b91c1c; }
+  .badge.ok { background: #14532d; color: #86efac; }
+  .badge.run { background: #451a03; color: #fbbf24; }
+  .badge.hold { background: #1e3a8a; color: #bfdbfe; }
+  .badge.warn { background: #7f1d1d; color: #fca5a5; }
   table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 8px; }
-  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid #eef1f6; vertical-align: top; }
-  th { color: #5a6478; font-size: 13px; width: 110px; white-space: nowrap; }
-  .tools { font-size: 13px; color: #374151; }
-  .tools b { color: #0a8a4b; } .tools i { color: #dc2626; font-style: normal; }
-  .note { background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 16px 18px; font-size: 14px; margin-top: 20px; }
-  .note b { color: #92400e; }
-  footer { margin-top: 28px; text-align: center; color: #8a94a6; font-size: 13px; }
+  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid #2a3345; vertical-align: top; }
+  th { color: #9aa7bd; font-size: 13px; width: 110px; white-space: nowrap; }
+  .tools { font-size: 13px; color: #c7d0de; }
+  .tools b { color: #4ade80; } .tools i { color: #f87171; font-style: normal; }
+  .note { background: #2a2410; border: 1px solid #6b5d1f; border-radius: 12px; padding: 16px 18px; font-size: 14px; margin-top: 20px; color: #f3e9c8; }
+  .note b { color: #fbbf24; }
+  footer { margin-top: 28px; text-align: center; color: #7c8698; font-size: 13px; }
   @media (max-width: 600px) {
     header h1 { font-size: 21px; }
     th { width: 84px; }
@@ -190,7 +191,7 @@
     <b>토큰 비용:</b> 이 MCP들은 서버를 상주시키는 게 아니라 부를 때만 띄우는 방식이라, 안 쓸 때는 토큰이 0원 나가. 쓸 때는 호출 결과가 돌아오는 만큼만 한 번 세져. Craft Anything처럼 안에서 또 에이전트를 돌리는 워크플로는 설치 범위에서 막아둠. 텔레메트리는 ffmpeg·codemunch에서 발견해 래퍼에서 이중 차단했음.
   </div>
 
-  <footer>마지막 업데이트: 2026-11-15 23:41 · 버전이 빨리 오르는 항목이 많아 업그레이드할 때마다 허용 목록을 다시 검토함</footer>
+  <footer>마지막 업데이트: 2026-11-15 23:44 (다크모드 적용) · 버전이 빨리 오르는 항목이 많아 업그레이드할 때마다 허용 목록을 다시 검토함</footer>
 </div>
 </body>
 </html>
