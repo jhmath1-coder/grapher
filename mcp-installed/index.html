@@ -50,9 +50,9 @@
   </header>
 
   <div class="stats">
-    <div class="stat"><b class="ok">10</b><span>설치 완료</span></div>
-    <div class="stat"><b class="ok">0</b><span>인증 대기</span></div>
-    <div class="stat"><b class="all">10</b><span>전체</span></div>
+    <div class="stat"><b class="ok">12</b><span>설치 완료</span></div>
+    <div class="stat"><b class="run">1</b><span>인증 대기</span></div>
+    <div class="stat"><b class="all">12</b><span>전체</span></div>
   </div>
 
   <h2>✅ 설치 완료 — 리버스엔지니어링</h2>
@@ -179,6 +179,33 @@
     </table>
   </div>
 
+  <h2>✅ 설치 완료 — 파일·검색 (2026-11-16)</h2>
+
+  <div class="card">
+    <h3><a href="https://github.com/modelcontextprotocol/servers" target="_blank" rel="noopener">Filesystem MCP (공식)</a><span class="badge ok">설치 완료</span></h3>
+    <p class="sub">지정한 폴더만 읽고 쓰는 파일 도구. GSP 분석 사본·NAS 정리용.</p>
+    <table>
+      <tr><th>버전</th><td>2.3.0 · 2026-11-16 설치</td></tr>
+      <tr><th>도구</th><td class="tools">전체 16개 · 허용 <b>16개</b> · 차단 <i>0개</i> (읽기·목록·검색 10개 + 쓰기 6개)</td></tr>
+      <tr><th>허용 폴더</th><td>gsp-project, user/files, 커넥터 안 work/ 스크래치 3곳만. ~/ 전체나 ~/workspace 전체는 허용 안 함</td></tr>
+      <tr><th>제한</th><td>삭제 도구 없음(공식 서버 미제공) · 쓰기는 사용자 요청 시에만, 기존 자료 삭제·덮어쓰기는 실행 전 확인</td></tr>
+      <tr><th>검증</th><td>gsp-project 목록 읽기 실제 수행 · 허용 밖 경로(MEMORY.md) 거부 확인</td></tr>
+      <tr><th>위치</th><td><code>~/workspace/custom-connectors/custom.filesystem/</code></td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3><a href="https://github.com/tavily-ai/tavily-mcp" target="_blank" rel="noopener">Tavily MCP</a><span class="badge warn">키 필요</span></h3>
+    <p class="sub">뉴스 검색·본문 추출. JH 뉴스 검색 품질용. 무료 티어 전용.</p>
+    <table>
+      <tr><th>버전</th><td>0.2.22 (MIT) · 2026-11-16 설치</td></tr>
+      <tr><th>도구</th><td class="tools">전체 5개 · 허용 <b>3개</b> · 차단 <i>2개</i> (crawl·research — 무료 크레딧 과다 소진)</td></tr>
+      <tr><th>인증</th><td><b>무료 API 키 필요 — 아직 없음.</b> 키를 금고에 넣으면 날짜 필터 검색·본문 추출 실호출 검증 예정. 유료 플랜은 쓰지 않음.</td></tr>
+      <tr><th>검증</th><td>list-tools 5개 확인 · 차단 호출 거부 확인. 실제 검색 호출은 키 없어서 미검증.</td></tr>
+      <tr><th>위치</th><td><code>~/workspace/custom-connectors/custom.tavily/</code></td></tr>
+    </table>
+  </div>
+
   <h2>📌 그 외 연결 상태</h2>
   <div class="card">
     <table>
@@ -191,7 +218,7 @@
     <b>토큰 비용:</b> 이 MCP들은 서버를 상주시키는 게 아니라 부를 때만 띄우는 방식이라, 안 쓸 때는 토큰이 0원 나가. 쓸 때는 호출 결과가 돌아오는 만큼만 한 번 세져. Craft Anything처럼 안에서 또 에이전트를 돌리는 워크플로는 설치 범위에서 막아둠. 텔레메트리는 ffmpeg·codemunch에서 발견해 래퍼에서 이중 차단했음.
   </div>
 
-  <footer>마지막 업데이트: 2026-11-15 23:44 (다크모드 적용) · 버전이 빨리 오르는 항목이 많아 업그레이드할 때마다 허용 목록을 다시 검토함</footer>
+  <footer>마지막 업데이트: 2026-11-16 12:18 (Filesystem·Tavily 추가) · 버전이 빨리 오르는 항목이 많아 업그레이드할 때마다 허용 목록을 다시 검토함</footer>
 </div>
 </body>
 </html>
