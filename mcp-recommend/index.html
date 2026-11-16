@@ -1,0 +1,790 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>인기 MCP 추천</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" />
+    <style>
+      :root {
+        --bg: #f3f5f2;
+        --surface: #ffffff;
+        --surface-2: #ecefe9;
+        --ink: #18211b;
+        --ink-2: #43524a;
+        --ink-3: #6b7a70;
+        --line: #d8ded6;
+        --accent: #146c43;
+        --accent-soft: #e2f0e7;
+        --amber: #9a5b00;
+        --amber-soft: #faf0dc;
+        --red: #a93226;
+        --red-soft: #f9e7e4;
+        --code-bg: #141a16;
+        --code-ink: #c9e8d2;
+        --radius: 10px;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0f130f;
+          --surface: #171d18;
+          --surface-2: #1f2721;
+          --ink: #e6ede7;
+          --ink-2: #a8b8ad;
+          --ink-3: #7d8f83;
+          --line: #2b352d;
+          --accent: #4cc38a;
+          --accent-soft: #1c2f24;
+          --amber: #e0a458;
+          --amber-soft: #33270f;
+          --red: #e0786f;
+          --red-soft: #3a1e1b;
+          --code-bg: #0a0e0b;
+          --code-ink: #a9dcbb;
+        }
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Pretendard Variable", Pretendard, -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
+        font-size: 16px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px 80px; }
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      code, .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+      /* ---------- header ---------- */
+      header { padding: 44px 0 8px; }
+      .kicker {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12.5px; letter-spacing: .14em; color: var(--accent);
+        text-transform: uppercase; margin: 0 0 10px;
+      }
+      h1 { font-size: clamp(30px, 5.4vw, 44px); line-height: 1.18; margin: 0 0 14px; font-weight: 800; letter-spacing: -0.02em; }
+      .lede { font-size: 17px; color: var(--ink-2); max-width: 46em; margin: 0 0 22px; }
+      .lede strong { color: var(--ink); }
+      .stat-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
+      .stat {
+        background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+        padding: 10px 14px; min-width: 150px; flex: 1 1 150px;
+      }
+      .stat b { display: block; font-size: 21px; line-height: 1.25; font-weight: 800; }
+      .stat span { font-size: 12.5px; color: var(--ink-3); }
+      .basis { font-size: 13px; color: var(--ink-3); margin: 10px 0 0; }
+
+      /* ---------- filter ---------- */
+      .filter-bar {
+        position: sticky; top: 0; z-index: 20;
+        background: var(--bg); padding: 14px 0 10px; margin-top: 26px;
+        border-bottom: 1px solid var(--line);
+      }
+      .filter-bar .label { font-size: 13px; font-weight: 700; color: var(--ink-2); margin: 0 0 8px; }
+      .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+      .chip {
+        font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer;
+        padding: 6px 13px; border-radius: 999px;
+        border: 1px solid var(--line); background: var(--surface); color: var(--ink-2);
+      }
+      .chip:hover { border-color: var(--accent); color: var(--accent); }
+      .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+      @media (prefers-color-scheme: dark) { .chip[aria-pressed="true"] { color: #0d1510; } }
+      .filter-note { font-size: 13px; color: var(--ink-3); margin: 8px 0 2px; min-height: 1.4em; }
+
+      /* ---------- sections ---------- */
+      section { margin-top: 46px; }
+      h2 { font-size: 24px; font-weight: 800; letter-spacing: -0.015em; margin: 0 0 6px; }
+      h2 .tier-badge {
+        display: inline-block; vertical-align: 3px; margin-right: 9px;
+        font-family: "JetBrains Mono", monospace; font-size: 13px; font-weight: 600;
+        padding: 3px 9px; border-radius: 6px;
+      }
+      .badge-s { background: var(--accent); color: #fff; }
+      .badge-a { background: var(--amber); color: #fff; }
+      .badge-b { background: var(--red); color: #fff; }
+      @media (prefers-color-scheme: dark) {
+        .badge-s, .badge-a, .badge-b { color: #10130f; }
+      }
+      .sec-desc { color: var(--ink-2); margin: 0 0 20px; max-width: 48em; }
+
+      /* ---------- top5 ---------- */
+      .top5 { list-style: none; margin: 0; padding: 0; counter-reset: rank; }
+      .top5 li {
+        display: flex; gap: 16px; align-items: baseline;
+        background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+        padding: 15px 18px; margin-bottom: 10px;
+      }
+      .top5 .num {
+        font-family: "JetBrains Mono", monospace; font-size: 22px; font-weight: 600;
+        color: var(--accent); min-width: 30px; text-align: right;
+      }
+      .top5 .t-name { font-weight: 800; font-size: 17px; }
+      .top5 .t-why { color: var(--ink-2); font-size: 14.5px; display: block; margin-top: 2px; }
+      .top5 .t-stars { margin-left: auto; white-space: nowrap; font-family: "JetBrains Mono", monospace; font-size: 13px; color: var(--ink-3); }
+
+      /* ---------- server cards ---------- */
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+      .card {
+        background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+        padding: 18px; display: flex; flex-direction: column; gap: 9px;
+        transition: opacity .25s ease;
+      }
+      .card.dim { opacity: .28; }
+      .card-head { display: flex; align-items: flex-start; gap: 10px; }
+      .card h3 { font-size: 17.5px; margin: 0; font-weight: 800; line-height: 1.3; }
+      .card h3 a { color: var(--ink); }
+      .card h3 a:hover { color: var(--accent); text-decoration: none; }
+      .stars {
+        margin-left: auto; white-space: nowrap; font-family: "JetBrains Mono", monospace;
+        font-size: 13px; font-weight: 600; color: var(--accent);
+        background: var(--accent-soft); border-radius: 6px; padding: 2px 8px;
+      }
+      .stars.warn { color: var(--red); background: var(--red-soft); }
+      .desc { margin: 0; color: var(--ink-2); font-size: 14.5px; }
+      .meta { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font-size: 13.5px; margin: 2px 0 0; }
+      .meta dt { color: var(--ink-3); font-weight: 600; white-space: nowrap; }
+      .meta dd { margin: 0; color: var(--ink); }
+      .install {
+        display: flex; align-items: center; gap: 8px;
+        background: var(--code-bg); color: var(--code-ink); border-radius: 7px;
+        padding: 8px 10px; font-size: 12.5px; overflow-x: auto; white-space: nowrap;
+      }
+      .install code { flex: 1; }
+      .copy-btn {
+        font: inherit; font-size: 11.5px; font-weight: 700; cursor: pointer; flex: none;
+        background: transparent; color: var(--code-ink); border: 1px solid #3d4a40;
+        border-radius: 5px; padding: 3px 8px;
+      }
+      .copy-btn:hover { border-color: var(--code-ink); }
+      .note { font-size: 13.5px; border-radius: 7px; padding: 9px 12px; margin: 0; }
+      .note.risk { background: var(--red-soft); color: var(--ink); }
+      .note.risk b { color: var(--red); }
+      .note.tip { background: var(--accent-soft); }
+      .note.caution { background: var(--amber-soft); }
+      .note.caution b { color: var(--amber); }
+      .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: auto; padding-top: 2px; }
+      .tag { font-size: 11.5px; font-weight: 600; color: var(--ink-3); border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; }
+
+      /* ---------- conditional list ---------- */
+      .cond { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+      .cond li { background: var(--surface-2); border-radius: var(--radius); padding: 14px 16px; font-size: 14.5px; }
+      .cond b { display: block; font-size: 15.5px; margin-bottom: 2px; }
+      .cond .when { color: var(--amber); font-weight: 700; font-size: 13px; }
+      .cond p { margin: 4px 0 0; color: var(--ink-2); }
+
+      /* ---------- use cases ---------- */
+      .uc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+      .uc {
+        background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px;
+      }
+      .uc h3 { margin: 0 0 8px; font-size: 16.5px; font-weight: 800; }
+      .uc h3 .uc-key { font-family: "JetBrains Mono", monospace; color: var(--accent); font-size: 13px; margin-right: 7px; }
+      .uc p { margin: 0 0 8px; font-size: 14.5px; color: var(--ink-2); }
+      .uc p:last-child { margin-bottom: 0; }
+      .uc .pick { color: var(--ink); }
+      .uc .pick b { color: var(--accent); }
+
+      /* ---------- risk table ---------- */
+      .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+      table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14.5px; }
+      th, td { text-align: left; padding: 11px 14px; vertical-align: top; }
+      thead th { background: var(--surface-2); font-size: 13px; color: var(--ink-2); border-bottom: 1px solid var(--line); }
+      tbody tr + tr td { border-top: 1px solid var(--line); }
+      td.srv { font-weight: 700; white-space: nowrap; }
+      td .danger { color: var(--red); font-weight: 600; }
+
+      /* ---------- skip list ---------- */
+      .skip { list-style: none; margin: 0; padding: 0; }
+      .skip li {
+        display: flex; gap: 12px; padding: 12px 2px; border-bottom: 1px solid var(--line); font-size: 15px;
+      }
+      .skip li:last-child { border-bottom: none; }
+      .skip .x { color: var(--red); font-weight: 800; flex: none; }
+      .skip b { white-space: nowrap; }
+      .skip span { color: var(--ink-2); }
+
+      /* ---------- caveats & sources ---------- */
+      .caveat { background: var(--amber-soft); border-radius: var(--radius); padding: 16px 18px; font-size: 14.5px; }
+      .caveat p { margin: 0 0 8px; }
+      .caveat p:last-child { margin-bottom: 0; }
+      .sources { font-size: 13.5px; color: var(--ink-2); }
+      .sources ul { margin: 8px 0 0; padding-left: 18px; columns: 2; column-gap: 34px; }
+      .sources li { margin-bottom: 4px; break-inside: avoid; }
+      footer { margin-top: 54px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 13px; color: var(--ink-3); }
+
+      @media (max-width: 640px) {
+        .wrap { padding: 0 14px 64px; }
+        header { padding-top: 30px; }
+        .grid, .uc-grid, .cond { grid-template-columns: 1fr; }
+        .top5 li { flex-wrap: wrap; }
+        .top5 .t-stars { margin-left: 46px; }
+        .sources ul { columns: 1; }
+        .table-scroll { overflow-x: visible; }
+        table { min-width: 0; }
+        thead { display: none; }
+        tbody tr { display: block; padding: 8px 0; }
+        tbody td { display: block; border-top: none !important; padding: 3px 14px; }
+        td.srv { padding-top: 8px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        .card { transition: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+
+      <header>
+        <p class="kicker">MCP Server Guide · 2026-10-23 조사</p>
+        <h1>인기 MCP·커넥터 추천</h1>
+        <p class="lede">
+          GitHub에서 스타와 추천이 많은 MCP 서버 19개를 골라, <strong>이 환경(Linux 헤드리스 개인 에이전트)에 실제로 깔 수 있는지, 위험한 권한은 없는지</strong>까지 따져 등급으로 나눴다.
+          결론부터 말하면 전부 깔 필요는 없다 — 잘 고른 4~5개가 20개보다 낫다는 게 실사용 후기들의 공통 의견이다.
+        </p>
+        <div class="stat-row">
+          <div class="stat"><b>38,336개</b><span>GitHub <code>mcp-server</code> 토픽 공개 repo 수 (2026-10-21 기준, 2차 출처)</span></div>
+          <div class="stat"><b>9,652개</b><span>공식 MCP 레지스트리에 등록된 서버 수 (2026-05 기준, 2차 출처)</span></div>
+          <div class="stat"><b>19개</b><span>이 페이지에서 검토한 후보 (18개 + 주의 대상 1개)</span></div>
+        </div>
+        <p class="basis">스타 수는 2026-10-23 각 repo의 GitHub 페이지에서 확인한 값으로, 계속 변한다. 가격은 2차 정리 자료 기준이라 실제 결제 전 각 서비스 요금 페이지에서 재확인이 필요하다.</p>
+      </header>
+
+      <div class="filter-bar">
+        <p class="label">용도별로 좁혀 보기 — 선택하면 아래 카드에서 맞는 서버만 또렷하게 남는다</p>
+        <div class="chips" role="group" aria-label="용도 필터">
+          <button class="chip" data-filter="all" aria-pressed="true">전체</button>
+          <button class="chip" data-filter="re" aria-pressed="false">리버스 엔지니어링</button>
+          <button class="chip" data-filter="docs" aria-pressed="false">문서·과제</button>
+          <button class="chip" data-filter="files" aria-pressed="false">파일·NAS</button>
+          <button class="chip" data-filter="news" aria-pressed="false">뉴스·검색</button>
+          <button class="chip" data-filter="memory" aria-pressed="false">메모리·노트</button>
+          <button class="chip" data-filter="monitor" aria-pressed="false">가격·게시판 모니터링</button>
+          <button class="chip" data-filter="dev" aria-pressed="false">개발 일반</button>
+        </div>
+        <p class="filter-note" id="filterNote"></p>
+      </div>
+
+      <section id="top5">
+        <h2>먼저 이 5개면 충분하다</h2>
+        <p class="sec-desc">조사에서 도출한 최종 숏리스트. 무료이거나 무료로 시작할 수 있고, 위험도가 낮으며, 여섯 가지 용도 중 다섯을 커버한다.</p>
+        <ol class="top5">
+          <li>
+            <span class="num">1</span>
+            <div><span class="t-name">공식 Filesystem + Fetch</span>
+              <span class="t-why">무료, 폴더 단위로 범위를 좁힐 수 있고, 문서·파일·노트·분석 등 거의 모든 용도의 토대.</span></div>
+            <span class="t-stars">★ 91,512</span>
+          </li>
+          <li>
+            <span class="num">2</span>
+            <div><span class="t-name">Playwright MCP</span>
+              <span class="t-why">헤드리스 + 격리 프로필이라 로그인 세션이 없는 안전한 브라우저. 모니터링과 자동화 담당.</span></div>
+            <span class="t-stars">★ 38,540</span>
+          </li>
+          <li>
+            <span class="num">3</span>
+            <div><span class="t-name">Context7</span>
+              <span class="t-why">라이브러리 문서를 버전까지 맞춰 가져오는, 가장 싸게 얻을 수 있는 큰 품질 향상. 무료 티어로 시작 가능.</span></div>
+            <span class="t-stars">★ 63,541</span>
+          </li>
+          <li>
+            <span class="num">4</span>
+            <div><span class="t-name">GitHub MCP (읽기 전용)</span>
+              <span class="t-why">가장 널리 쓰이는 벤더 공식 서버. 읽기 전용 모드로 두면 기본 위험도가 낮다.</span></div>
+            <span class="t-stars">★ 33,887</span>
+          </li>
+          <li>
+            <span class="num">5</span>
+            <div><span class="t-name">Exa</span>
+              <span class="t-why">이 그룹 중 가장 연구·조사에 강한 의미 기반 검색. 키 없이도 체험 가능. 뉴스·날짜 필터가 더 중요하면 Tavily로 교체.</span></div>
+            <span class="t-stars">★ 5,162</span>
+          </li>
+        </ol>
+      </section>
+
+      <section id="tier-s">
+        <h2><span class="tier-badge badge-s">Tier S</span>먼저 깔 것 — 고가치 · 저위험 · 무료</h2>
+        <p class="sec-desc">계정이 거의 필요 없고, 권한 범위를 좁히면 위험이 낮은 것들. 이 셋이 사실상 기본 장비다.</p>
+        <div class="grid">
+
+          <article class="card" data-uc="re docs files memory">
+            <div class="card-head">
+              <h3><a href="https://github.com/modelcontextprotocol/servers" target="_blank" rel="noopener">공식 레퍼런스 서버</a></h3>
+              <span class="stars">★ 91,512</span>
+            </div>
+            <p class="desc">Filesystem(폴더 범위 파일 접근), Fetch(URL 가져오기), Git(로컬 git), Memory(로컬 지식그래프 파일), Time(시간 도구) — MCP 공식 기준 구현 모음.</p>
+            <dl class="meta">
+              <dt>라이선스</dt><dd>Apache-2.0 / MIT (혼합)</dd>
+              <dt>키·계정</dt><dd>없음</dd>
+              <dt>비용</dt><dd>무료</dd>
+            </dl>
+            <div class="install"><code>npx -y @modelcontextprotocol/server-filesystem &lt;허용폴더&gt;</code><button class="copy-btn" type="button">복사</button></div>
+            <p class="note risk"><b>주의:</b> Filesystem은 허용한 폴더 안에서는 자유롭게 읽고 쓴다. 실행 인자로 <b>좁은 폴더만</b> 넘길 것 — 루트(<code>/</code>)나 홈 전체는 금지. 공식 README도 "교육용 구현, 프로덕션 솔루션이 아니다"라고 명시한다.</p>
+            <div class="tags"><span class="tag">리버스 엔지니어링</span><span class="tag">문서·과제</span><span class="tag">파일·NAS</span><span class="tag">메모리·노트</span></div>
+          </article>
+
+          <article class="card" data-uc="monitor dev">
+            <div class="card-head">
+              <h3><a href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener">Playwright MCP</a></h3>
+              <span class="stars">★ 38,540</span>
+            </div>
+            <p class="desc">Microsoft 공식. 접근성 트리 스냅샷 기반으로 브라우저를 조작해, 비전 모델 없이도 결정적으로 클릭·입력·수집이 된다.</p>
+            <dl class="meta">
+              <dt>라이선스</dt><dd>Apache-2.0</dd>
+              <dt>키·계정</dt><dd>없음 (Node 18+)</dd>
+              <dt>비용</dt><dd>무료</dd>
+            </dl>
+            <div class="install"><code>npx @playwright/mcp@latest</code><button class="copy-btn" type="button">복사</button></div>
+            <p class="note risk"><b>주의:</b> 헤드리스 + 격리/임시 프로필로만 쓸 것. 로그인된 세션이 있는 프로필에 붙이면 그 권한으로 행동할 수 있다. Microsoft README 스스로 "보안 경계가 아니다"라고 밝힌다.</p>
+            <div class="tags"><span class="tag">가격·게시판 모니터링</span><span class="tag">개발 일반</span></div>
+          </article>
+
+          <article class="card" data-uc="dev">
+            <div class="card-head">
+              <h3><a href="https://github.com/upstash/context7" target="_blank" rel="noopener">Context7</a></h3>
+              <span class="stars">★ 63,541</span>
+            </div>
+            <p class="desc">최신·버전별 라이브러리 문서와 코드 예제를 모델 컨텍스트에 직접 넣어줘, 오래된 API를 지어내는 오류를 줄인다.</p>
+            <dl class="meta">
+              <dt>라이선스</dt><dd>MIT</dd>
+              <dt>키·계정</dt><dd>무료 API 키 권장 (OAuth 셋업)</dd>
+              <dt>비용</dt><dd>무료 약 월 1,000회 호출 · Pro $10/석/월 (2차 출처)</dd>
+            </dl>
+            <div class="install"><code>npx -y @upstash/context7-mcp</code><button class="copy-btn" type="button">복사</button></div>
+            <p class="note tip">원격 엔드포인트(<code>mcp.context7.com/mcp</code>)도 있어 로컬 설치 없이 붙일 수 있다. 단, 라이브러리 문서 전용이지 뉴스 검색 엔진이 아니다.</p>
+            <div class="tags"><span class="tag">개발 일반</span></div>
+          </article>
+
+        </div>
+      </section>
+
+      <section id="tier-a">
+        <h2><span class="tier-badge badge-a">Tier A</span>유용하지만 — 키·계정 또는 제한 설정이 필요</h2>
+        <p class="sec-desc">가치는 확실하지만 그대로 깔면 위험하거나 비용이 붙는 것들. 각 카드의 제한 조건을 지키는 게 전제다.</p>
+        <div class="grid">
+
+          <article class="card" data-uc="dev">
+            <div class="card-head">
+              <h3><a href="https://github.com/github/github-mcp-server" target="_blank" rel="noopener">GitHub MCP Server</a></h3>
+              <span class="stars">★ 33,887</span>
+            </div>
+            <p class="desc">GitHub 공식. repo·코드 검색·이슈·PR·Actions·코드/시크릿 스캔·Dependabot까지 GitHub API 전체 표면을 연다.</p>
+            <dl class="meta">
+              <dt>라이선스</dt><dd>MIT</dd>
+              <dt>키·계정</dt><dd>GitHub 계정 (OAuth 또는 PAT)</dd>
+              <dt>비용</dt><dd>무료 (조직 Copilot 정책 적용 가능)</dd>
+            </dl>
+            <div class="install"><code>docker run ghcr.io/github/github-mcp-server</code><button class="copy-btn" type="button">복사</button></div>
+            <p class="note risk"><b>필수 제한:</b> <code>GITHUB_READ_ONLY=1</code> 또는 원격 읽기 전용 엔드포인트(<code>/readonly</code>) 사용, repo를 한정한 fine-grained PAT, <code>GITHUB_TOOLSETS</code>로 도구 범위 축소.</p>
+            <div class="tags"><span class="tag">개발 일반</span></div>
+          </article>
+
+          <article class="card" data-uc="news">
+            <div class="card-head">
+              <h3><a href="https://github.com/exa-labs/exa-mcp-server" target="_blank" rel="noopener">Exa MCP</a></h3>
+              <span class="stars">★ 5,162</span>
+            </div>
+            <p class="desc">신경망/의미 기반 웹 검색 + 콘텐츠 가져오기 + 여러 단계 조사 에이전트 도구. 연구형 질문에 가장 강하다.</p>
+            <dl class="meta">
+              <dt>라이선스</dt><dd>MIT</dd>
+              <dt>키·계정</dt><dd>호스팅은 익명 사용 가능(속도 제한), 키/OAuth 시 한도↑</dd>
+              <dt>비용</dt><dd>무료 크레딧 약 $10 · 검색 약 $7/1,000건 (2차 출처)</dd>
+            </dl>
+            <div class="install"><code>https://mcp.exa.ai/mcp (원격)</code><button class="copy-btn" type="button">복사</button></div>
+            <p class="note tip">검색 서버는 Exa·Tavily·Brave·Firecrawl 중 <b>하나만</b> 고르는 게 원칙. 넷 다 깔면 중복 + 매 턴 컨텍스트만 소모한다.</p>
+            <div class="tags"><span class="tag">뉴스·검색</span></div>
+          </article>
+
+          <article class="card" data-uc="news">
+            <div class="card-head">
+              <h3><a href="https://github.com/tavily-ai/tavily-mcp" target="_blank" rel="noopener">Tavily MCP</a></h3>
+              <span class="stars">★ 2,454</span>
+            </div>
+            <p class="desc">에이전트용 실시간 검색, URL 추출, 사이트 맵/크롤, 그리고 <code>tavily_research</code> 딥리서치 도구. 날짜·도메인 필터가 있어 뉴스형 검색에 맞다.</p>
+            <dl class="meta">
+              <dt>라이선스</dt><dd>MIT</dd>
+              <dt>키·계정</dt><dd><code>TAVILY_API_KEY</code> 필요</dd>
+              <dt>비용</dt><dd>무료 월 1,000 크레딧 · 이후 약 $0.008/크레딧 (2차 출처)</dd>
+            </dl>
+            <div class="install"><code>npx -y tavily-mcp@latest</code><button class="copy-btn" type="button">복사</button></div>
+            <p class="note tip">매일 뉴스 브리핑이 주 용도면 Exa 대신 이쪽이 더 맞을 수 있다 — 둘 중 하나만.</p>
+            <div class="tags"><span class="tag">뉴스·검색</span></div>
+          </article>
+
+          <article class="card" data-uc="news docs monitor">
+            <div class="card-head">
+              <h3><a href="https://github.com/firecrawl/firecrawl-mcp-server" target="_blank" rel="noopener">Firecrawl MCP</a></h3>
+              <span class="stars">★ 7,673</span>
+            </div>
+            <p class="desc">검색, markdown/JSON 스크래핑, 사이트 크롤·맵핑, 문서 파싱, 페이지 변경 감지 <b>Monitor</b>까지 도구 27개. URL의 PDF·문서 파싱도 된다.</p>
+            <dl class="meta">
+              <dt>라이선스</dt><dd>MIT</dd>
+              <dt>키·계정</dt><dd>키 없이 되는 티어 있음, 전체 도구는 API 키 필요</dd>
+              <dt>비용</dt><dd>무료 월 1,000 크레딧 · Hobby 약 $16~19/월 (2차 출처)</dd>
+            </dl>
+            <div class="install"><code>npx -y firecrawl-mcp</code><button class="copy-btn" type="button">복사</button></div>
+            <p class="note risk"><b>주의:</b> 크롤링은 크레딧을 태운다. 깊이·크레딧 상한을 걸 것. 단순 가격·게시판 감시는 Monitor만으로도 브라우저 없이 해결될 수 있다.</p>
+            <div class="tags"><span class="tag">뉴스·검색</span><span class="tag">문서·과제</span><span class="tag">가격·게시판 모니터링</span></div>
+          </article>
+
+          <article class="card" data-uc="re">
+            <div class="card-head">
+              <h3><a href="https://github.com/LaurieWired/GhidraMCP" target="_blank" rel="noopener">GhidraMCP</a></h3>
+              <span class="stars">★ 11,497</span>
+            </div>
+            <p class="desc">무료 Ghidra의 디컴파일·분석·이름변경·xref 함수를 LLM에 노출한다. PyGhidra 헤드리스 모드(<code>--headless --binary …</code>)가 헤드리스 리눅스 에이전트와 정확히 맞는다.</p>
+            <dl class="meta">
+              <dt>라이선스</dt><dd>Apache-2.0</dd>
+              <dt>키·계정</dt><dd>없음 (무료 Ghidra 설치 필요)</dd>
+              <dt>비용</dt><dd>무료</dd>
+            </dl>
+            <div class="install"><code>uvx (브리지) + Ghidra 확장</code><button class="copy-btn" type="button">복사</button></div>
+            <p class="note tip">리버스 엔지니어링 용도로는 사실상 Tier S. 기드라 12.1.4가 이미 설치돼 있는 환경이면 브리지만 얹으면 된다.</p>
+            <div class="tags"><span class="tag">리버스 엔지니어링</span></div>
+          </article>
+
+          <article class="card" data-uc="re">
+            <div class="card-head">
+              <h3><a href="https://github.com/morluto/rea" target="_blank" rel="noopener">REA</a></h3>
+              <span class="stars warn">★ 370,531 ⚠</span>
+            </div>
+            <p class="desc">네이티브 바이너리·Electron/JS 앱·.NET·APK·웹사이트를 하나의 MCP로 분석해 근거 기반 결과를 돌려주는 리버스 엔지니어링 도구.</p>
+            <dl class="meta">
+              <dt>라이선스</dt><dd>MIT</dd>
+              <dt>키·계정</dt><dd>정적 JS 분석은 없음. 네이티브 분석은 본인의 Ghidra/IDA/Hopper 사용</dd>
+              <dt>비용</dt><dd>무료</dd>
+            </dl>
+            <div class="install"><code>npx rea-agents setup</code><button class="copy-btn" type="button">복사</button></div>
+            <p class="note caution"><b>스타 수 주의:</b> repo 생성은 2026-04-14인데 스타가 2차 스냅샷 기준 11일 만에 약 93k → 371k로 뛰었다. 자연스러운 성장으로 보기 어려운 속도라, 스타만 믿지 말고 샌드박스에서 시험한 뒤 판단할 것. 기능 자체의 방향(바이너리·APK·Electron 통합 분석)은 이 용도에 정확히 맞는다.</p>
+            <div class="tags"><span class="tag">리버스 엔지니어링</span></div>
+          </article>
+
+          <article class="card" data-uc="docs files">
+            <div class="card-head">
+              <h3><a href="https://github.com/googleapis/genai-toolbox" target="_blank" rel="noopener">MCP Toolbox for Databases</a></h3>
+              <span class="stars">★ 16,711</span>
+            </div>
+            <p class="desc">Google의 DB용 MCP 프런트엔드(현 mcp-toolbox로 개명). Postgres·MySQL·SQLite 계열·MongoDB·Redis·Snowflake·BigQuery 등을 한 서버로 붙인다.</p>
+            <dl class="meta">
+              <dt>라이선스</dt><dd>Apache-2.0</dd>
+              <dt>키·계정</dt><dd>대상 데이터베이스 자격증명</dd>
+              <dt>비용</dt><dd>소프트웨어 무료 (DB는 본인 것)</dd>
+            </dl>
+            <div class="install"><code>npx -y @toolbox-sdk/server --prebuilt=postgres --stdio</code><button class="copy-btn" type="button">복사</button></div>
+            <p class="note risk"><b>필수 제한:</b> 읽기 전용 DB 유저로 접속하고, 범용 <code>execute_sql</code>보다 <code>tools.yaml</code>에 미리 정의한 파라미터 쿼리를 우선할 것 — 프로덕션 데이터에 쓰기/DDL이 그대로 닿는다.</p>
+            <div class="tags"><span class="tag">문서·과제</span><span class="tag">파일·NAS</span></div>
+          </article>
+
+          <article class="card" data-uc="docs files">
+            <div class="card-head">
+              <h3><a href="https://github.com/wonderwhy-er/DesktopCommanderMCP" target="_blank" rel="noopener">Desktop Commander</a></h3>
+              <span class="stars">★ 10,095</span>
+            </div>
+            <p class="desc">터미널 제어 + 파일 검색 + diff 기반 파일 편집. 후보 중 유일하게 PDF·DOCX·Excel 파일을 직접 읽고 쓴다 — 학습지·성적표 작업에 실제로 쓸모 있다.</p>
+            <dl class="meta">
+              <dt>라이선스</dt><dd>MIT</dd>
+              <dt>키·계정</dt><dd>없음</dd>
+              <dt>비용</dt><dd>무료</dd>
+            </dl>
+            <div class="install"><code>npx -y @wonderwhy-er/desktop-commander@latest</code><button class="copy-btn" type="button">복사</button></div>
+            <p class="note risk"><b>필수 제한:</b> <b>전체 셸 실행</b> 권한을 주는 서버다. README 스스로 가드레일은 "샌드박스가 아니다"라고 한다. Docker 격리 변형 + 명령 차단목록 + 허용 디렉터리 조합이 전제이며, 자격증명이 있는 호스트에 맨몸으로 올리지 말 것.</p>
+            <div class="tags"><span class="tag">문서·과제</span><span class="tag">파일·NAS</span></div>
+          </article>
+
+          <article class="card" data-uc="news">
+            <div class="card-head">
+              <h3><a href="https://github.com/brave/brave-search-mcp-server" target="_blank" rel="noopener">Brave Search MCP</a></h3>
+              <span class="stars">★ 1,522</span>
+            </div>
+            <p class="desc">Brave의 독립 인덱스로 웹·뉴스·이미지·영상·지역 검색 + LLM 컨텍스트 도구. 읽기 전용. 구 레퍼런스 서버(아카이브됨)의 공식 후계다.</p>
+            <dl class="meta">
+              <dt>라이선스</dt><dd>MIT</dd>
+              <dt>키·계정</dt><dd>무료 <code>BRAVE_API_KEY</code> (전체 지역검색 기능은 Pro)</dd>
+              <dt>비용</dt><dd>약 $5/1,000건, 월 $5 무료 크레딧 (2차 출처)</dd>
+            </dl>
+            <div class="install"><code>npx -y @brave/brave-search-mcp-server --transport stdio</code><button class="copy-btn" type="button">복사</button></div>
+            <p class="note tip">스타가 낮은 건 repo가 2025년 6월에 새로 생겼기 때문 — 릴리스는 102회로 활발하다. 주 검색(Exa/Tavily)의 교차검증용 백업으로 적합.</p>
+            <div class="tags"><span class="tag">뉴스·검색</span></div>
+          </article>
+
+        </div>
+
+        <ul class="cond">
+          <li>
+            <span class="when">조건부 — Supabase를 실제로 운영할 때만</span>
+            <b>Supabase MCP · ★ 2,969 · Apache-2.0</b>
+            <p>SQL·마이그레이션·엣지 함수·스토리지·브랜칭·로그까지 프로젝트를 관리한다. 호스팅(<code>mcp.supabase.com/mcp</code>, OAuth 2.1) 또는 Supabase CLI 로컬 실행. 쓸 때는 <code>?read_only=true&amp;project_ref=&lt;ref&gt;</code>로 범위를 고정할 것. 비용은 본인 Supabase 플랜을 따른다(브랜칭은 유료 플랜 기능).</p>
+          </li>
+          <li>
+            <span class="when">조건부 — 클러스터(k3s 등)를 실제로 돌릴 때만</span>
+            <b>Kubernetes MCP Server · ★ 2,179 · Apache-2.0</b>
+            <p>kubectl 없이 모든 K8s/OpenShift 리소스 CRUD, pod 로그/exec, Helm 설치/제거. <code>npx</code>·<code>uvx</code>·네이티브 바이너리·Docker 모두 가능. TOML 설정 <code>read_only = true</code>, 도구셋 제한, Secrets는 <code>[[denied_resources]]</code>로 차단, 최소 권한 kubeconfig가 전제. 클러스터가 없으면 가치가 없다.</p>
+          </li>
+          <li>
+            <span class="when">조건부 — 유료 IDA 라이선스가 이미 있을 때만</span>
+            <b>IDA Pro MCP · ★ 13,108 · MIT</b>
+            <p>IDA Pro의 디컴파일·디스어셈블리·이름변경·디버그를 LLM에 연결. 헤드리스 <code>uv run idalib-mcp --stdio</code> 모드가 있다. 단, 유료 IDA Pro 8.3+ 필수(IDA Free 미지원)이고, 작성자 본인이 README에서 <b>공식 Hex-Rays IDA MCP 서버</b>(약 1.2k★, IDA 9.4+ 필요, 2차 출처)를 대신 권한다.</p>
+          </li>
+          <li>
+            <span class="when">조건부 — 프런트엔드 디버깅 전용</span>
+            <b>Chrome DevTools MCP · ★ 54,027 · Apache-2.0</b>
+            <p>Google 공식. 살아있는 Chrome의 콘솔·네트워크·성능 트레이스·Lighthouse·힙 스냅샷을 다룬다. 범용 브라우저 드라이버가 아니라 디버깅 도구이며, 가격 모니터링 같은 일상 자동화에는 맞지 않는다. 기본으로 사용 통계를 보내므로 <code>--no-usage-statistics</code>를 붙일 것.</p>
+          </li>
+        </ul>
+      </section>
+
+      <section id="usecases">
+        <h2>용도별로 보면</h2>
+        <p class="sec-desc">여섯 가지 작업 유형마다 무엇이 맞고 무엇이 안 맞는지를 정리했다. 위 필터 칩과 같은 분류다.</p>
+        <div class="uc-grid">
+          <div class="uc">
+            <h3><span class="uc-key">a</span>리버스 엔지니어링 · 바이너리 분석</h3>
+            <p class="pick">1순위 <b>GhidraMCP</b> — 무료이고 PyGhidra 헤드리스 모드가 헤드리스 환경과 정확히 맞는다. 유료 IDA가 이미 있으면 IDA Pro MCP(단, 공식 Hex-Rays 서버도 검토).</p>
+            <p><b>REA</b>는 바이너리·APK·Electron·.NET을 한 도구로 노리는 방향이 정확하지만, 스타 급증 이력 때문에 샌드박스 시험 후 판단. 보조로 Filesystem(샘플 폴더 한정) + Git(노트·스크립트). Desktop Commander는 셸 위험만 더하고 RE 이득이 없어 제외.</p>
+          </div>
+          <div class="uc">
+            <h3><span class="uc-key">b</span>교사 — 문서 · PDF · 과제 데이터</h3>
+            <p class="pick">기본은 <b>Filesystem(반 폴더로 한정) + Fetch</b>로 무료로 대부분 해결. URL 문서·PDF 파싱은 <b>Firecrawl</b>.</p>
+            <p><b>Desktop Commander</b>는 PDF/DOCX/Excel을 직접 읽고 쓰는 유일한 후보라 학습지·성적표에 실제로 유용하지만, 셸 때문에 Docker 격리가 전제(그래서 Tier A). 과제·성적 데이터가 스프레드시트 DB나 Postgres/SQLite에 있으면 <b>MCP Toolbox + 읽기 전용 DB 유저</b>.</p>
+          </div>
+          <div class="uc">
+            <h3><span class="uc-key">c</span>대용량 파일 라이브러리 · NAS · 홈서버</h3>
+            <p class="pick">핵심은 <b>Filesystem</b>을 좁게 허용한 루트로 두는 것. 관리해야 할 진짜 위험은 라이브러리 전체에 대한 쓰기 권한이다.</p>
+            <p>대규모 트리 검색·diff 편집은 Desktop Commander(Docker 격리 한정). <b>Kubernetes MCP</b>는 홈서버가 실제로 k3s/Kubernetes를 돌릴 때만 — 읽기 전용 + Secrets 차단이면 좋은 클러스터 점검 도구가 된다. 미디어·목록 DB는 MCP Toolbox, 설정·dotfile repo는 Git 서버.</p>
+          </div>
+          <div class="uc">
+            <h3><span class="uc-key">d</span>뉴스 · 리서치 브리핑 · 검색 품질</h3>
+            <p class="pick">주 검색은 하나만 — 연구형 질문과 조사 에이전트가 강한 <b>Exa</b>, 또는 날짜·도메인 필터와 <code>tavily_research</code>가 있는 뉴스형 <b>Tavily</b>. 실제 기사 본문은 무료 <b>Fetch</b>로 읽는다.</p>
+            <p><b>Brave Search</b>는 저렴한 독립 인덱스 교차검증용. Firecrawl은 사이트 전체 크롤·구조화 추출·변경 알림이 필요할 때만. Context7은 라이브러리 문서 전용이라 뉴스 검색기로 쓰면 안 된다.</p>
+          </div>
+          <div class="uc">
+            <h3><span class="uc-key">e</span>메모리 · 세컨드 브레인 · 노트 검색</h3>
+            <p class="pick">공식 <b>Memory</b> 서버 — JSONL 파일 하나에 지식그래프를 저장하는 로컬 방식이라 무료·사적·계정 없음이 장점. 평가는 "상황에 따라"(에이전트는 알려준 것만 기억한다).</p>
+            <p>Obsidian 볼트는 헤드리스 환경에서 mcp-obsidian을 건너뛰고 <b>Filesystem을 볼트 폴더에 직접</b> 거는 게 답이다 — 마크다운은 앱 없이도 검색·편집된다. Notion은 이미 거기에 살고 있을 때만 원격 서버로.</p>
+          </div>
+          <div class="uc">
+            <h3><span class="uc-key">f</span>가격 · 게시판 모니터링 자동화</h3>
+            <p class="pick"><b>Playwright MCP</b> 헤드리스 + 격리/임시 프로필이 정답. 접근성 트리 기반이라 결정적이고, 기본이 빈 세션(로그인 없음)인 게 오히려 안전장치다.</p>
+            <p>단순 페이지 변경 감지라면 <b>Firecrawl Monitor</b>가 브라우저 자체를 대체할 수 있다. Chrome DevTools MCP는 디버깅 도구라 이 용도에 부적합하고, 어떤 브라우저 MCP든 로그인된 일상 프로필에 자동 연결하는 패턴은 피해야 한다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="myfit">
+        <h2>지금 내 작업에 대입하면</h2>
+        <p class="sec-desc">현재 돌고 있는 작업들에 위 후보를 대입한 실전 배치안이다.</p>
+        <div class="uc-grid">
+          <div class="uc">
+            <h3>GSP 파일 분석</h3>
+            <p class="pick"><b>GhidraMCP</b> 추가가 1순위 — 기드라 12.1.4는 이미 설치돼 있어 브리지만 얹으면 된다. REA는 이미 연결해 쓰는 중(읽기 전용 137개만 허용한 상태)이라, 여기에 분석 사본용 Filesystem(샘플 폴더 한정)을 곁들이면 된다.</p>
+          </div>
+          <div class="uc">
+            <h3>가격·핫딜·게시판 모니터링</h3>
+            <p class="pick">지금 웹 검색 기반으로 도는 감시 작업들은 <b>Playwright MCP</b>(헤드리스·격리 프로필)로 직접 페이지를 읽게 하거나, 단순 변경 감지는 <b>Firecrawl Monitor</b>로 바꾸면 색인 시차 문제가 줄어든다.</p>
+          </div>
+          <div class="uc">
+            <h3>매일 아침 신문(JH 뉴스)</h3>
+            <p class="pick">검색 품질을 올릴 거면 <b>Exa 또는 Tavily 중 하나</b> + 본문 읽기용 Fetch 조합. 둘 다 깔 필요는 없고, 뉴스·날짜 필터 비중이 크면 Tavily 쪽이 맞다.</p>
+          </div>
+          <div class="uc">
+            <h3>NAS · 대용량 라이브러리 정리</h3>
+            <p class="pick"><b>Filesystem</b>을 정리 대상 폴더로만 좁혀 거는 게 핵심. Kubernetes MCP는 NAS가 실제로 컨테이너 클러스터를 돌리는 구조일 때만 의미가 있고, 지금처럼 Docker 단독이면 보류가 맞다.</p>
+          </div>
+          <div class="uc">
+            <h3>과제 제출·채점 데이터</h3>
+            <p class="pick">제출 데이터가 DB 형태로 쌓이면 <b>MCP Toolbox + 읽기 전용 유저</b>. 문서 파일 자체를 다루는 일은 Filesystem + (필요하면 Docker 격리한) Desktop Commander 조합.</p>
+          </div>
+          <div class="uc">
+            <h3>깔지 않아도 되는 것</h3>
+            <p class="pick">Notion·Gmail·캘린더·드라이브·텔레그램·패들렛은 이미 커넥터로 연결돼 있어 커뮤니티 MCP를 또 깔 이유가 없다. 검색 서버 4종 동시 설치도 마찬가지 — 중복은 매 턴 컨텍스트 비용으로 돌아온다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="risk">
+        <h2>위험한 권한 — 제한 조건표</h2>
+        <p class="sec-desc">인기 서버 중에는 설계 자체가 위험한 것들이 있다. 깔 거면 아래 제한을 세트로 적용해야 한다.</p>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr><th>서버</th><th>위험</th><th>필수 제한</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="srv">공식 Filesystem</td>
+                <td>허용 디렉터리 안에서 <span class="danger">임의 파일 읽기/쓰기</span></td>
+                <td>실행 인자로 좁은 폴더만 전달. 루트(<code>/</code>)나 홈 전체 금지 — 범위는 실행 인자가 곧 보안 설정이다.</td>
+              </tr>
+              <tr>
+                <td class="srv">Desktop Commander</td>
+                <td><span class="danger">전체 셸 실행</span> + 파일 쓰기. README: 가드레일은 "샌드박스가 아니다"</td>
+                <td>Docker 격리 변형 사용, 명령 차단목록 + 허용 디렉터리. 소중한 자격증명이 있는 호스트에 맨몸으로 노출 금지.</td>
+              </tr>
+              <tr>
+                <td class="srv">Playwright / Chrome DevTools</td>
+                <td>브라우저 프로필이 <span class="danger">로그인된 권한 그대로</span> 행동 가능. DevTools는 사용 통계를 기본 전송</td>
+                <td>헤드리스 + 격리/임시 프로필, 로그인 세션 금지. Playwright의 <code>--allow-unrestricted-file-access</code> 금지, DevTools는 <code>--no-usage-statistics</code>.</td>
+              </tr>
+              <tr>
+                <td class="srv">GitHub MCP</td>
+                <td>이슈/PR 쓰기, Actions 실행, 비공개 repo 읽기</td>
+                <td><code>GITHUB_READ_ONLY=1</code> 또는 <code>/readonly</code> 원격 엔드포인트, repo 한정 fine-grained PAT, <code>GITHUB_TOOLSETS</code> 제한.</td>
+              </tr>
+              <tr>
+                <td class="srv">MCP Toolbox / Supabase</td>
+                <td>프로덕션 데이터에 <span class="danger">쓰기/DDL 포함 임의 SQL</span></td>
+                <td>읽기 전용 DB 유저. 범용 실행보다 <code>tools.yaml</code> 사전 정의 쿼리 우선. Supabase는 <code>?read_only=true&amp;project_ref=</code>로 범위 고정.</td>
+              </tr>
+              <tr>
+                <td class="srv">Kubernetes MCP</td>
+                <td>pod exec, 리소스 삭제, Helm 설치</td>
+                <td>TOML <code>read_only = true</code>, 도구셋 제한, Secrets <code>[[denied_resources]]</code>, 최소 권한 전용 kubeconfig.</td>
+              </tr>
+              <tr>
+                <td class="srv">GhidraMCP / IDA MCP / REA</td>
+                <td>분석 DB 수정 가능. 디버거·런타임 기능은 <span class="danger">대상 코드를 실행</span>함</td>
+                <td>전용 프로젝트 폴더에서 사본을 분석. "대상 실행/디버그" 도구는 코드 실행으로 취급하고, 신뢰 못 할 샘플은 샌드박스에서.</td>
+              </tr>
+              <tr>
+                <td class="srv">Firecrawl / Fetch</td>
+                <td>임의 URL 가져오기(SSRF성), 크롤링 크레딧 소모</td>
+                <td>Fetch는 공개 URL만. Firecrawl은 크롤 깊이·크레딧 상한 설정.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="tier-b">
+        <h2><span class="tier-badge badge-b">Tier B</span>인기 있어도 건너뛸 것</h2>
+        <p class="sec-desc">스타만 보고 깔면 후회하는 부류 — 유지 중단, 중복, 또는 이 환경과 구조적으로 안 맞는 것들.</p>
+        <ul class="skip">
+          <li><span class="x">✕</span><b>Notion MCP (로컬)</b><span>★ 4,676. README 스스로 "더 이상 적극 유지되지 않으니 원격 Notion MCP를 쓰라"고 안내한다. 게다가 Notion은 내장 커넥터와 중복. 필요하면 공식 원격 MCP(OAuth)로.</span></li>
+          <li><span class="x">✕</span><b>mcp-obsidian</b><span>★ 4,489. Obsidian 데스크톱 앱이 실행 중이어야 동작한다 — 헤드리스 환경과 구조적으로 안 맞는다. 볼트 폴더에 Filesystem을 직접 거는 걸로 대체. 태그된 릴리스도 없다.</span></li>
+          <li><span class="x">✕</span><b>Sequential Thinking</b><span>공식 레퍼런스 서버지만, 실사용 후기 작성자들이 "컨텍스트 비용만큼 값을 못 한다"며 제거한 서버. 공식 목록에 있다고 다 깔 필요는 없다.</span></li>
+          <li><span class="x">✕</span><b>Figma Context MCP (Framelink)</b><span>★ 16,057. 디렉터리 데이터 기준 약 116일간 커밋이 없어 "인기 있지만 방치됨"으로 분류됐고, 과거 RCE(CVE-2025-15061, v0.6.3에서 패치) 이력도 있다. Figma→코드 작업이 아니면 무관하고, 필요해도 Figma 공식 호스팅 MCP가 우선.</span></li>
+          <li><span class="x">✕</span><b>아카이브된 구 레퍼런스 서버들</b><span>구 GitHub·Slack·Postgres·SQLite·Redis·Google Drive/Maps·Puppeteer·Brave 서버는 <code>servers-archived</code>로 이동됐다. 위의 공식 후계(벤더 공식 서버, MCP Toolbox, Playwright, Brave 신 repo)를 쓸 것.</span></li>
+          <li><span class="x">✕</span><b>Gmail·캘린더·드라이브·Spotify류 커뮤니티 서버</b><span>대부분 에이전트 플랫폼이 이미 내장 커넥터로 제공하는 기능의 중복이다. 한계 효용이 낮고, 포크를 쓸 거면 마지막 커밋부터 확인할 것.</span></li>
+        </ul>
+      </section>
+
+      <section id="caveats">
+        <h2>읽을 때 감안할 것</h2>
+        <div class="caveat">
+          <p><b>스타 수의 출처 수준:</b> 조사 시점에 실시간 브라우저가 github.com을 열지 못해, 모든 GitHub 수치는 웹 인덱스로 읽은 repo 페이지 값이다. 방향 판단에는 충분하지만 정확한 오늘 수치와는 차이가 있을 수 있다.</p>
+          <p><b>REA의 스타:</b> 370,531★는 조회 당시 GitHub 페이지에 표시된 값 그대로다. 다만 11일간 약 93k→371k라는 증가 속도는 2차 스냅샷들과 맞춰 봐도 유기적 성장으로 보기 어렵고, 실제 사용자 기반인지는 확인되지 않았다.</p>
+          <p><b>가격:</b> Context7·Firecrawl·Exa·Tavily·Brave의 요금은 벤더 요금 페이지를 직접 읽은 게 아니라 2026-10월 2차 비교 자료 기준이다(예: Firecrawl Hobby는 연간 $16 / 월간 $19처럼 결제 주기에 따라 다름). 예산을 잡기 전 공식 요금 페이지에서 재확인할 것.</p>
+          <p><b>검토했지만 후보에서 뺀 것:</b> Sentry MCP(약 815★, 2차 출처 — Sentry 사용자에게만 해당), Serena, codebase-memory-mcp(한 목록에서 46,159★로 주장됐으나 직접 확인 못 함). 확인이 안 된 수치는 추측으로 채우지 않았다.</p>
+          <p><b>생태계 규모 수치</b>(38,336개 repo, 레지스트리 9,652개)도 2차 출처 기준이다.</p>
+        </div>
+      </section>
+
+      <section id="discovery">
+        <h2>더 찾을 때 — 목록 자체가 발견 도구</h2>
+        <p class="sec-desc">
+          새 서버를 고를 땐 아래 두 awesome 목록이 표준 출발점이다.
+          <a href="https://github.com/punkpeye/awesome-mcp-servers" target="_blank" rel="noopener">punkpeye/awesome-mcp-servers</a>(★ 96,785, MIT, 가장 큰 목록)와
+          <a href="https://github.com/wong2/awesome-mcp-servers" target="_blank" rel="noopener">wong2/awesome-mcp-servers</a>(★ 4,379, MIT — PR은 더 이상 받지 않고 mcpservers.org로 제출).
+          어떤 서버든 깔기 전에 확인할 것: 리눅스 지원, 마지막 릴리스·커밋 날짜, 라이선스, 외부로 데이터를 보내는지, 토큰을 요구하는지.
+        </p>
+      </section>
+
+      <section class="sources">
+        <h2>출처</h2>
+        <p>스타 수와 상태는 각 repo의 GitHub 페이지(2026-10-23 확인). 추천 빈도와 가격은 아래 실사용 라운드업 교차 확인.</p>
+        <ul>
+          <li><a href="https://github.com/modelcontextprotocol/servers" target="_blank" rel="noopener">공식 레퍼런스 서버 repo</a></li>
+          <li><a href="https://github.com/upstash/context7" target="_blank" rel="noopener">Context7</a></li>
+          <li><a href="https://github.com/ChromeDevTools/chrome-devtools-mcp" target="_blank" rel="noopener">Chrome DevTools MCP</a></li>
+          <li><a href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener">Playwright MCP</a></li>
+          <li><a href="https://github.com/github/github-mcp-server" target="_blank" rel="noopener">GitHub MCP Server</a></li>
+          <li><a href="https://github.com/googleapis/genai-toolbox" target="_blank" rel="noopener">MCP Toolbox (genai-toolbox)</a></li>
+          <li><a href="https://github.com/LaurieWired/GhidraMCP" target="_blank" rel="noopener">GhidraMCP</a></li>
+          <li><a href="https://github.com/mrexodia/ida-pro-mcp" target="_blank" rel="noopener">IDA Pro MCP</a></li>
+          <li><a href="https://github.com/wonderwhy-er/DesktopCommanderMCP" target="_blank" rel="noopener">Desktop Commander</a></li>
+          <li><a href="https://github.com/firecrawl/firecrawl-mcp-server" target="_blank" rel="noopener">Firecrawl MCP</a></li>
+          <li><a href="https://github.com/exa-labs/exa-mcp-server" target="_blank" rel="noopener">Exa MCP</a></li>
+          <li><a href="https://github.com/tavily-ai/tavily-mcp" target="_blank" rel="noopener">Tavily MCP</a></li>
+          <li><a href="https://github.com/brave/brave-search-mcp-server" target="_blank" rel="noopener">Brave Search MCP</a></li>
+          <li><a href="https://github.com/supabase/mcp" target="_blank" rel="noopener">Supabase MCP</a></li>
+          <li><a href="https://github.com/manusa/kubernetes-mcp-server" target="_blank" rel="noopener">Kubernetes MCP Server</a></li>
+          <li><a href="https://github.com/GLips/Figma-Context-MCP" target="_blank" rel="noopener">Figma Context MCP</a></li>
+          <li><a href="https://github.com/makenotion/notion-mcp-server" target="_blank" rel="noopener">Notion MCP (로컬)</a></li>
+          <li><a href="https://github.com/MarkusPfundstein/mcp-obsidian" target="_blank" rel="noopener">mcp-obsidian</a></li>
+          <li><a href="https://github.com/morluto/rea" target="_blank" rel="noopener">REA</a></li>
+          <li><a href="https://github.com/punkpeye/awesome-mcp-servers" target="_blank" rel="noopener">awesome-mcp-servers (punkpeye)</a></li>
+        </ul>
+      </section>
+
+      <footer>
+        조사 기준일 2026-10-23 · 스타 수는 시점값이며 계속 변한다 · 설치 전 각 repo의 최신 상태를 재확인할 것.
+      </footer>
+
+    </div>
+
+    <script>
+      (function () {
+        // --- 용도 필터: 맞는 카드만 또렷하게 ---
+        var chips = Array.prototype.slice.call(document.querySelectorAll('.chip'));
+        var cards = Array.prototype.slice.call(document.querySelectorAll('.card'));
+        var note = document.getElementById('filterNote');
+        var labels = {
+          all: '전체', re: '리버스 엔지니어링', docs: '문서·과제', files: '파일·NAS',
+          news: '뉴스·검색', memory: '메모리·노트', monitor: '가격·게시판 모니터링', dev: '개발 일반'
+        };
+        function applyFilter(key) {
+          chips.forEach(function (c) {
+            c.setAttribute('aria-pressed', c.getAttribute('data-filter') === key ? 'true' : 'false');
+          });
+          if (key === 'all') {
+            cards.forEach(function (c) { c.classList.remove('dim'); });
+            note.textContent = '';
+            return;
+          }
+          var n = 0;
+          cards.forEach(function (c) {
+            var hit = (c.getAttribute('data-uc') || '').split(' ').indexOf(key) !== -1;
+            c.classList.toggle('dim', !hit);
+            if (hit) n++;
+          });
+          note.textContent = '‘' + labels[key] + '’ 용도에 맞는 서버 ' + n + '개가 또렷하게 표시됩니다. 용도별 상세 판단은 아래 "용도별로 보면" 섹션을 보세요.';
+        }
+        chips.forEach(function (c) {
+          c.addEventListener('click', function () { applyFilter(c.getAttribute('data-filter')); });
+        });
+
+        // --- 설치 명령 복사 ---
+        document.querySelectorAll('.install').forEach(function (box) {
+          var btn = box.querySelector('.copy-btn');
+          var code = box.querySelector('code');
+          if (!btn || !code) return;
+          btn.addEventListener('click', function () {
+            var text = code.textContent;
+            function done() {
+              btn.textContent = '복사됨';
+              setTimeout(function () { btn.textContent = '복사'; }, 1600);
+            }
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(text).then(done, done);
+            } else {
+              var ta = document.createElement('textarea');
+              ta.value = text; document.body.appendChild(ta);
+              ta.select();
+              try { document.execCommand('copy'); } catch (e) {}
+              document.body.removeChild(ta);
+              done();
+            }
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
