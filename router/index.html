@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Crect%20width%3D%27100%27%20height%3D%27100%27%20rx%3D%2722%27%20fill%3D%27%230ea5e9%27%2F%3E%3Ctext%20x%3D%2750%27%20y%3D%2770%27%20font-size%3D%2758%27%20text-anchor%3D%27middle%27%3E%F0%9F%93%B6%3C%2Ftext%3E%3C/svg%3E">
+<title>공유기 교체 가이드 — RT-AX58U, 다음은 뭘로?</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", "Noto Sans KR", "Malgun Gothic", sans-serif; background: #f0f9ff; color: #222; line-height: 1.65; }
+  header { background: linear-gradient(135deg, #0284c7, #2563eb); color: #fff; padding: 38px 20px 30px; text-align: center; }
+  header h1 { font-size: 28px; margin-bottom: 6px; }
+  header p { opacity: .93; font-size: 15px; }
+  .build { display: inline-block; margin-top: 12px; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.45); padding: 3px 12px; border-radius: 999px; font-size: 12.5px; }
+  main { max-width: 960px; margin: 0 auto; padding: 24px 16px 48px; }
+  h2 { font-size: 20px; margin: 32px 4px 12px; padding-left: 10px; border-left: 6px solid #0284c7; }
+  h3 { font-size: 17px; margin: 0 0 6px; }
+  p.lead { font-size: 15px; color: #334155; margin: 0 4px 8px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 14px; }
+  .card { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(2,132,199,.08); border: 1px solid #e0f2fe; }
+  .card.pick { border: 2px solid #0284c7; position: relative; }
+  .badge { display: inline-block; font-size: 12px; font-weight: 700; color: #fff; background: #0284c7; padding: 2px 10px; border-radius: 999px; margin-bottom: 8px; }
+  .badge.gold { background: #d97706; }
+  .badge.gray { background: #64748b; }
+  .badge.red { background: #dc2626; }
+  .card .emoji { font-size: 30px; }
+  .card h3 { margin-top: 8px; color: #0c4a6e; }
+  .card p { font-size: 14px; color: #475569; }
+  .card ul { margin: 10px 0 0 18px; font-size: 14px; color: #334155; }
+  .card ul li { margin-bottom: 4px; }
+  .price { font-size: 20px; font-weight: 800; color: #0369a1; margin-top: 12px; }
+  .price small { font-size: 12.5px; font-weight: 400; color: #64748b; }
+  .price .strike { font-size: 13px; color: #94a3b8; text-decoration: line-through; font-weight: 400; }
+  .btn { display: inline-block; margin-top: 12px; background: #0284c7; color: #fff; text-decoration: none; font-size: 13.5px; font-weight: 700; padding: 8px 16px; border-radius: 999px; }
+  .btn:hover { background: #0369a1; }
+  .btn.ghost { background: #e0f2fe; color: #0369a1; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; font-size: 13.5px; box-shadow: 0 2px 8px rgba(2,132,199,.08); }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+  th { background: #0284c7; color: #fff; font-size: 13px; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  tr.hl td { background: #f0f9ff; font-weight: 700; }
+  td.num { text-align: right; white-space: nowrap; font-weight: 700; color: #0369a1; }
+  .wrap { overflow-x: auto; border-radius: 12px; }
+  .good, .bad { border-radius: 16px; padding: 20px; }
+  .good { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .bad { background: #fef2f2; border: 1px solid #fecaca; }
+  .good h3 { color: #166534; }
+  .bad h3 { color: #991b1b; }
+  .good ul, .bad ul { margin: 10px 0 0 18px; font-size: 14px; color: #334155; }
+  .good ul li, .bad ul li { margin-bottom: 6px; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 640px) { .cols { grid-template-columns: 1fr; } header h1 { font-size: 23px; } }
+  .check { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(2,132,199,.08); border: 1px solid #e0f2fe; }
+  .check ol { margin: 10px 0 0 20px; font-size: 14.5px; color: #334155; }
+  .check ol li { margin-bottom: 8px; }
+  .check code { background: #f1f5f9; padding: 1px 6px; border-radius: 6px; font-size: 13px; }
+  .note { background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 14px 16px; font-size: 14px; color: #78350f; margin-top: 28px; }
+  .env { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(2,132,199,.08); border: 1px solid #e0f2fe; font-size: 14.5px; color: #334155; }
+  .env b { color: #0c4a6e; }
+  .env ul { margin: 8px 0 0 18px; }
+  .env ul li { margin-bottom: 4px; }
+  footer { text-align: center; color: #94a3b8; font-size: 12.5px; padding: 0 16px 32px; line-height: 1.8; }
+  footer a { color: #0284c7; }
+</style>
+</head>
+<body>
+<header>
+  <h1>📶 공유기 교체 가이드</h1>
+  <p>RT-AX58U를 쓰고 있다면, 다음 공유기는 뭘로? 우리 집 환경에 맞는 추천과 다나와 가격 정리</p>
+  <span class="build">2026-11-27 작성 · 가격 다나와 기준</span>
+</header>
+<main>
+
+  <h2>지금 쓰고 있는 공유기 — RT-AX58U</h2>
+  <p class="lead">2019년 1월 출시, 7년째 현역. Wi-Fi 6 입문기로는 훌륭했지만, 지금 기준으로는 아쉬운 점이 쌓였어요.</p>
+  <div class="wrap">
+  <table>
+    <tr><th>항목</th><th>RT-AX58U 사양</th></tr>
+    <tr><td>출시</td><td>2019년 1월 (AX3000)</td></tr>
+    <tr><td>Wi-Fi</td><td>Wi-Fi 6 · 듀얼밴드 (5GHz 2,402Mbps + 2.4GHz 574Mbps, 2×2)</td></tr>
+    <tr><td>CPU / RAM</td><td>1.5GHz 트리플코어 (V2는 1.7GHz 쿼드코어) / 512MB</td></tr>
+    <tr><td>유선 포트</td><td>WAN 1GbE ×1 · LAN 1GbE ×4 · USB 3.2 Gen1 ×1</td></tr>
+    <tr><td>기타</td><td>외장 안테나 ×4 · AiMesh 지원 · 6GHz 대역 없음 · 2.5G 포트 없음</td></tr>
+    <tr><td>펌웨어</td><td>현재 3.0.0.4.384_7739 → 최신 3.0.0.4.388_25278 (2026/10/22) <b>아직 업데이트가 나와요</b></td></tr>
+  </table>
+  </div>
+  <div class="note">💡 <b>교체하기 전에, 돈 안 들이고 할 수 있는 것:</b> 펌웨어를 3.0.0.4.388_25278로 업데이트하세요. 384 계열은 몇 년 전 버전이라 보안 패치가 잔뜩 밀려 있어요. 공유기 관리 페이지 → 관리 → 펌웨어 업그레이드에서 자동 확인이 됩니다.</div>
+
+  <h2>우리 집 환경에서는 뭐가 달라질까</h2>
+  <div class="env">
+    <b>집 네트워크 구성 (2026-11-26 기준)</b>
+    <ul>
+      <li>공유기: RT-AX58U (192.168.50.1) · NAS DS920+ (192.168.50.90, 1GbE) · 테일스케일 UDP 41641 포트포워딩으로 5080 PC와 직접 연결</li>
+      <li>5080 PC는 공유기 바깥 서브넷(스위칭허브 직결) — <b>선 옮기기는 어렵다고 결정됨</b></li>
+      <li>무선 기기: 아이폰 13 Pro Max (Wi-Fi 6) · 아이패드 Pro M4 (Wi-Fi 6E, 6GHz 가능) · 그램 노트북</li>
+      <li>미니PC: GMKtec M8 · FIREBAT F1 (둘 다 2.5G LAN 탑재)</li>
+      <li>나스에서 돌아가는 것: Immich · Paperless-ngx · JDownloader · 테일스케일</li>
+    </ul>
+  </div>
+  <div class="cols" style="margin-top:14px;">
+    <div class="good">
+      <h3>✅ 바꾸면 좋아지는 것</h3>
+      <ul>
+        <li><b>Wi-Fi 7</b> — 무선 속도·지연·다중 접속 개선 (MLO, 4096-QAM)</li>
+        <li><b>2.5GbE 포트</b> — M8·F1의 2.5G LAN을 제대로 활용 (NAS는 1G라 NAS 전송은 그대로)</li>
+        <li><b>CPU·RAM 여유</b> — 1GB RAM + 쿼드코어, 기기 10대 이상 + VPN·QoS에도 안정</li>
+        <li><b>6GHz 대역</b> — BE92U 한정. 아이패드 M4가 6GHz로 붙으면 5GHz 혼잡을 피할 수 있음</li>
+        <li><b>보안 업데이트</b> — 신형은 펌웨어 지원이 한참 남음</li>
+      </ul>
+    </div>
+    <div class="bad">
+      <h3>❌ 바꿔도 안 바뀌는 것</h3>
+      <ul>
+        <li><b>5080 PC ↔ NAS 속도</b> — 선/서브넷 문제라 공유기 교체로 안 풀림. 테일스케일 직접 연결은 이미 되어 있음</li>
+        <li><b>NAS 전송 속도</b> — DS920+는 1GbE라 공유기가 2.5G·10G여도 NAS와 주고받는 속도는 1G 그대로</li>
+        <li><b>인터넷 속도 자체</b> — 요금제가 그대로면 그대로. 기가 인터넷이면 지금 공유기도 이미 포화 상태</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>추천 — 3가지 + 비추천 1가지</h2>
+  <div class="grid">
+    <div class="card pick">
+      <span class="badge gold">🥇 1순위 · 가성비</span>
+      <div class="emoji">🎮</div>
+      <h3>ASUS TUF Gaming BE6500</h3>
+      <p>Wi-Fi 7 · 5GHz 4×4라 5GHz 실속도가 가장 빠름. 2.5G 포트가 WAN 1개 + LAN 3개로 넉넉하고, 게이밍 포트·OpenNAT도 있음. 우리 집에서 체감 폭이 제일 큰 가성비 선택.</p>
+      <ul>
+        <li>Wi-Fi 7 BE6500 (5GHz 5,764Mbps · 2.4GHz 688Mbps)</li>
+        <li>1.5GHz 쿼드코어 · RAM 1GB</li>
+        <li>2.5GbE WAN ×1 · 2.5GbE LAN ×3 · USB 3.2</li>
+        <li>AiMesh · 무상 3년</li>
+        <li>⚠️ 6GHz 대역 없음 (듀얼밴드) — 아이패드는 5GHz로 붙음</li>
+      </ul>
+      <div class="price">약 16만원 <small>무료배송 기준 · 국내 정식 약 20만원</small><br><span class="strike">해외구매 최저가 약 14.7만원 (배송비 별도, A/S 주의)</span></div>
+      <a class="btn" href="https://prod.danawa.com/info/?pcode=68789063&amp;keyword=%EC%BB%B4%ED%93%A8%ED%84%B0%EC%99%80%EC%9D%B4%ED%8C%8C%EC%9D%B4%EA%B3%B5%EC%9C%A0%EA%B8%B0&amp;cate=112804" target="_blank" rel="noopener">다나와 가격 보기</a>
+    </div>
+    <div class="card">
+      <span class="badge">⬆️ 스텝업 · 제대로 오래 쓸 때</span>
+      <div class="emoji">🚀</div>
+      <h3>ASUS RT-BE92U</h3>
+      <p>Wi-Fi 7 트라이밴드로 6GHz가 있는 유일한 추천. 아이패드 M4가 6GHz로 붙고, 10G WAN이라 나중에 10G 인터넷이 와도 대비됨. 비싸지만 5년 이상 쓸 거면 이쪽.</p>
+      <ul>
+        <li>Wi-Fi 7 BE9700 (6GHz 5,764 + 5GHz 2,882 + 2.4GHz 688Mbps)</li>
+        <li>2.0GHz 쿼드코어 · RAM 1GB</li>
+        <li>10GbE WAN ×1 · 2.5GbE LAN ×3 · USB 3.2</li>
+        <li>AiMesh · 무상 3년</li>
+      </ul>
+      <div class="price">약 39만원 <small>카드 혜택 약 37만원</small></div>
+      <a class="btn" href="https://prod.danawa.com/info/?cate=112804&amp;pcode=71008304" target="_blank" rel="noopener">다나와 가격 보기</a>
+    </div>
+    <div class="card">
+      <span class="badge gray">💰 예산 최우선</span>
+      <div class="emoji">🌱</div>
+      <h3>ASUS RT-BE58U</h3>
+      <p>가장 싼 Wi-Fi 7. 무선만 보면 지금보다 빨라지지만, LAN이 1G라 2.5G 미니PC 활용은 안 되고 6GHz도 없어. 예산이 최우선일 때만.</p>
+      <ul>
+        <li>Wi-Fi 7 BE3600 (5GHz 2,882 + 2.4GHz 688Mbps)</li>
+        <li>2.0GHz 쿼드코어 · RAM 1GB</li>
+        <li>2.5GbE WAN ×1 · 1GbE LAN ×4 · USB 3.2</li>
+        <li>AiMesh · 무상 3년</li>
+      </ul>
+      <div class="price">약 17만원 <small>카드 혜택 약 15.7만원</small></div>
+      <a class="btn" href="https://prod.danawa.com/info/?pcode=71008313&amp;keyword=%EB%AA%A8%EB%B0%94%EC%9D%BC3&amp;cate=112804" target="_blank" rel="noopener">다나와 가격 보기</a>
+    </div>
+    <div class="card">
+      <span class="badge red">❌ 지금은 비추천</span>
+      <div class="emoji">🎲</div>
+      <h3>ASUS RT-AX86U Pro</h3>
+      <p>예전엔 가성비 게이밍 공유기 1순위였지만, 지금은 Wi-Fi 6인데 가격이 Wi-Fi 7 모델보다 비싸요. 22만원 이하로 떨어지지 않는 한 살 이유가 없음.</p>
+      <ul>
+        <li>Wi-Fi 6 AX5700 (5GHz 4,804 + 2.4GHz 861Mbps)</li>
+        <li>2.0GHz 쿼드코어 · RAM 1GB</li>
+        <li>2.5GbE ×1 · 1GbE LAN ×4</li>
+      </ul>
+      <div class="price">약 31만원 <small>Wi-Fi 6인데 BE6500보다 비쌈</small></div>
+      <a class="btn ghost" href="https://prod.danawa.com/info/?pcode=68789243" target="_blank" rel="noopener">다나와 가격 보기</a>
+    </div>
+  </div>
+
+  <h2>스펙 비교표</h2>
+  <div class="wrap">
+  <table>
+    <tr><th>모델</th><th>Wi-Fi</th><th>대역</th><th>최고 무선</th><th>WAN</th><th>LAN</th><th>CPU / RAM</th><th>다나와 최저가</th></tr>
+    <tr><td><b>RT-AX58U</b> (지금)</td><td>Wi-Fi 6</td><td>듀얼</td><td>2,402 Mbps</td><td>1G ×1</td><td>1G ×4</td><td>1.5GHz 3코어 / 512MB</td><td>보유 중</td></tr>
+    <tr><td><b>RT-BE58U</b></td><td>Wi-Fi 7</td><td>듀얼</td><td>2,882 Mbps</td><td>2.5G ×1</td><td>1G ×4</td><td>2.0GHz 4코어 / 1GB</td><td class="num">~169,000원</td></tr>
+    <tr class="hl"><td><b>TUF BE6500</b> 🥇</td><td>Wi-Fi 7</td><td>듀얼</td><td>5,764 Mbps</td><td>2.5G ×1</td><td>2.5G ×3</td><td>1.5GHz 4코어 / 1GB</td><td class="num">~160,770원</td></tr>
+    <tr><td><b>RT-BE92U</b></td><td>Wi-Fi 7</td><td>트라이 (6GHz)</td><td>5,764 Mbps</td><td>10G ×1</td><td>2.5G ×3</td><td>2.0GHz 4코어 / 1GB</td><td class="num">~394,570원</td></tr>
+    <tr><td><b>RT-AX86U Pro</b></td><td>Wi-Fi 6</td><td>듀얼</td><td>4,804 Mbps</td><td>2.5G ×1</td><td>1G ×4</td><td>2.0GHz 4코어 / 1GB</td><td class="num">~306,910원</td></tr>
+  </table>
+  </div>
+  <p class="lead" style="margin-top:10px;">* 최고 무선 속도는 해당 대역의 이론상 최대값이에요. 아이폰·아이패드는 2×2 안테나라 실제 체감은 5GHz 기준 최대 ~2,400Mbps 수준이에요.</p>
+
+  <h2>교체할 때 체크리스트</h2>
+  <div class="check">
+    <ol>
+      <li><b>기존 공유기 설정 백업</b> — 관리 페이지 → 관리 → 설정 파일 저장. 새 공유기에 그대로 올리면 Wi-Fi 이름·비밀번호·포트포워딩이 그대로 옮겨져요.</li>
+      <li><b>포트포워딩 다시 만들기</b> — <code>UDP 41641 → 192.168.50.90</code> (테일스케일 직접 연결용). 이거 안 하면 5080 PC ↔ NAS가 중계(DERP)로 느려져요.</li>
+      <li><b>Wi-Fi 이름·비밀번호 그대로 쓰기</b> — 기기들을 일일이 다시 연결할 필요가 없어요.</li>
+      <li><b>AX58U는 버리지 말 것</b> — AiMesh 노드로 재활용하면 집 구석 음영 지역 커버가 돼요.</li>
+      <li><b>새 공유기 펌웨어 최신으로 업데이트</b> 후 사용하기.</li>
+      <li><b>테일스케일 IP는 그대로</b> — 공유기 교체와 무관하게 NAS 100.115.240.90, 5080 PC 100.75.164.64는 그대로예요.</li>
+    </ol>
+  </div>
+
+  <div class="note">💡 <b>결론:</b> 지금 당장 급한 게 아니라면, 펌웨어 업데이트(무료)부터 하고 <b>TUF BE6500</b>을 1순위로 보세요. 6GHz·10G까지 염두에 두면 <b>RT-BE92U</b>예요. BE58U는 2.5G LAN이 없어서 미니PC 활용이 안 되니, 1만원 차이로 BE6500이 훨씬 낫습니다.</div>
+</main>
+<footer>
+  가격: 다나와 기준 2026-11-27 조사 · 카드 혜택·배송비는 판매처마다 다르고 가격은 수시로 변하니 구매 전 다나와에서 최종 확인하세요.<br>
+  사양 출처: <a href="https://www.asus.com/networking-iot-servers/wifi-routers/asus-wifi-routers/rt-ax58u/techspec/" target="_blank" rel="noopener">ASUS RT-AX58U 스펙</a> · <a href="https://www.asus.com/networking-iot-servers/wifi-routers/asus-gaming-routers/tuf-gaming-be6500/techspec/" target="_blank" rel="noopener">ASUS TUF BE6500 스펙</a> · <a href="https://www.asus.com/networking-iot-servers/wifi-routers/asus-wifi-routers/rt-ax58u/helpdesk_bios?model2Name=RT-AX58U" target="_blank" rel="noopener">RT-AX58U 펌웨어</a><br>
+  jhmath1-coder.github.io/grapher/router/ · 2026-11-27
+</footer>
+</body>
+</html>
