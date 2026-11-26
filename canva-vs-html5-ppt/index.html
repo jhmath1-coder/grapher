@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%232563eb'/%3E%3Ctext x='50' y='70' font-size='58' text-anchor='middle'%3E%F0%9F%93%8A%3C/text%3E%3C/svg%3E">
+    <title>Canva vs HTML5 PPT 비교 정리</title>
+    <style>
+      button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"]) { min-height: 2rem; }
+    </style>
+    <style>
+      :root{
+        --bg:#f4f6f8; --surface:#ffffff; --surface2:#eceff2; --ink:#17202a; --ink2:#4a5866;
+        --line:#d7dde3;
+        --canva:#00a8b5; --canva-deep:#00707c; --canva-soft:#e0f5f7;
+        --html:#d6491f; --html-deep:#a83512; --html-soft:#fdeee8;
+        --good:#1e7d46; --bad:#b3362b;
+        --radius:14px;
+      }
+      @media (prefers-color-scheme: dark){
+        :root{
+          --bg:#101418; --surface:#1a2129; --surface2:#232d38; --ink:#eef3f7; --ink2:#a9b8c4;
+          --line:#33404d;
+          --canva:#2fd3e0; --canva-deep:#7fe6ee; --canva-soft:#12333a;
+          --html:#ff7a4d; --html-deep:#ffb59c; --html-soft:#3a211a;
+          --good:#4cc38a; --bad:#ff8a7a;
+        }
+      }
+      *{ box-sizing:border-box; }
+      html{ scroll-behavior:smooth; }
+      body{
+        margin:0; background:var(--bg); color:var(--ink);
+        font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+        line-height:1.6; -webkit-font-smoothing:antialiased;
+      }
+      .wrap{ max-width:1080px; margin:0 auto; padding:0 20px 80px; }
+
+      /* ---------- Hero ---------- */
+      .hero{ padding:52px 0 8px; text-align:center; }
+      .hero h1{ font-size:clamp(30px,5.4vw,52px); line-height:1.15; margin:0 0 14px; letter-spacing:-.02em; font-weight:800; }
+      .hero h1 .c{ color:var(--canva); }
+      .hero h1 .h{ color:var(--html); }
+      .hero h1 .vs{ display:inline-block; font-size:.42em; vertical-align:.55em; background:var(--ink); color:var(--bg);
+        border-radius:999px; padding:.28em .8em; margin:0 .35em; letter-spacing:.06em; }
+      .hero p{ color:var(--ink2); font-size:clamp(15px,2.4vw,18px); margin:0 auto; max-width:640px; }
+      .hero .oneliner{ margin-top:22px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+      .chip{ background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:8px 16px; font-size:14px; font-weight:600; }
+      .chip b.c{ color:var(--canva); } .chip b.h{ color:var(--html); }
+
+      section{ margin-top:56px; }
+      h2{ font-size:clamp(22px,3.6vw,30px); margin:0 0 8px; letter-spacing:-.015em; font-weight:800; }
+      .sub{ color:var(--ink2); margin:0 0 22px; font-size:15px; }
+
+      /* ---------- Demo arena ---------- */
+      .arena{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+      @media (max-width:760px){ .arena{ grid-template-columns:1fr; } }
+      .panel{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; display:flex; flex-direction:column; }
+      .panel-head{ padding:16px 20px 12px; display:flex; align-items:baseline; gap:10px; }
+      .panel-head .name{ font-size:20px; font-weight:800; }
+      .panel-head .tag{ font-size:12.5px; color:var(--ink2); }
+      .panel.canva .name{ color:var(--canva-deep); }
+      .panel.html .name{ color:var(--html-deep); }
+      .stage{ position:relative; margin:0 16px; border-radius:10px; min-height:230px; overflow:hidden;
+        display:flex; align-items:center; justify-content:center; text-align:center; }
+      .stage.canva-stage{ background:var(--canva-soft); border:1.5px dashed color-mix(in srgb, var(--canva) 45%, transparent); }
+      .stage.html-stage{ background:#14100e; border:1.5px solid #3a2a22; }
+      #particles{ position:absolute; inset:0; width:100%; height:100%; }
+      .demo-card{ position:relative; z-index:2; padding:18px 22px; }
+      .demo-card .big{ font-size:30px; font-weight:800; line-height:1.25; letter-spacing:-.01em; }
+      .demo-card .small{ font-size:14px; margin-top:6px; opacity:.75; }
+      #canvaDemo .big, #canvaDemo .small{ color:var(--canva-deep); }
+      #htmlDemo .big{ color:#fff; }
+      #htmlDemo .small{ color:#ffd9c9; min-height:1.6em; }
+      #countNum{ font-variant-numeric:tabular-nums; }
+      .controls{ padding:14px 16px 18px; display:flex; flex-wrap:wrap; gap:8px; }
+      .controls .lbl{ width:100%; font-size:12.5px; font-weight:700; color:var(--ink2); letter-spacing:.04em; }
+      .btn{ appearance:none; border:1px solid var(--line); background:var(--surface2); color:var(--ink);
+        border-radius:9px; padding:8px 14px; font-size:14px; font-weight:600; cursor:pointer; min-height:38px;
+        transition:transform .12s ease, background .12s ease; font-family:inherit; }
+      .btn:hover{ transform:translateY(-1px); }
+      .btn:active{ transform:translateY(0) scale(.97); }
+      .btn:focus-visible{ outline:3px solid var(--canva); outline-offset:2px; }
+      .panel.canva .btn.on{ background:var(--canva); border-color:var(--canva); color:#fff; }
+      .panel.html .btn.on{ background:var(--html); border-color:var(--html); color:#fff; }
+      .note{ padding:0 20px 18px; font-size:13.5px; color:var(--ink2); margin:0; }
+
+      /* Canva preset animations */
+      @keyframes a-fade{ from{opacity:0} to{opacity:1} }
+      @keyframes a-rise{ from{opacity:0; transform:translateY(34px)} to{opacity:1; transform:translateY(0)} }
+      @keyframes a-pop{ 0%{opacity:0; transform:scale(.6)} 70%{transform:scale(1.08)} 100%{opacity:1; transform:scale(1)} }
+      @keyframes a-pan{ from{opacity:0; transform:translateX(-46px)} to{opacity:1; transform:translateX(0)} }
+      @keyframes a-wipe{ from{ clip-path:inset(0 100% 0 0); } to{ clip-path:inset(0 0 0 0); } }
+      @keyframes a-breathe{ 0%,100%{ transform:scale(1)} 50%{ transform:scale(1.07)} }
+      .anim-fade{ animation:a-fade .7s ease both; }
+      .anim-rise{ animation:a-rise .7s cubic-bezier(.2,.8,.25,1) both; }
+      .anim-pop{ animation:a-pop .6s cubic-bezier(.2,.8,.25,1) both; }
+      .anim-pan{ animation:a-pan .7s cubic-bezier(.2,.8,.25,1) both; }
+      .anim-wipe{ animation:a-wipe .8s ease both; }
+      .anim-breathe{ animation:a-breathe 1.6s ease-in-out infinite; }
+      .caret::after{ content:"▌"; animation:blink 1s steps(1) infinite; color:#ffb59c; }
+      @keyframes blink{ 50%{opacity:0} }
+
+      /* ---------- Verdict strip ---------- */
+      .verdict{ display:grid; grid-template-columns:1fr auto 1fr; gap:14px; align-items:stretch; margin-top:18px; }
+      @media (max-width:760px){ .verdict{ grid-template-columns:1fr; } .verdict .mid{ justify-self:center; } }
+      .vcard{ border-radius:var(--radius); padding:20px 22px; border:1px solid var(--line); }
+      .vcard.c{ background:var(--canva-soft); } .vcard.h{ background:var(--html-soft); }
+      .vcard .who{ font-weight:800; font-size:17px; margin-bottom:6px; }
+      .vcard.c .who{ color:var(--canva-deep); } .vcard.h .who{ color:var(--html-deep); }
+      .vcard p{ margin:0; font-size:14.5px; }
+      .verdict .mid{ align-self:center; font-weight:800; font-size:15px; background:var(--ink); color:var(--bg);
+        border-radius:999px; padding:8px 18px; }
+
+      /* ---------- Pros / cons ---------- */
+      .pc{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+      @media (max-width:760px){ .pc{ grid-template-columns:1fr; } }
+      .pcard{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:22px; }
+      .pcard h3{ margin:0 0 4px; font-size:19px; }
+      .pcard.c h3{ color:var(--canva-deep); } .pcard.h h3{ color:var(--html-deep); }
+      .pcard .who-sub{ color:var(--ink2); font-size:13.5px; margin:0 0 14px; }
+      .pcard h4{ margin:16px 0 6px; font-size:14px; letter-spacing:.03em; }
+      .pcard ul{ margin:0; padding:0; list-style:none; }
+      .pcard li{ padding:5px 0 5px 26px; position:relative; font-size:14.5px; }
+      .pcard li::before{ position:absolute; left:0; top:5px; font-weight:800; }
+      .pros li::before{ content:"＋"; color:var(--good); }
+      .cons li::before{ content:"－"; color:var(--bad); }
+      .pcard li b{ font-weight:700; }
+
+      /* ---------- Table ---------- */
+      .tbl-wrap{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+      table{ width:100%; border-collapse:collapse; font-size:14.5px; }
+      th, td{ padding:12px 16px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line); }
+      thead th{ background:var(--surface2); font-size:13px; letter-spacing:.04em; }
+      thead th.c{ color:var(--canva-deep); } thead th.h{ color:var(--html-deep); }
+      tbody th{ font-weight:700; white-space:nowrap; width:118px; }
+      tr:last-child td, tr:last-child th{ border-bottom:none; }
+      @media (max-width:640px){
+        table, tbody, tr, th, td{ display:block; width:100%; }
+        thead{ display:none; }
+        tbody th{ padding-bottom:2px; border-bottom:none; }
+        td{ padding-top:2px; }
+        td::before{ font-size:12px; font-weight:800; letter-spacing:.05em; display:block; margin-bottom:2px; }
+        td.c::before{ content:"CANVA"; color:var(--canva-deep); }
+        td.h::before{ content:"HTML5"; color:var(--html-deep); }
+        tr{ border-bottom:1px solid var(--line); padding:6px 0; }
+        tr:last-child{ border-bottom:none; }
+      }
+
+      /* ---------- Situations ---------- */
+      .situ{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+      @media (max-width:760px){ .situ{ grid-template-columns:1fr; } }
+      .scard{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; display:flex; gap:14px; }
+      .scard .badge{ flex:0 0 auto; align-self:flex-start; font-size:12px; font-weight:800; letter-spacing:.05em;
+        border-radius:7px; padding:5px 10px; color:#fff; margin-top:2px; }
+      .badge.c{ background:var(--canva); } .badge.h{ background:var(--html); } .badge.both{ background:var(--ink); color:var(--bg); }
+      .scard h3{ margin:0 0 4px; font-size:16px; }
+      .scard p{ margin:0; font-size:14px; color:var(--ink2); }
+
+      /* ---------- Picker ---------- */
+      .picker{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:24px; }
+      .q{ margin-bottom:20px; }
+      .q p{ font-weight:700; margin:0 0 10px; font-size:15.5px; }
+      .opts{ display:flex; gap:8px; flex-wrap:wrap; }
+      .opt{ appearance:none; border:1.5px solid var(--line); background:var(--surface); color:var(--ink);
+        border-radius:999px; padding:9px 18px; font-size:14.5px; font-weight:600; cursor:pointer; min-height:40px; font-family:inherit; }
+      .opt.sel-c{ border-color:var(--canva); background:var(--canva-soft); }
+      .opt.sel-h{ border-color:var(--html); background:var(--html-soft); }
+      .result{ margin-top:6px; border-radius:10px; padding:18px 20px; font-size:15.5px; display:none; }
+      .result.show{ display:block; }
+      .result.c{ background:var(--canva-soft); } .result.h{ background:var(--html-soft); } .result.b{ background:var(--surface2); }
+      .result b{ font-size:17px; }
+
+      /* ---------- Effect ladder ---------- */
+      .ladder{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+      @media (max-width:760px){ .ladder{ grid-template-columns:1fr; } }
+      .lcard{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px; }
+      .lcard .lv{ font-size:12px; font-weight:800; letter-spacing:.08em; color:var(--ink2); }
+      .lcard h3{ margin:6px 0 8px; font-size:17px; }
+      .lcard ul{ margin:0; padding-left:18px; font-size:14px; color:var(--ink2); }
+      .lcard .who2{ margin-top:12px; font-size:13px; font-weight:700; }
+      .lcard.l1 .who2{ color:var(--canva-deep); } .lcard.l2 .who2{ color:var(--canva-deep); } .lcard.l3 .who2{ color:var(--html-deep); }
+
+      footer{ margin-top:64px; padding-top:20px; border-top:1px solid var(--line); color:var(--ink2); font-size:13.5px; }
+      @media (prefers-reduced-motion: reduce){
+        html{ scroll-behavior:auto; }
+        *, *::before, *::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+
+      <header class="hero">
+        <h1><span class="c">Canva</span><span class="vs">VS</span><span class="h">HTML5 PPT</span></h1>
+        <p>둘 다 슬라이드를 만들지만, 잘하는 게 완전히 다릅니다. 아래에서 효과를 직접 눌러 보고, 장단점과 상황별 추천까지 한 번에 정리했습니다.</p>
+        <div class="oneliner">
+          <span class="chip"><b class="c">Canva</b> = 빨리, 예쁘게, 누구나</span>
+          <span class="chip"><b class="h">HTML5</b> = 화려하게, 상호작용, 한계 없음</span>
+        </div>
+      </header>
+
+      <!-- ===== 효과 체험 ===== -->
+      <section aria-labelledby="demoTitle">
+        <h2 id="demoTitle">1. 효과, 직접 눌러 보기</h2>
+        <p class="sub">왼쪽은 Canva에 실제로 있는 프리셋 애니메이션 재현, 오른쪽은 HTML5로만 가능한 효과입니다. 같은 "효과"라도 결이 다릅니다.</p>
+
+        <div class="arena">
+          <div class="panel canva">
+            <div class="panel-head"><span class="name">Canva</span><span class="tag">Animate 메뉴의 프리셋 효과</span></div>
+            <div class="stage canva-stage">
+              <div class="demo-card" id="canvaDemo">
+                <div class="big">각 잡고 오세요</div>
+                <div class="small">부산수학축전 체험 부스</div>
+              </div>
+            </div>
+            <div class="controls" role="group" aria-label="Canva 애니메이션 선택">
+              <span class="lbl">요소 애니메이션 (클릭하면 적용)</span>
+              <button class="btn fx" data-anim="anim-fade">Fade · 페이드</button>
+              <button class="btn fx" data-anim="anim-rise">Rise · 떠오르기</button>
+              <button class="btn fx" data-anim="anim-pop">Pop · 팝</button>
+              <button class="btn fx" data-anim="anim-pan">Pan · 밀려오기</button>
+              <button class="btn fx" data-anim="anim-wipe">Wipe · 와이프</button>
+              <button class="btn fx" data-anim="anim-breathe">Breathe · 호흡(반복)</button>
+            </div>
+            <p class="note">Canva의 효과는 전부 이런 방식입니다. 요소를 고르고 효과를 클릭하면 끝. 종류가 정해져 있고, 속도와 방향 정도만 조절할 수 있습니다. 대신 실패할 일이 없습니다.</p>
+          </div>
+
+          <div class="panel html">
+            <div class="panel-head"><span class="name">HTML5</span><span class="tag">코드로 만드는 효과 — 버튼마다 다른 기술</span></div>
+            <div class="stage html-stage">
+              <canvas id="particles" aria-hidden="true"></canvas>
+              <div class="demo-card" id="htmlDemo">
+                <div class="big"><span id="countNum">0</span><span style="font-size:.55em; font-weight:700;"> 건</span></div>
+                <div class="small" id="typeLine"></div>
+              </div>
+            </div>
+            <div class="controls" role="group" aria-label="HTML5 효과 실행">
+              <span class="lbl">효과 실행</span>
+              <button class="btn" id="btnCount">숫자 카운트업 (0 → 157)</button>
+              <button class="btn" id="btnType">타이핑 연출</button>
+              <button class="btn" id="btnConfetti">폭죽 터뜨리기</button>
+              <button class="btn" id="btnParticle">파티클 켜기/끄기</button>
+            </div>
+            <p class="note">파티클 배경, 실시간 카운트업, 타이핑, 폭죽은 Canva에 없는 효과입니다. 보는 사람의 클릭·터치에 반응하는 상호작용도 HTML5만 됩니다. 대신 만들 때 코드가 필요합니다.</p>
+          </div>
+        </div>
+
+        <div class="verdict">
+          <div class="vcard c">
+            <div class="who">Canva 효과의 본질</div>
+            <p>"정해진 효과를 골라 붙이기". 발표 재생 시 자동으로 흘러가고, 누가 만들어도 일정한 완성도가 나옵니다.</p>
+          </div>
+          <div class="mid">한 줄 요약</div>
+          <div class="vcard h">
+            <div class="who">HTML5 효과의 본질</div>
+            <p>"원하는 효과를 직접 설계하기". 상상한 연출은 대부분 구현되지만, 만드는 시간과 실력이 결과물을 좌우합니다.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 장단점 ===== -->
+      <section aria-labelledby="pcTitle">
+        <h2 id="pcTitle">2. 장단점</h2>
+        <p class="sub">실제로 두 방식으로 같은 발표자료(수학축전 부스 발표)를 만들어 본 경험을 기준으로 정리했습니다.</p>
+        <div class="pc">
+          <div class="pcard c">
+            <h3>Canva</h3>
+            <p class="who-sub">디자인 플랫폼 — 템플릿 + 드래그 편집</p>
+            <h4>장점</h4>
+            <ul class="pros">
+              <li><b>속도가 압도적</b> — 템플릿 고르고 글자만 바꾸면 완성. 9장짜리 발표도 짧은 시간에 끝납니다.</li>
+              <li><b>디자인 감각을 대신해 줌</b> — 폰트·색·배치가 이미 맞춰져 있어 못 만들 수가 없습니다.</li>
+              <li><b>수정·공유가 쉬움</b> — 링크 하나로 같이 편집하고, 발표 직전 오타 수정도 바로 반영됩니다.</li>
+              <li><b>자료가 풍부</b> — 사진·아이콘·일러스트가 안에 다 있어 따로 찾을 필요가 없습니다.</li>
+              <li><b>어디서든 열림</b> — 앱·웹 모두 되고, PDF·PPTX로 내보내기도 됩니다.</li>
+            </ul>
+            <h4>단점</h4>
+            <ul class="cons">
+              <li><b>애니메이션은 프리셋뿐</b> — 등장 효과와 슬라이드 전환만 있고, AI가 만든 디자인에는 자동으로 안 들어갑니다. 하나씩 직접 넣어야 합니다.</li>
+              <li><b>상호작용 불가</b> — 클릭에 반응하거나, 게임처럼 조작하거나, 숫자가 실시간으로 바뀌는 연출은 못 합니다.</li>
+              <li><b>남들과 비슷해짐</b> — 인기 템플릿은 어디서 본 듯한 디자인이 됩니다.</li>
+              <li><b>인터넷·계정 의존</b> — 오프라인이거나 로그인이 안 되면 편집이 막힙니다.</li>
+              <li><b>세밀한 조정 한계</b> — 픽셀 단위 위치, 특수한 레이아웃은 답답할 때가 있습니다.</li>
+            </ul>
+          </div>
+
+          <div class="pcard h">
+            <h3>HTML5 PPT</h3>
+            <p class="who-sub">웹페이지로 만드는 슬라이드 — 코드 기반</p>
+            <h4>장점</h4>
+            <ul class="pros">
+              <li><b>연출의 한계가 없음</b> — 파티클, 폭죽, 카운트업, 타이핑, 미니 게임까지 발표 자체를 쇼로 만들 수 있습니다.</li>
+              <li><b>상호작용 가능</b> — 청중이 직접 눌러 보고, 입력에 따라 화면이 바뀌는 체험형 발표가 됩니다.</li>
+              <li><b>파일 하나로 끝</b> — index.html 하나면 되고, 브라우저만 있으면 오프라인에서도 열립니다.</li>
+              <li><b>완전한 내 것</b> — 템플릿이 없어 남과 겹치지 않고, GitHub Pages 같은 곳에 올려 링크로 공유하기도 좋습니다.</li>
+              <li><b>데이터 연동</b> — 표·그래프·계산이 코드로 들어가 있어 숫자를 바꾸면 전체가 다시 계산됩니다.</li>
+            </ul>
+            <h4>단점</h4>
+            <ul class="cons">
+              <li><b>만드는 데 시간과 실력</b> — 코드가 필요해서, 급하게 글자만 고치는 수준의 수정도 손이 많이 갑니다.</li>
+              <li><b>디자인은 본인 책임</b> — 템플릿이 없으니 감각이 없으면 결과물도 그대로 드러납니다.</li>
+              <li><b>협업이 불편</b> — 여러 명이 동시에 고치는 Canva식 공동 편집이 안 됩니다.</li>
+              <li><b>환경 차이 확인 필요</b> — 화면 크기·브라우저마다 잘 나오는지 발표 전에 점검해야 합니다.</li>
+              <li><b>효과 과잉 위험</b> — 화려함에 취하면 정작 내용이 묻히기 쉽습니다.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 비교표 ===== -->
+      <section aria-labelledby="tblTitle">
+        <h2 id="tblTitle">3. 항목별 비교</h2>
+        <p class="sub">핵심 항목만 추렸습니다.</p>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr><th scope="col">항목</th><th scope="col" class="c">Canva</th><th scope="col" class="h">HTML5 PPT</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">제작 속도</th><td class="c">매우 빠름 — 템플릿 기반</td><td class="h">느림 — 코드 작성 필요</td></tr>
+              <tr><th scope="row">디자인 완성도</th><td class="c">누가 해도 일정 이상 보장</td><td class="h">만드는 사람 실력에 비례</td></tr>
+              <tr><th scope="row">애니메이션</th><td class="c">프리셋 등장 효과 + 전환</td><td class="h">자유 설계 (파티클·물리·3D까지)</td></tr>
+              <tr><th scope="row">상호작용</th><td class="c">없음 (링크 이동 정도)</td><td class="h">클릭·입력·게임 요소 가능</td></tr>
+              <tr><th scope="row">수정 편의성</th><td class="c">드래그·타이핑으로 즉시</td><td class="h">코드를 고쳐야 함</td></tr>
+              <tr><th scope="row">공동 편집</th><td class="c">실시간 다인 편집 지원</td><td class="h">사실상 1인 작업</td></tr>
+              <tr><th scope="row">공유 방식</th><td class="c">링크 공유, PDF·PPTX 내보내기</td><td class="h">파일 전달 또는 웹 링크 (GitHub Pages 등)</td></tr>
+              <tr><th scope="row">오프라인</th><td class="c">편집은 인터넷 필수</td><td class="h">파일만 있으면 발표 가능</td></tr>
+              <tr><th scope="row">비용</th><td class="c">무료 + 유료(Pro) 요소 혼합</td><td class="h">파일 자체는 무료, 제작 인건비가 본질</td></tr>
+              <tr><th scope="row">개성</th><td class="c">템플릿 안에서만</td><td class="h">완전 오리지널</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===== 상황별 추천 ===== -->
+      <section aria-labelledby="situTitle">
+        <h2 id="situTitle">4. 어떤 상황에 어떤 것?</h2>
+        <p class="sub">결론부터 말하면, "빨리·무난하게"면 Canva, "기억에 남게·체험하게"면 HTML5입니다.</p>
+        <div class="situ">
+          <div class="scard"><span class="badge c">CANVA</span><div>
+            <h3>수업·회의 자료를 급히 만들 때</h3>
+            <p>내일 아침 수업 자료, 회의 30분 전 슬라이드. 고민 없이 템플릿에 내용만 얹는 게 정답입니다.</p></div></div>
+          <div class="scard"><span class="badge c">CANVA</span><div>
+            <h3>여러 사람이 함께 만들 때</h3>
+            <p>동료 교사와 공동 제작, 학생 조별 과제처럼 실시간으로 같이 고쳐야 하면 Canva뿐입니다.</p></div></div>
+          <div class="scard"><span class="badge c">CANVA</span><div>
+            <h3>디자인에 자신 없을 때</h3>
+            <p>배치와 색 조합을 플랫폼이 책임져 주니, 내용에만 집중하면 됩니다.</p></div></div>
+          <div class="scard"><span class="badge c">CANVA</span><div>
+            <h3>만든 뒤에도 자주 고칠 자료</h3>
+            <p>매년 숫자만 바꾸는 정기 보고, 양식처럼 반복 사용하는 자료는 수정이 쉬운 쪽이 이깁니다.</p></div></div>
+          <div class="scard"><span class="badge h">HTML5</span><div>
+            <h3>행사·발표에서 임팩트가 필요할 때</h3>
+            <p>수학축전 부스 발표처럼 "와" 소리가 목표면, 파티클·폭죽·카운트업이 있는 HTML5가 압도적입니다.</p></div></div>
+          <div class="scard"><span class="badge h">HTML5</span><div>
+            <h3>청중이 직접 만져 보는 체험형</h3>
+            <p>각 맞추기 미니 게임처럼 청중 참여가 핵심이면 상호작용이 되는 HTML5만 가능합니다.</p></div></div>
+          <div class="scard"><span class="badge h">HTML5</span><div>
+            <h3>인터넷이 없는 발표장에서</h3>
+            <p>파일 하나로 노트북에 넣어 가면 끝. 네트워크 상태에 발표가 흔들리지 않습니다.</p></div></div>
+          <div class="scard"><span class="badge both">둘 다</span><div>
+            <h3>실전 꿀조합: Canva로 뼈대, HTML5로 하이라이트</h3>
+            <p>본문 슬라이드는 Canva로 빠르게 만들고, 표지·결과 발표 같은 결정적 장면만 HTML5로 따로 만들면 속도와 임팩트를 모두 잡습니다.</p></div></div>
+        </div>
+      </section>
+
+      <!-- ===== 효과 단계 ===== -->
+      <section aria-labelledby="ladderTitle">
+        <h2 id="ladderTitle">5. 효과의 단계로 보면</h2>
+        <p class="sub">효과 욕심이 어느 수준인지에 따라 답이 갈립니다.</p>
+        <div class="ladder">
+          <div class="lcard l1">
+            <div class="lv">LEVEL 1 · 등장 효과</div>
+            <h3>글자가 부드럽게 나타나면 충분</h3>
+            <ul><li>페이드, 떠오르기, 슬라이드 전환</li><li>페이지가 넘어가는 느낌만 있으면 됨</li></ul>
+            <div class="who2">→ Canva로 충분합니다</div>
+          </div>
+          <div class="lcard l2">
+            <div class="lv">LEVEL 2 · 연출 효과</div>
+            <h3>움직이는 배경, 강조 모션</h3>
+            <ul><li>움직이는 배경 영상, GIF, 요소 반복 모션</li><li>Canva에서도 일부 가능하지만 손이 많이 감</li></ul>
+            <div class="who2">→ Canva로 가능, 단 품이 듭니다</div>
+          </div>
+          <div class="lcard l3">
+            <div class="lv">LEVEL 3 · 상호작용 효과</div>
+            <h3>반응하고, 세고, 터지는 화면</h3>
+            <ul><li>파티클, 카운트업, 타이핑, 폭죽, 미니 게임</li><li>청중의 행동에 화면이 반응</li></ul>
+            <div class="who2">→ HTML5만 됩니다</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 고르기 도우미 ===== -->
+      <section aria-labelledby="pickTitle">
+        <h2 id="pickTitle">6. 10초 고르기</h2>
+        <p class="sub">세 가지만 답하면 추천해 드립니다.</p>
+        <div class="picker">
+          <div class="q" data-q="time">
+            <p>Q1. 만들 시간이 얼마나 있나요?</p>
+            <div class="opts">
+              <button class="opt" data-v="c">1시간도 촉박하다</button>
+              <button class="opt" data-v="h">며칠 투자할 수 있다</button>
+            </div>
+          </div>
+          <div class="q" data-q="fx">
+            <p>Q2. 효과는 어느 수준까지 원하나요?</p>
+            <div class="opts">
+              <button class="opt" data-v="c">부드럽게 등장하면 된다</button>
+              <button class="opt" data-v="h">터지고 세고 반응해야 한다</button>
+            </div>
+          </div>
+          <div class="q" data-q="team">
+            <p>Q3. 만드는 사람은?</p>
+            <div class="opts">
+              <button class="opt" data-v="c">여럿이 같이 만든다</button>
+              <button class="opt" data-v="h">혼자 끝까지 만든다</button>
+            </div>
+          </div>
+          <div class="result" id="pickResult" role="status" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <footer>
+        정리 기준: Canva 프레젠테이션의 Animate(요소·페이지 애니메이션)와 전환 기능, 그리고 HTML5(CSS·JavaScript)로 직접 구현한 슬라이드의 실제 제작 경험. 이 페이지 자체가 HTML5로 만들어졌고, 위쪽 파티클·폭죽·카운트업이 그 증거입니다.
+      </footer>
+    </div>
+
+    <script>
+      (function(){
+        "use strict";
+        var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        /* ---------- Canva preset demo ---------- */
+        var canvaDemo = document.getElementById("canvaDemo");
+        var animClasses = ["anim-fade","anim-rise","anim-pop","anim-pan","anim-wipe","anim-breathe"];
+        document.querySelectorAll(".btn.fx").forEach(function(btn){
+          btn.addEventListener("click", function(){
+            document.querySelectorAll(".btn.fx").forEach(function(b){ b.classList.remove("on"); });
+            btn.classList.add("on");
+            animClasses.forEach(function(c){ canvaDemo.classList.remove(c); });
+            void canvaDemo.offsetWidth; /* restart animation */
+            canvaDemo.classList.add(btn.getAttribute("data-anim"));
+          });
+        });
+        canvaDemo.classList.add("anim-rise");
+
+        /* ---------- Count-up ---------- */
+        var countEl = document.getElementById("countNum");
+        var counting = false;
+        document.getElementById("btnCount").addEventListener("click", function(){
+          if (counting) return;
+          var target = 157, dur = 1400, t0 = null;
+          if (reduceMotion){ countEl.textContent = target; return; }
+          counting = true;
+          function step(ts){
+            if (!t0) t0 = ts;
+            var p = Math.min((ts - t0) / dur, 1);
+            var eased = 1 - Math.pow(1 - p, 3);
+            countEl.textContent = Math.round(target * eased);
+            if (p < 1) requestAnimationFrame(step); else counting = false;
+          }
+          requestAnimationFrame(step);
+        });
+
+        /* ---------- Typing ---------- */
+        var typeEl = document.getElementById("typeLine");
+        var typeTimer = null;
+        document.getElementById("btnType").addEventListener("click", function(){
+          var text = "이틀간 157건 체험, 토요일 예약 80석 전석 마감";
+          if (typeTimer) clearInterval(typeTimer);
+          if (reduceMotion){ typeEl.textContent = text; typeEl.classList.remove("caret"); return; }
+          typeEl.textContent = "";
+          typeEl.classList.add("caret");
+          var i = 0;
+          typeTimer = setInterval(function(){
+            i++;
+            typeEl.textContent = text.slice(0, i);
+            if (i >= text.length){ clearInterval(typeTimer); typeTimer = null; setTimeout(function(){ typeEl.classList.remove("caret"); }, 1600); }
+          }, 55);
+        });
+
+        /* ---------- Confetti (canvas bursts) ---------- */
+        var stage = document.querySelector(".html-stage");
+        var fxCanvas = document.createElement("canvas");
+        fxCanvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3;";
+        stage.appendChild(fxCanvas);
+        var fxCtx = fxCanvas.getContext("2d");
+        var pieces = [], fxRunning = false;
+        function sizeFx(){
+          var r = stage.getBoundingClientRect();
+          fxCanvas.width = Math.max(1, Math.round(r.width));
+          fxCanvas.height = Math.max(1, Math.round(r.height));
+        }
+        sizeFx();
+        window.addEventListener("resize", sizeFx);
+        var COLORS = ["#ffd166","#ff7a4d","#2fd3e0","#ffffff","#f25c38"];
+        function burst(){
+          sizeFx();
+          var cx = fxCanvas.width / 2, cy = fxCanvas.height * 0.62;
+          for (var i = 0; i < 90; i++){
+            var a = Math.random() * Math.PI * 2, sp = 2.5 + Math.random() * 6.5;
+            pieces.push({ x:cx, y:cy, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp - 3.4,
+              w:4 + Math.random()*5, h:3 + Math.random()*4, rot:Math.random()*Math.PI,
+              vr:(Math.random()-.5)*.3, color:COLORS[i % COLORS.length], life:1 });
+          }
+          if (!fxRunning){ fxRunning = true; requestAnimationFrame(fxTick); }
+        }
+        function fxTick(){
+          fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+          pieces = pieces.filter(function(p){ return p.life > 0; });
+          pieces.forEach(function(p){
+            p.x += p.vx; p.y += p.vy; p.vy += 0.16; p.vx *= 0.99; p.rot += p.vr; p.life -= 0.011;
+            fxCtx.save(); fxCtx.translate(p.x, p.y); fxCtx.rotate(p.rot);
+            fxCtx.globalAlpha = Math.max(p.life, 0);
+            fxCtx.fillStyle = p.color; fxCtx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+            fxCtx.restore();
+          });
+          if (pieces.length){ requestAnimationFrame(fxTick); }
+          else { fxRunning = false; fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height); }
+        }
+        document.getElementById("btnConfetti").addEventListener("click", function(){
+          if (reduceMotion) return;
+          burst();
+        });
+
+        /* ---------- Particles ---------- */
+        var pCanvas = document.getElementById("particles");
+        var pCtx = pCanvas.getContext("2d");
+        var dots = [], particlesOn = !reduceMotion, pRunning = false;
+        function sizeP(){
+          var r = stage.getBoundingClientRect();
+          pCanvas.width = Math.max(1, Math.round(r.width));
+          pCanvas.height = Math.max(1, Math.round(r.height));
+        }
+        function seedDots(){
+          dots = [];
+          var n = Math.round(pCanvas.width / 14);
+          for (var i = 0; i < n; i++){
+            dots.push({ x:Math.random()*pCanvas.width, y:Math.random()*pCanvas.height,
+              r:.8 + Math.random()*1.8, vx:(Math.random()-.5)*.35, vy:(Math.random()-.5)*.35,
+              a:.25 + Math.random()*.5 });
+          }
+        }
+        function pTick(){
+          if (!particlesOn){ pRunning = false; pCtx.clearRect(0,0,pCanvas.width,pCanvas.height); return; }
+          pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+          dots.forEach(function(d){
+            d.x += d.vx; d.y += d.vy;
+            if (d.x < 0 || d.x > pCanvas.width) d.vx *= -1;
+            if (d.y < 0 || d.y > pCanvas.height) d.vy *= -1;
+            pCtx.beginPath(); pCtx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+            pCtx.fillStyle = "rgba(255,180,140," + d.a + ")"; pCtx.fill();
+          });
+          requestAnimationFrame(pTick);
+        }
+        function startParticles(){
+          if (pRunning) return;
+          sizeP(); seedDots(); pRunning = true; requestAnimationFrame(pTick);
+        }
+        var btnP = document.getElementById("btnParticle");
+        function syncPBtn(){ btnP.classList.toggle("on", particlesOn); btnP.textContent = particlesOn ? "파티클 끄기" : "파티클 켜기"; }
+        btnP.addEventListener("click", function(){
+          particlesOn = !particlesOn;
+          if (particlesOn) startParticles();
+          syncPBtn();
+        });
+        if (particlesOn) startParticles();
+        syncPBtn();
+        window.addEventListener("resize", function(){ if (particlesOn){ sizeP(); seedDots(); } });
+
+        /* ---------- Picker ---------- */
+        var answers = {};
+        var result = document.getElementById("pickResult");
+        document.querySelectorAll(".q").forEach(function(q){
+          var key = q.getAttribute("data-q");
+          q.querySelectorAll(".opt").forEach(function(opt){
+            opt.addEventListener("click", function(){
+              q.querySelectorAll(".opt").forEach(function(o){ o.classList.remove("sel-c","sel-h"); });
+              opt.classList.add(opt.getAttribute("data-v") === "c" ? "sel-c" : "sel-h");
+              answers[key] = opt.getAttribute("data-v");
+              judge();
+            });
+          });
+        });
+        function judge(){
+          if (Object.keys(answers).length < 3){ result.className = "result"; result.style.display = "none"; return; }
+          var c = 0, h = 0;
+          Object.keys(answers).forEach(function(k){ if (answers[k] === "c") c++; else h++; });
+          result.style.display = "block";
+          if (c === 3){
+            result.className = "result show c";
+            result.innerHTML = "<b>추천: Canva</b> — 시간이 없고 여럿이 만들고 무난한 효과가 목표라면 고민할 필요 없습니다. 템플릿 골라 내용만 얹으세요.";
+          } else if (h === 3){
+            result.className = "result show h";
+            result.innerHTML = "<b>추천: HTML5 PPT</b> — 시간도 있고 임팩트도 노린다면 처음부터 HTML5로 가는 게 맞습니다. 이 페이지 같은 연출이 전부 가능합니다.";
+          } else if (c > h){
+            result.className = "result show c";
+            result.innerHTML = "<b>추천: Canva 중심</b> — 본문은 Canva로 빠르게 만들고, 표지 한 장 정도의 하이라이트만 따로 신경 쓰는 조합이 어울립니다.";
+          } else {
+            result.className = "result show h";
+            result.innerHTML = "<b>추천: HTML5 중심</b> — 연출 욕심이 크네요. 뼈대는 단순하게 잡고 효과에 시간을 쓰는 쪽이 만족도가 높습니다.";
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>
