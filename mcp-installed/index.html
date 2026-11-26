@@ -61,8 +61,8 @@
     <h3><a href="https://github.com/morluto/rea" target="_blank" rel="noopener">REA — Reverse Engineer Anything</a><span class="badge ok">설치 완료</span></h3>
     <p class="sub">바이너리·JS·Electron·.NET·웹을 뜯어보는 리버스엔지니어링 MCP. GSP 분석의 출발점.</p>
     <table>
-      <tr><th>버전</th><td>rea-agents@6.5.0 (MIT) · 2026-10-16 설치</td></tr>
-      <tr><th>도구</th><td class="tools">전체 207개 · 허용 <b>137개</b> · 차단 <i>70개</i></td></tr>
+      <tr><th>버전</th><td>rea-agents@6.10.1 (MIT) · 2026-10-16 설치 · 2026-11-26 업데이트</td></tr>
+      <tr><th>도구</th><td class="tools">전체 263개 · 허용 <b>178개</b> · 차단 <i>85개</i></td></tr>
       <tr><th>허용 범위</th><td>읽기 전용 정적 분석만 (analyze·inspect·search·decompile 계열)</td></tr>
       <tr><th>차단</th><td>capture_*·observe_*·start_*·set_*·gdb/rizin 등 실행·디버거 계열</td></tr>
       <tr><th>위치</th><td><code>~/workspace/custom-connectors/custom.rea/</code></td></tr>
@@ -86,8 +86,8 @@
     <h3><a href="https://github.com/storytold/craft-anything" target="_blank" rel="noopener">Craft Anything</a><span class="badge ok">설치 완료</span></h3>
     <p class="sub">순수 Rust 조사 엔진. 웹사이트·앱·게임을 관찰하고 클린룸으로 다시 만드는 도구 — 여기는 조사용만.</p>
     <table>
-      <tr><th>버전</th><td>0.6.0 (MIT OR Apache-2.0, 커밋 899b4ebd) · 2026-11-11 설치 · 공식 프리빌드 SHA-256 검증</td></tr>
-      <tr><th>도구</th><td class="tools">전체 322개 · 허용 <b>217개</b> · 차단 <i>106개</i></td></tr>
+      <tr><th>버전</th><td>0.6.1 (MIT OR Apache-2.0, 커밋 48a9c5a) · 2026-11-11 설치 · 2026-11-26 업데이트 · 소스 빌드</td></tr>
+      <tr><th>도구</th><td class="tools">전체 323개 · 허용 <b>218개</b> · 차단 <i>106개</i></td></tr>
       <tr><th>허용 범위</th><td>Study·검사 계열만 (네이티브·포맷·브라우저 관찰·읽기 전용 딥 검사)</td></tr>
       <tr><th>차단</th><td>rebuild_* 전부, 빌드 파일 쓰기, 프로젝트 실행·복사·삭제, 에이전트 호출, npm 설치</td></tr>
       <tr><th>위치</th><td><code>~/workspace/custom-connectors/custom.craft-anything/</code></td></tr>
@@ -101,8 +101,8 @@
     <h3><a href="https://github.com/github/github-mcp-server" target="_blank" rel="noopener">GitHub MCP (공식)</a><span class="badge ok">설치 완료</span></h3>
     <p class="sub">깃헙 저장소·이슈·PR·커밋 조회. 읽기 전용으로 제한.</p>
     <table>
-      <tr><th>버전</th><td>v2.1.0 (MIT) · 2026-11-15 설치 · 같은 날 인증 완료</td></tr>
-      <tr><th>도구</th><td class="tools">전체 57개 · 허용 <b>57개</b> · 차단 <i>34개</i> (쓰기·실험적 도구)</td></tr>
+      <tr><th>버전</th><td>v2.3.0 (MIT) · 2026-11-15 설치 · 2026-11-26 업데이트 · 같은 날 인증 완료</td></tr>
+      <tr><th>도구</th><td class="tools">전체 94개 · 허용 <b>57개</b> · 차단 <i>37개</i> (쓰기·실험적 도구)</td></tr>
       <tr><th>인증</th><td>새 PAT 발급 없이 연결됨 — Pages 배포용 금고 연결(custom.github)을 서로게이트로 재사용. <b>get_me → jhmath1-coder 확인</b>, grapher 파일 읽기·저장소 검색 검증 완료.</td></tr>
       <tr><th>위치</th><td><code>~/workspace/custom-connectors/custom.github-mcp/</code></td></tr>
     </table>
@@ -112,7 +112,7 @@
     <h3><a href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener">Playwright MCP (공식)</a><span class="badge ok">설치 완료</span></h3>
     <p class="sub">헤드리스 브라우저로 라이브 페이지 검증·모니터링. 그래퍼 배포 검증용.</p>
     <table>
-      <tr><th>버전</th><td>0.0.85 (Apache-2.0) · 2026-11-15 설치</td></tr>
+      <tr><th>버전</th><td>0.0.86 (Apache-2.0) · 2026-11-15 설치 · 2026-11-26 업데이트</td></tr>
       <tr><th>도구</th><td class="tools">전체 25개 · 허용 <b>16개</b> · 차단 <i>9개</i></td></tr>
       <tr><th>제한</th><td>격리 프로필만 사용, 로그인 프로필 연결 금지</td></tr>
       <tr><th>검증</th><td>example.com 열기·스냅샷·스크린샷 실제 수행</td></tr>
@@ -124,7 +124,7 @@
     <h3><a href="https://github.com/upstash/context7" target="_blank" rel="noopener">Context7</a><span class="badge ok">설치 완료</span></h3>
     <p class="sub">최신 라이브러리 문서 조회. 키 없이 동작.</p>
     <table>
-      <tr><th>버전</th><td>4.7.0 · 2026-11-15 설치</td></tr>
+      <tr><th>버전</th><td>4.8.0 · 2026-11-15 설치 · 2026-11-26 업데이트</td></tr>
       <tr><th>도구</th><td class="tools">허용 <b>2개</b> · 차단 <i>3개</i> (미리보기 도구)</td></tr>
       <tr><th>검증</th><td>zod 조회·문서 반환 실제 수행</td></tr>
       <tr><th>비고</th><td>API 키는 선택 사항 (속도 제한 상향·비공개 저장소 문서 조회 시에만 필요)</td></tr>
@@ -136,7 +136,7 @@
     <h3><a href="https://github.com/haris-musa/excel-mcp-server" target="_blank" rel="noopener">Excel MCP Server</a><span class="badge ok">설치 완료</span></h3>
     <p class="sub">엑셀 직접 읽기·쓰기. 채점표·명단 작업용.</p>
     <table>
-      <tr><th>버전</th><td>2.3.0 · 2026-11-15 설치</td></tr>
+      <tr><th>버전</th><td>2.3.6 · 2026-11-15 설치 · 2026-11-26 업데이트</td></tr>
       <tr><th>도구</th><td class="tools">전체 46개 · 허용 <b>46개</b> · 차단 <i>2개</i></td></tr>
       <tr><th>제한</th><td>허용 폴더는 ~/workspace 로 한정 · 쓰기는 사용자 요청 시에만, 기존 자료 삭제·덮어쓰기는 실행 전 확인</td></tr>
       <tr><th>검증</th><td>테스트 엑셀 쓰기→읽기 값 일치 · 허용 폴더 밖 접근 거부 확인</td></tr>
@@ -148,7 +148,7 @@
     <h3><a href="https://github.com/kajisho5/ffmpeg-skill" target="_blank" rel="noopener">ffmpeg 스킬</a><span class="badge ok">설치 완료</span></h3>
     <p class="sub">로컬 영상 편집용 FFmpeg 도구 42개. 홍보 영상 작업용 스킬 (MCP가 아니라 스킬로 설치).</p>
     <table>
-      <tr><th>버전</th><td>v3.9.1 (커밋 a6af086) · 2026-11-15 설치</td></tr>
+      <tr><th>버전</th><td>v4.7.1 (커밋 bad487c) · 2026-11-15 설치 · 2026-11-26 업데이트</td></tr>
       <tr><th>도구</th><td>42개 (자르기·리사이즈·자막 소각·플랫폼 검사 등)</td></tr>
       <tr><th>검증</th><td>테스트 클립 자르기·리사이즈·자막 소각 실제 수행</td></tr>
       <tr><th>한계</th><td>전사 기능 미검증(로컬 음성 엔진 없음) · GPU 인코딩 미검증(CPU x264 기본)</td></tr>
@@ -160,7 +160,7 @@
     <h3><a href="https://github.com/ChromeDevTools/chrome-devtools-mcp" target="_blank" rel="noopener">Chrome DevTools MCP (공식)</a><span class="badge ok">설치 완료</span></h3>
     <p class="sub">Chrome을 직접 열고 클릭·디버깅. Playwright와 역할이 겹쳐 그래퍼 라이브 검증은 둘 중 하나만 쓰면 됨.</p>
     <table>
-      <tr><th>버전</th><td>1.13.0 · 2026-11-15 설치</td></tr>
+      <tr><th>버전</th><td>1.14.0 · 2026-11-15 설치 · 2026-11-26 업데이트</td></tr>
       <tr><th>도구</th><td class="tools">전체 22개 · 허용 <b>15개</b> · 차단 <i>7개</i> (+입력·JS 평가 카테고리 제외)</td></tr>
       <tr><th>검증</th><td>example.com 열기·스냅샷·네트워크·스크린샷 실제 수행</td></tr>
       <tr><th>위치</th><td><code>~/workspace/custom-connectors/custom.chrome-devtools/</code></td></tr>
@@ -171,8 +171,8 @@
     <h3><a href="https://github.com/jcodemunch/codemunch-mcp" target="_blank" rel="noopener">github-codemunch-mcp</a><span class="badge ok">설치 완료</span></h3>
     <p class="sub">저장소 코드를 함수·클래스 단위로만 뽑아오는 조회 도구. 토큰 절약용.</p>
     <table>
-      <tr><th>버전</th><td>1.108.447 · 2026-11-15 설치</td></tr>
-      <tr><th>도구</th><td class="tools">전체 90개 · 허용 <b>80개</b> · 차단 <i>10개</i></td></tr>
+      <tr><th>버전</th><td>1.108.491 · 2026-11-15 설치 · 2026-11-26 업데이트</td></tr>
+      <tr><th>도구</th><td class="tools">전체 89개 · 허용 <b>80개</b> · 차단 <i>10개</i></td></tr>
       <tr><th>검증</th><td>심볼 조회(get_symbol_source 86행 단위) 실제 수행 · 스코프 차단 확인</td></tr>
       <tr><th>라이선스 주의</th><td>Dual-Use License v1.2 — 비상업적 무료, 영리 목적은 1회 결제 필요. 개인·학습 용도는 무료 범위.</td></tr>
       <tr><th>위치</th><td><code>~/workspace/custom-connectors/custom.codemunch/</code></td></tr>
@@ -185,7 +185,7 @@
     <h3><a href="https://github.com/modelcontextprotocol/servers" target="_blank" rel="noopener">Filesystem MCP (공식)</a><span class="badge ok">설치 완료</span></h3>
     <p class="sub">지정한 폴더만 읽고 쓰는 파일 도구. GSP 분석 사본·NAS 정리용.</p>
     <table>
-      <tr><th>버전</th><td>2.3.0 · 2026-11-16 설치</td></tr>
+      <tr><th>버전</th><td>2.4.0 · 2026-11-16 설치 · 2026-11-26 업데이트</td></tr>
       <tr><th>도구</th><td class="tools">전체 16개 · 허용 <b>16개</b> · 차단 <i>0개</i> (읽기·목록·검색 10개 + 쓰기 6개)</td></tr>
       <tr><th>허용 폴더</th><td>gsp-project, user/files, 커넥터 안 work/ 스크래치 3곳만. ~/ 전체나 ~/workspace 전체는 허용 안 함</td></tr>
       <tr><th>제한</th><td>삭제 도구 없음(공식 서버 미제공) · 쓰기는 사용자 요청 시에만, 기존 자료 삭제·덮어쓰기는 실행 전 확인</td></tr>
@@ -218,7 +218,7 @@
     <b>토큰 비용:</b> 이 MCP들은 서버를 상주시키는 게 아니라 부를 때만 띄우는 방식이라, 안 쓸 때는 토큰이 0원 나가. 쓸 때는 호출 결과가 돌아오는 만큼만 한 번 세져. Craft Anything처럼 안에서 또 에이전트를 돌리는 워크플로는 설치 범위에서 막아둠. 텔레메트리는 ffmpeg·codemunch에서 발견해 래퍼에서 이중 차단했음.
   </div>
 
-  <footer>마지막 업데이트: 2026-11-16 12:23 (Tavily 인증 완료) · 버전이 빨리 오르는 항목이 많아 업그레이드할 때마다 허용 목록을 다시 검토함</footer>
+  <footer>마지막 업데이트: 2026-11-26 10:05 (MCP 일괄 업데이트 — 10개 업데이트, Tavily·Ghidra 최신 유지) · 버전이 빨리 오르는 항목이 많아 업그레이드할 때마다 허용 목록을 다시 검토함</footer>
 </div>
 </body>
 </html>
