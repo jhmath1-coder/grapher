@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Crect%20width%3D%27100%27%20height%3D%27100%27%20rx%3D%2722%27%20fill%3D%27%237c3aed%27%2F%3E%3Ctext%20x%3D%2750%27%20y%3D%2770%27%20font-size%3D%2758%27%20text-anchor%3D%27middle%27%3E%F0%9F%A4%96%3C%2Ftext%3E%3C/svg%3E">
+<title>내 AI 머신 3대 비교 — M8+3070 · 9070 XT · 5080</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", "Noto Sans KR", "Malgun Gothic", sans-serif; background: #f5f3ff; color: #222; line-height: 1.65; }
+  header { background: linear-gradient(135deg, #7c3aed, #4f46e5); color: #fff; padding: 38px 20px 30px; text-align: center; }
+  header h1 { font-size: 28px; margin-bottom: 6px; }
+  header p { opacity: .93; font-size: 15px; }
+  .build { display: inline-block; margin-top: 12px; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.45); padding: 3px 12px; border-radius: 999px; font-size: 12.5px; }
+  main { max-width: 960px; margin: 0 auto; padding: 24px 16px 48px; }
+  h2 { font-size: 20px; margin: 32px 4px 12px; padding-left: 10px; border-left: 6px solid #7c3aed; }
+  h3 { font-size: 17px; margin: 0 0 6px; }
+  p.lead { font-size: 15px; color: #334155; margin: 0 4px 8px; }
+  p.note { font-size: 13.5px; color: #64748b; margin: 10px 4px 0; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 14px; }
+  .card { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(124,58,237,.08); border: 1px solid #ede9fe; }
+  .card.pick { border: 2px solid #7c3aed; position: relative; }
+  .badge { display: inline-block; font-size: 12px; font-weight: 700; color: #fff; background: #7c3aed; padding: 2px 10px; border-radius: 999px; margin-bottom: 8px; }
+  .badge.gold { background: #d97706; }
+  .badge.gray { background: #64748b; }
+  .badge.green { background: #059669; }
+  .badge.red { background: #dc2626; }
+  .card .emoji { font-size: 30px; }
+  .card h3 { margin-top: 8px; color: #4c1d95; }
+  .card p { font-size: 14px; color: #475569; }
+  .card ul { margin: 10px 0 0 18px; font-size: 14px; color: #334155; }
+  .card ul li { margin-bottom: 4px; }
+  .big { font-size: 22px; font-weight: 800; color: #6d28d9; margin-top: 10px; }
+  .big small { font-size: 12.5px; font-weight: 400; color: #64748b; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; font-size: 13.5px; box-shadow: 0 2px 8px rgba(124,58,237,.08); }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+  th { background: #7c3aed; color: #fff; font-size: 13px; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  td .tag { display: inline-block; font-size: 11.5px; font-weight: 700; padding: 1px 8px; border-radius: 999px; background: #ede9fe; color: #5b21b6; }
+  td .tag.est { background: #fef3c7; color: #92400e; }
+  td .tag.no { background: #fee2e2; color: #991b1b; }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin: 10px 4px; font-size: 14px; }
+  .bar-row .label { width: 150px; flex-shrink: 0; font-weight: 700; color: #334155; }
+  .bar-row .track { flex: 1; background: #ede9fe; border-radius: 999px; height: 22px; overflow: hidden; }
+  .bar-row .fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #8b5cf6, #6d28d9); }
+  .bar-row .fill.fast { background: linear-gradient(90deg, #34d399, #059669); }
+  .bar-row .fill.mid { background: linear-gradient(90deg, #fbbf24, #d97706); }
+  .bar-row .val { width: 110px; flex-shrink: 0; text-align: right; font-weight: 700; color: #4c1d95; }
+  .verdict { background: linear-gradient(135deg, #ede9fe, #dbeafe); border: 1px solid #c7d2fe; border-radius: 16px; padding: 20px 22px; margin: 12px 4px 0; font-size: 15px; color: #312e81; }
+  .verdict b { color: #4c1d95; }
+  footer { text-align: center; color: #94a3b8; font-size: 12.5px; padding: 24px 0 8px; }
+  @media (max-width: 560px) {
+    header h1 { font-size: 23px; }
+    .bar-row .label { width: 96px; font-size: 13px; }
+    .bar-row .val { width: 84px; font-size: 13px; }
+    th, td { padding: 8px; font-size: 12.5px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>🤖 내 AI 머신 3대 비교</h1>
+  <p>M8+3070 · 9070 XT · 5080 — 지금 쓰는 AI 성능과, 머신별로 더 쓸 수 있는 AI</p>
+  <span class="build">기준일 2026-11-27 · 실측은 실측, 추정은 (추정) 표시</span>
+</header>
+<main>
+
+  <h2>🖥️ 스펙 한눈에 보기</h2>
+  <div class="grid">
+    <div class="card">
+      <span class="badge gray">미니PC + eGPU · 24시간 자동 생성용</span>
+      <div class="emoji">📦</div>
+      <h3>M8 + RTX 3070</h3>
+      <ul>
+        <li>CPU: Ryzen 6650H · RAM 16GB</li>
+        <li>GPU: RTX 3070 <b>8GB</b> (eGPU 독, OCuLink·USB4)</li>
+        <li>OS: Windows 11</li>
+        <li>역할: LDPlayer ×3 + ComfyUI + eGPU</li>
+        <li>ComfyUI 포트 8188, 자동 큐 55분마다</li>
+      </ul>
+      <div class="big">aes 4K 약 70~115초<small> / 장</small></div>
+    </div>
+    <div class="card">
+      <span class="badge gold">게임 본체 · AI 보조</span>
+      <div class="emoji">🎮</div>
+      <h3>RX 9070 XT 본체</h3>
+      <ul>
+        <li>CPU: Ryzen 5 5600 · RAM 16GB</li>
+        <li>GPU: RX 9070 XT <b>16GB</b> (RDNA4)</li>
+        <li>OS: Windows 11 듀얼부트 (별도 1TB SSD)</li>
+        <li>역할: 4K 중상옵 게이밍 (주력), AI는 보조</li>
+        <li>ComfyUI는 ROCm — <b>Win11 전용</b></li>
+      </ul>
+      <div class="big">aes 4K 약 60~70초<small> / 장 (추정)</small></div>
+    </div>
+    <div class="card pick">
+      <span class="badge">AI · 영상 본체 · 가장 빠름</span>
+      <div class="emoji">🚀</div>
+      <h3>RTX 5080 본체</h3>
+      <ul>
+        <li>CPU: Ryzen 7 5700X3D · RAM 32GB</li>
+        <li>GPU: RTX 5080 <b>16GB</b></li>
+        <li>OS: Windows 11 25H2</li>
+        <li>역할: ComfyUI + 영상 생성 + 로컬 LLM</li>
+        <li>Hermes + Ollama, FaceFusion 설치됨</li>
+      </ul>
+      <div class="big">aes 4K 약 40~50초<small> / 장</small></div>
+    </div>
+  </div>
+  <p class="note">※ F1 미니PC(헤르메스 전용)는 이번 비교에서 제외. 9070 XT 본체 Win11 듀얼부트는 설치 진행 중 기준.</p>
+
+  <h2>⚡ 이미지 생성 속도 비교 — aes 4K (3840×2160) 1장 기준</h2>
+  <p class="lead">Anima Aesthetic v1.1, 1차 40스텝 + 2차 리파인 + 4x-UltraSharp → 4K. 숫자가 작을수록 빠름.</p>
+  <div class="bar-row"><span class="label">5080</span><div class="track"><div class="fill fast" style="width:42%"></div></div><span class="val">약 40~50초</span></div>
+  <div class="bar-row"><span class="label">9070 XT (추정)</span><div class="track"><div class="fill mid" style="width:62%"></div></div><span class="val">약 60~70초</span></div>
+  <div class="bar-row"><span class="label">M8 + 3070</span><div class="track"><div class="fill" style="width:88%"></div></div><span class="val">약 70~115초</span></div>
+  <p class="note">M8 실측: diverse+일본 팩 약 115초/장, 최애 3장 변형팩 약 108초/장 (2026-11-24~27). 워크플로·프롬프트에 따라 달라짐. AMD는 NVIDIA보다 25~40% 느리고, RDNA4는 int8에서 검은 이미지가 나올 수 있어 fp8을 써야 함.</p>
+
+  <h2>🎨 지금 쓰고 있는 AI</h2>
+  <table>
+    <tr><th>AI</th><th>어디서</th><th>상태 · 속도</th></tr>
+    <tr><td><b>Anima Aesthetic v1.1</b> (aes, 이미지)</td><td>3대 모두</td><td><span class="tag">주력</span> 5080 40~50초 · 9070 XT 60~70초(추정) · M8 70~115초</td></tr>
+    <tr><td><b>MOSS-Image</b> (이미지)</td><td>M8 (8189 포트)</td><td>약 2분/장 · 캐릭터가 단조롭다는 이유로 중단, aes가 본인 스타일 확정</td></tr>
+    <tr><td><b>Anima 2.9B</b> (이미지)</td><td>M8</td><td>테스트 10장 완료 · 로테이션 편입 여부 판단 대기 중</td></tr>
+    <tr><td><b>Illustrious XL 2.0</b> (이미지)</td><td>5080 (테스트 준비)</td><td>테스트 팩 3장 준비됨 · 아직 안 돌림</td></tr>
+    <tr><td><b>H3</b> (영상)</td><td>5080</td><td><span class="tag">영상 주력</span> 10초 약 20분 · 15초가 최대 (두 개 이어서 20초로 만듦)</td></tr>
+    <tr><td><b>LTX-2.3</b> (영상)</td><td>5080</td><td>5초 테스트 설정 완료 (8스텝·768p) · 실측 시간 아직 없음</td></tr>
+    <tr><td><b>SeedVR2</b> (영상 업스케일)</td><td>5080</td><td>H3·LTX 클립 업스케일용으로 설치됨</td></tr>
+    <tr><td><b>Hermes + Ollama</b> (로컬 LLM)</td><td>5080 · F1</td><td>5080: gemma4:12b 1순위 · qwen3:14b 2순위 · 검열해제 qwen3-abliterated:14b-v2 · gemma-4-abliterated:12b / 실전 편집은 Gemini Flash Lite (API)</td></tr>
+    <tr><td><b>FaceFusion 3.9.2</b> (얼굴 교체)</td><td>5080</td><td>설치됨 · 프리뷰 줄무늬 현상 확인 중 (target 모드로 확인 필요)</td></tr>
+    <tr><td><b>4x-UltraSharp</b> (업스케일)</td><td>3대 모두</td><td>aes 워크플로 2차 후 4K 업스케일 표준 장착</td></tr>
+  </table>
+
+  <h2>➕ 머신별로 더 쓸 수 있는 AI</h2>
+  <p class="lead">VRAM이 기준. 8GB는 가벼운 모델 위주, 16GB는 웬만한 건 다 돌아감.</p>
+  <div class="grid">
+    <div class="card">
+      <span class="badge gray">M8 + 3070 (8GB) — 가벼운 것 위주</span>
+      <div class="emoji">📦</div>
+      <h3>이미지 · 기타</h3>
+      <ul>
+        <li><b>Pony V6 · Illustrious XL · Animagine · NoobAI</b> — 8GB 최소 사양, 1344×768 권장</li>
+        <li><b>SDXL 베이스</b> — 8GB에서 무난</li>
+        <li><b>Flux Schnell fp8</b> — 8GB에서도 돌아가나 빡빡 (속도 느림)</li>
+        <li><b>Z-Image Turbo</b> — GGUF 경량, 4K 월페이퍼 워크플로 이미 있음</li>
+        <li><b>ControlNet · IPAdapter</b> — 구도·참조 이미지 고정용, 8GB에서 가능</li>
+        <li><b>Whisper small/base</b> — 음성 받아쓰기 (STT), 8GB 가능</li>
+        <li><b>Kokoro TTS</b> — 가벼운 로컬 음성 합성 (82M)</li>
+      </ul>
+      <p class="note">Qwen-Image-Edit(fp8 19GB)는 VRAM이 모자라 M8에서는 불가.</p>
+    </div>
+    <div class="card">
+      <span class="badge gold">9070 XT (16GB, ROCm) — 게임 외 AI 보조</span>
+      <div class="emoji">🎮</div>
+      <h3>이미지 · LLM</h3>
+      <ul>
+        <li><b>Flux dev fp8</b> — 16GB에서 가능 (ROCm fp8 권장)</li>
+        <li><b>SDXL · Qwen-Image</b> — 16GB면 무난</li>
+        <li><b>Wan 2.1/2.2 비디오</b> — 시도 가능 (추정, ROCm 호환성 미검증)</li>
+        <li><b>Ollama (ROCm)</b> — qwen3:14b · gemma3:12b급 로컬 LLM 가능 (추정, NVIDIA보다 느림)</li>
+        <li><b>Z-Image Turbo</b> — GGUF 경량, ROCm에서도 가능</li>
+        <li><b>Whisper · Kokoro TTS</b> — M8과 동일하게 가능</li>
+      </ul>
+      <p class="note">ROCm은 Win11 전용. int8 양자화는 검은 이미지가 나올 수 있어 fp8로. ComfyUI 우선순위는 5080이 1순위.</p>
+    </div>
+    <div class="card pick">
+      <span class="badge">5080 (16GB) — 웬만한 건 다 됨</span>
+      <div class="emoji">🚀</div>
+      <h3>이미지 · 영상 · LLM · 음성</h3>
+      <ul>
+        <li><b>Flux dev</b> — 16GB에서 표준 운용 가능</li>
+        <li><b>Wan 2.2 (5B)</b> — 이미지→영상, 14B는 오프로드 걸려 느림</li>
+        <li><b>HunyuanVideo</b> — 13B, 16GB에서 빡빡하게 가능 (추정)</li>
+        <li><b>Qwen-Image-Edit</b> — fp8 19GB, 오프로드 걸리지만 동작 (느림)</li>
+        <li><b>Hunyuan3D 2.1</b> — 이미지→3D 모델, 16GB에서 가능 (추정)</li>
+        <li><b>Whisper large-v3</b> — 고정확도 받아쓰기</li>
+        <li><b>Chatterbox TTS</b> — 감정 담긴 로컬 음성 합성</li>
+        <li><b>PuLID · ControlNet · IPAdapter</b> — 얼굴·구도 일관성 강화</li>
+      </ul>
+      <p class="note">H3·LTX-2.3·SeedVR2는 이미 설치됨. 영상은 5080이 유일한 실전 머신.</p>
+    </div>
+  </div>
+
+  <h2>🧩 공통으로 쓸 수 있는 AI · 꿀조합</h2>
+  <table>
+    <tr><th>조합</th><th>내용</th><th>어디서</th></tr>
+    <tr><td><b>Hermes aes 프롬프트 빌더</b></td><td>키워드만 치면 aes 규칙(only one girl·와이드/미디엄·네거티브 14종)을 담은 프롬프트를 짜주는 지시문 — 스킬로 저장하면 매번 붙여넣을 필요 없음</td><td>5080 Hermes</td></tr>
+    <tr><td><b>ComfyUI image-to-prompt 노드</b></td><td>키워드 넣으면 프롬프트를 자동으로 늘려줌 (comfyui-ollama-image-to-prompt)</td><td>ComfyUI 전 머신</td></tr>
+    <tr><td><b>4x-UltraSharp + lanczos 4K</b></td><td>이미지 4K 업스케일 표준 조합 — 지금 aes 워크플로에 이미 들어감</td><td>3대 모두</td></tr>
+    <tr><td><b>Gemini Flash Lite (API)</b></td><td>프롬프트 편집·글쓰기 실전용 — 교육 계정 키로 사용 중, 로컬 모델보다 빠르고 정확</td><td>어디서든</td></tr>
+    <tr><td><b>waifu2x</b></td><td>애니 이미지 업스케일·노이즈 제거 대안 (Runway 안 될 때)</td><td>어디서든</td></tr>
+  </table>
+
+  <h2>⚠️ 주의할 점</h2>
+  <div class="grid">
+    <div class="card">
+      <span class="badge red">VRAM이 전부</span>
+      <h3>8GB vs 16GB</h3>
+      <p>3070 8GB는 최신 대형 모델(Flux dev 정밀·Qwen-Image-Edit·Wan 14B·HunyuanVideo)이 안 돌아가거나 오프로드로 기어감. 16GB 두 대는 웬만한 건 다 되지만, 14B급 영상 모델은 5080에서도 빡빡함.</p>
+    </div>
+    <div class="card">
+      <span class="badge gray">AMD는 느리고 까다로움</span>
+      <h3>ROCm 주의</h3>
+      <p>9070 XT는 Win11 + ROCm에서만 ComfyUI가 돌아감. NVIDIA보다 25~40% 느리고, RDNA4 잔버그 있음 (int8 → 검은 이미지, fp8 사용). 새 모델 나올 때마다 ROCm 호환성을 먼저 확인해야 함.</p>
+    </div>
+    <div class="card">
+      <span class="badge green">역할 분담이 답</span>
+      <h3>머신별 역할</h3>
+      <p>24시간 자동 생성은 M8+3070, 빠르고 무거운 작업(영상·대형 모델·로컬 LLM)은 5080, 9070 XT는 게임 본체 + AI 보조. 한 대에 다 몰면 안 되고, 각자 잘하는 걸 시키는 게 제일 싸고 빠름.</p>
+    </div>
+  </div>
+
+  <div class="verdict">
+    <b>결론 —</b> 이미지 1장 속도는 <b>5080(40~50초) &gt; 9070 XT(60~70초 추정) &gt; M8+3070(70~115초)</b> 순. 하지만 M8은 24시간 자동으로 돌리는 게 강점이라, 양은 M8이, 속도와 무거운 작업은 5080이 맡는 게 지금 구조에서 최선. 9070 XT는 Win11 듀얼부트 끝나면 Flux·Wan 같은 걸 보조로 돌려볼 만함.
+  </div>
+
+  <footer>기준일 2026-11-27 · 속도는 실측·추정치 혼합 (추정 표시 확인) · <a href="https://jhmath1-coder.github.io/grapher/collection/">깃 모음으로 돌아가기</a></footer>
+</main>
+</body>
+</html>
