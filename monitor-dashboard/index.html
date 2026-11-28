@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2220%22%20fill%3D%22%230f766e%22/%3E%3Ctext%20x%3D%2250%22%20y%3D%2268%22%20font-size%3D%2252%22%20text-anchor%3D%22middle%22%3E%F0%9F%93%8A%3C/text%3E%3C/svg%3E">
+<title>모니터링 가격 대시보드</title>
+<script id="hatch-space-target">
+    (() => {
+      const params = new URLSearchParams(location.hash.slice(1));
+      const root = document.documentElement;
+      if (params.get("hatch_target") === "tv") root.dataset.hatchTarget = "tv";
+      const widget = params.get("hatch_view") === "widget";
+      root.dataset.hatchView = widget ? "widget" : "app";
+      if (widget) {
+        root.dataset.hatchWidget = params.get("hatch_widget") || "default";
+        root.dataset.hatchInstance = params.get("hatch_instance") || "";
+        const sizes = ["small", "medium", "large", "watch", "watch_round"];
+        root.dataset.hatchSize = sizes.includes(params.get("hatch_size")) ? params.get("hatch_size") : "small";
+        const style = document.createElement("style");
+        style.textContent = 'html[data-hatch-view="widget"], html[data-hatch-view="widget"] body { background: transparent; }';
+        document.head.prepend(style);
+      }
+    })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f5f3; --surface:#ffffff; --surface2:#eef0ec; --line:#e2e5e0;
+  --ink:#141713; --muted:#6b7268; --faint:#9aa198;
+  --gpu:#d94f1e; --gpu-bg:#fdf0e9; --gpu-line:#f3c4ad;
+  --air:#0a6e5c; --air-bg:#e6f3f0; --air-line:#a8d5cc;
+  --up:#c0392b; --up-bg:#fdecea; --down:#0a6e5c; --down-bg:#e6f3f0; --flat:#6b7268; --flat-bg:#eef0ec;
+  --radius:18px;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e100e; --surface:#171a17; --surface2:#1e211e; --line:#2a2e2a;
+    --ink:#eef1ed; --muted:#9aa198; --faint:#6b7268;
+    --gpu:#ff7a45; --gpu-bg:#2b1a12; --gpu-line:#5a3320;
+    --air:#2ec4a6; --air-bg:#122824; --air-line:#1f4a40;
+    --up:#ff7a6b; --up-bg:#2e1816; --down:#2ec4a6; --down-bg:#122824; --flat-bg:#1e211e;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+button,[role="button"],select,summary,input:not([type="checkbox"],[type="radio"]){min-height:2rem}
+.mono{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:1080px;margin:0 auto;padding:20px 18px 40px}
+html[data-hatch-view="widget"] .wrap{display:none}
+html[data-hatch-view="app"] .widget-view{display:none}
+
+/* top bar */
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.topbar h1{font-size:28px;line-height:1.15;font-weight:900;letter-spacing:-.03em;margin:0}
+.topbar h1 span{color:var(--muted);font-weight:500;font-size:15px;display:block;letter-spacing:0;margin-top:6px}
+.live-badge{display:inline-flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-size:12.5px;font-weight:700}
+.dot{width:8px;height:8px;border-radius:50%;background:#22a06b;box-shadow:0 0 0 4px rgba(34,160,107,.15)}
+.sheet-btn{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--bg);text-decoration:none;font-weight:800;font-size:13.5px;padding:10px 16px;border-radius:999px;min-height:40px}
+.sheet-btn:hover{opacity:.88}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 18px 16px;position:relative;overflow:hidden}
+.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px}
+.kpi.gpu::before{background:var(--gpu)} .kpi.air::before{background:var(--air)} .kpi.neutral::before{background:var(--faint)}
+.kpi-label{font-size:12px;font-weight:800;letter-spacing:.04em;color:var(--muted);text-transform:uppercase}
+.kpi-price{font-size:clamp(22px,3.2vw,30px);font-weight:900;letter-spacing:-.03em;margin:6px 0 2px;line-height:1}
+.kpi-price small{font-size:14px;font-weight:700;color:var(--muted)}
+.kpi-sub{font-size:13px;color:var(--muted);line-height:1.45}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:800;padding:3px 8px;border-radius:999px;margin-top:8px}
+.pill.up{color:var(--up);background:var(--up-bg)} .pill.down{color:var(--down);background:var(--down-bg)} .pill.flat{color:var(--flat);background:var(--flat-bg)}
+
+/* tabs */
+.tabs{display:flex;gap:8px;margin:22px 0 14px;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:var(--surface);color:var(--muted);font-weight:800;font-size:14px;padding:10px 18px;border-radius:999px;cursor:pointer;min-height:40px}
+.tab.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.period{display:flex;gap:6px;margin-left:auto}
+.period button{border:1px solid var(--line);background:transparent;color:var(--muted);font-weight:700;font-size:12.5px;padding:7px 12px;border-radius:999px;cursor:pointer}
+.period button.active{background:var(--surface2);color:var(--ink);border-color:var(--line)}
+
+/* panels */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px;margin-bottom:14px}
+.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.panel-head h2{font-size:19px;font-weight:900;letter-spacing:-.02em;margin:0}
+.panel-head p{margin:4px 0 0;color:var(--muted);font-size:13.5px;line-height:1.5}
+.tag{font-size:11px;font-weight:900;letter-spacing:.06em;padding:5px 9px;border-radius:999px}
+.tag.gpu{color:var(--gpu);background:var(--gpu-bg);border:1px solid var(--gpu-line)}
+.tag.air{color:var(--air);background:var(--air-bg);border:1px solid var(--air-line)}
+.grid2{display:grid;grid-template-columns:1.35fr .95fr;gap:18px;margin-top:16px}
+.chart-box{background:var(--surface2);border-radius:14px;padding:14px 14px 8px}
+.chart-box h3{margin:0 0 2px;font-size:13px;font-weight:800}
+.chart-box .hint{font-size:12px;color:var(--muted)}
+.legend{display:flex;gap:14px;font-size:12px;font-weight:700;color:var(--muted);margin-top:6px}
+.legend i{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle}
+
+.product-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
+.product-row:last-child{border-bottom:none}
+.product-row b{font-size:14.5px}
+.product-row .meta{font-size:12.5px;color:var(--muted);margin-top:2px}
+.price{text-align:right;white-space:nowrap}
+.price b{font-size:16px}
+.price span{display:block;font-size:12px;font-weight:800;margin-top:2px}
+.price span.up{color:var(--up)} .price span.down{color:var(--down)} .price span.flat{color:var(--flat)}
+.best{border:1.5px solid var(--gpu-line);background:var(--gpu-bg);border-radius:14px;padding:14px 16px}
+.best-air{border-color:var(--air-line);background:var(--air-bg)}
+.best .lbl{font-size:11px;font-weight:900;letter-spacing:.05em}
+.best .big{font-size:26px;font-weight:900;letter-spacing:-.03em;margin:4px 0}
+.best .desc{font-size:13px;color:var(--muted);line-height:1.5}
+
+/* flights */
+.flight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.fcard{border:1px solid var(--line);border-radius:16px;padding:16px;background:var(--surface)}
+.fcard.featured{border:1.5px solid var(--air-line);background:var(--air-bg)}
+.fcard .route{font-size:11px;font-weight:900;letter-spacing:.05em;color:var(--muted)}
+.fcard .dates{font-size:16px;font-weight:900;margin:6px 0 2px;letter-spacing:-.01em}
+.fcard .dur{font-size:12.5px;color:var(--muted)}
+.fcard .fprice{font-size:20px;font-weight:900;margin-top:10px;letter-spacing:-.02em}
+.fcard .fprice small{font-size:12px;color:var(--muted);font-weight:700}
+.fcard .note{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.45}
+
+/* feed */
+.feed{display:grid;gap:0}
+.feed-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.feed-item:last-child{border-bottom:none}
+.feed-icon{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.feed-icon.gpu{background:var(--gpu-bg)} .feed-icon.air{background:var(--air-bg)}
+.feed-item b{font-size:14.5px}
+.feed-item p{margin:3px 0 0;font-size:13.5px;color:var(--muted);line-height:1.55}
+.feed-item time{font-size:12px;color:var(--faint);font-weight:700;white-space:nowrap;padding-top:2px}
+
+.footnote{font-size:12px;color:var(--faint);line-height:1.6;margin-top:10px}
+.footer-note{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;background:var(--ink);color:var(--bg);border-radius:18px;padding:18px 20px;margin-top:6px}
+.footer-note b{font-size:15px} .footer-note p{margin:3px 0 0;font-size:13px;opacity:.75;line-height:1.5}
+.footer-note a{background:var(--bg);color:var(--ink);text-decoration:none;font-weight:800;font-size:13px;padding:10px 14px;border-radius:999px;white-space:nowrap}
+.hidden{display:none !important}
+svg text{font-family:"Noto Sans KR",sans-serif}
+
+/* widget */
+.widget-view{padding:14px;font-family:"Noto Sans KR",sans-serif;color:var(--ink)}
+.widget-view .w-title{font-size:12px;font-weight:900;letter-spacing:.04em;color:var(--muted)}
+.widget-view .w-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.widget-view .w-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px}
+.widget-view .w-card b{font-size:16px;display:block;margin-top:2px;letter-spacing:-.02em}
+.widget-view .w-card span{font-size:11px;color:var(--muted);line-height:1.3;display:block}
+html[data-hatch-size="small"] .widget-view{padding:8px 10px}
+html[data-hatch-size="small"] .widget-view .w-grid{grid-template-columns:1fr;gap:5px;margin-top:5px}
+html[data-hatch-size="small"] .widget-view .w-card{padding:6px 10px}
+html[data-hatch-size="small"] .widget-view .w-card b{font-size:14px;margin-top:0}
+html[data-hatch-size="small"] .widget-view .w-card span{font-size:10.5px}
+html[data-hatch-size="small"] .widget-view .w-card span:last-child{display:none}
+html[data-hatch-size="small"] .widget-view .w-card:nth-child(n+3){display:none}
+html[data-hatch-size="small"] .widget-view .w-title{font-size:10.5px}
+html[data-hatch-size="medium"] .widget-view{padding:12px}
+html[data-hatch-size="medium"] .widget-view .w-grid{grid-template-columns:repeat(3,1fr);gap:8px}
+html[data-hatch-size="medium"] .widget-view .w-card:nth-child(4){display:none}
+html[data-hatch-size="medium"] .widget-view .w-card b{font-size:15px}
+html[data-hatch-target="tv"] .wrap{max-width:1400px}
+html[data-hatch-target="tv"] .topbar h1{font-size:40px}
+
+@media (max-width:760px){
+  .kpis{grid-template-columns:1fr 1fr}
+  .grid2{grid-template-columns:1fr}
+  .flight-grid{grid-template-columns:1fr 1fr}
+  .topbar h1{font-size:24px}
+  .period{margin-left:0}
+}
+@media (max-width:460px){ .flight-grid{grid-template-columns:1fr} .kpis{grid-template-columns:1fr} }
+@media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+</style>
+</head>
+<body>
+
+<!-- WIDGET -->
+<section class="widget-view" aria-label="가격 요약 위젯">
+  <div class="w-title">모니터링 가격 · 11/28 기준</div>
+  <div class="w-grid">
+    <div class="w-card"><span>🎮 RX 9070 XT 최저 · 11/24</span><b>1,447,990원</b><span>PRIME OC · 다나와 확인 중단 중</span></div>
+    <div class="w-card"><span>🎮 RTX 5080 최저 · 11/24</span><b>3,265,000원</b><span>PALIT · 다나와 확인 중단 중</span></div>
+    <div class="w-card"><span>✈️ 부산–오사카 최저</span><b>348,800원</b><span>1/6 → 1/12 · 제주항공 7C1351/7C1354</span></div>
+    <div class="w-card"><span>기록</span><b>733행</b><span>GPU 591 · 항공권 142</span></div>
+  </div>
+</section>
+
+<!-- APP -->
+<div class="wrap">
+  <div class="topbar">
+    <div>
+      <h1>모니터링 가격 대시보드<span>그래픽카드 10종 · 부산–오사카 9개 여정 — 텔레그램 알림을 한눈에</span></h1>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <span class="live-badge">📸 2026.11.28 스냅샷 · GPU 11/24 / 항공권 11/28 10:14 기준</span>
+      <span class="live-badge" style="border-color:var(--gpu-line);background:var(--gpu-bg);color:var(--gpu)">⏸ 다나와 보안 사고로 GPU 확인 중단 중 (11/26~)</span>
+      <a class="sheet-btn" href="https://docs.google.com/spreadsheets/d/1jEKHSnI5yRmequbPm0MlZ_7cRrCsg7z04rCIJzunny4/edit" target="_blank" rel="noopener">📊 원본 시트 열기 ↗</a>
+    </div>
+  </div>
+
+  <!-- KPI -->
+  <div class="kpis">
+    <div class="kpi gpu">
+      <div class="kpi-label">RX 9070 XT · 최저가</div>
+      <div class="kpi-price mono">1,447,990<small>원</small></div>
+      <div class="kpi-sub">PRIME OC · 다나와 인기 상위 5종 중 최저 · 11/24 기준</div>
+      <span class="pill up">⏸ 다나와 확인 중단 중 (11/26~)</span>
+    </div>
+    <div class="kpi gpu">
+      <div class="kpi-label">RTX 5080 · 최저가</div>
+      <div class="kpi-price mono">3,265,000<small>원</small></div>
+      <div class="kpi-sub">PALIT · 다나와 인기 상위 5종 중 최저 · 11/24 기준</div>
+      <span class="pill up">⏸ 다나와 확인 중단 중 (11/26~)</span>
+    </div>
+    <div class="kpi air">
+      <div class="kpi-label">부산–오사카 · 최저가</div>
+      <div class="kpi-price mono">348,800<small>원</small></div>
+      <div class="kpi-sub">1/6 → 1/12 (6일) · 제주항공 7C1351/7C1354 · KB국민 Less go카드</div>
+      <span class="pill down">⭐ 최저가 자리 바뀜 · 11/28 10:14 기준</span>
+    </div>
+    <div class="kpi neutral">
+      <div class="kpi-label">누적 기록</div>
+      <div class="kpi-price mono">733<small>행</small></div>
+      <div class="kpi-sub">GPU 591행 (10/9–11/24)<br>항공권 142행 (10/10–11/26)</div>
+      <span class="pill flat">시트 3개 탭에 보관 중</span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs" role="tablist" aria-label="보기 전환">
+    <button class="tab active" data-filter="all">전체 보기</button>
+    <button class="tab" data-filter="gpu">🎮 그래픽카드만</button>
+    <button class="tab" data-filter="air">✈️ 항공권만</button>
+    <div class="period" aria-label="차트 기간">
+      <button data-period="all" class="active">전체 기간</button>
+      <button data-period="recent">최근 구간</button>
+    </div>
+  </div>
+
+  <!-- GPU PANEL -->
+  <section class="panel" data-section="gpu">
+    <div class="panel-head">
+      <div>
+        <h2>🎮 그래픽카드 — 다나와 최저가 추적</h2>
+        <p>RX 9070 XT 5종 + RTX 5080 5종, 국내 정품 신품 기준. 매일 오전 10시에 확인해 시트에 쌓고 있어요.</p>
+      </div>
+      <span class="tag gpu">GPU · 591행 기록 · ⏸ 확인 중단 중</span>
+    </div>
+
+    <div style="border:1.5px solid var(--gpu-line);background:var(--gpu-bg);border-radius:14px;padding:13px 16px;margin-top:10px">
+      <b style="font-size:14px;color:var(--gpu)">⏸ 다나와 보안 사고로 11/26부터 가격 확인 중단 중</b>
+      <p style="margin:4px 0 0;font-size:13px;color:var(--muted);line-height:1.55">다나와에서 보안 사고가 발생해 확인을 멈춘 상태예요. 아래 가격과 차트는 마지막으로 확인한 <b style="color:var(--ink)">11/24 기준</b> 값 그대로 유지하고 있습니다 — RX PRIME OC 1,447,990원 · RTX PALIT 3,265,000원.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="chart-box">
+        <h3>최저가 추이 <span class="hint" id="chartHint">· 10/9 – 11/24</span></h3>
+        <div id="gpuChart"></div>
+        <div class="legend"><span><i style="background:var(--gpu)"></i>RX 9070 XT 최저</span><span><i style="background:#8a6d3b"></i>RTX 5080 최저 (÷2 스케일)</span></div>
+        <div class="footnote">10/24 11번가 대폭락 구간이 그대로 남아 있어요. 차트는 11/24까지의 시트 기록을 요약한 추이이고 (11/26부터 다나와 확인 중단), 정확한 일별 가격은 원본 시트 ‘그래픽카드 기록’ 탭에서 확인할 수 있어요.</div>
+      </div>
+
+      <div>
+        <div class="best">
+          <div class="lbl" style="color:var(--gpu)">🏆 11/24 기준 가장 싼 RX 9070 XT</div>
+          <div class="big mono">1,447,990원</div>
+          <div class="desc"><b style="color:var(--ink)">PRIME OC</b> — 5종 중 최저. 다나와 확인이 중단돼 11/24 가격을 그대로 두고 있어요.</div>
+        </div>
+        <div class="best" style="margin-top:10px">
+          <div class="lbl" style="color:var(--gpu)">🏆 11/24 기준 가장 싼 RTX 5080</div>
+          <div class="big mono">3,265,000원</div>
+          <div class="desc"><b style="color:var(--ink)">PALIT</b> — 5종 중 최저. RX와 마찬가지로 11/24 가격 유지 중이에요.</div>
+        </div>
+
+        <div style="margin-top:8px">
+          <div class="product-row"><div><b>모니터링 방식</b><div class="meta">다나와 인기 상위 5개 제품씩 · 총 10개</div></div><div class="price"><b>⏸ 중단 중</b><span class="up">11/26부터 · 다나와 보안 사고</span></div></div>
+          <div class="product-row"><div><b>기록 기간</b><div class="meta">2026.10.09 – 11.24 · 날짜순 누적</div></div><div class="price"><b>591행</b><span class="flat">시트 보관</span></div></div>
+          <div class="product-row"><div><b>특이 구간</b><div class="meta">10/24 11번가 대폭락 — 최저가 급락일</div></div><div class="price"><b>📌 표시됨</b><span class="down">차트에서 확인</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLIGHT PANEL -->
+  <section class="panel" data-section="air">
+    <div class="panel-head">
+      <div>
+        <h2>✈️ 부산–오사카 항공권 — 최저가 TOP 3와 최근 변동</h2>
+        <p>전체 9개 여정(출발 1/6 · 1/13 · 1/20 × 체류 6일 · 8일 · 10일)을 매일 10시·16시에 확인 중이에요. 아래 카드는 11/28 오전 10:14 점검 기준 최저가 상위 3개 여정과 최근 변동이 큰 여정을 모은 것이고, 9개 전체의 일별 가격은 원본 시트에 있습니다. 김해 09시 이전 출발 / 간사이 18시 이후 출발, 성인 1명 이코노미 기준.</p>
+      </div>
+      <span class="tag air">항공권 · 142행 기록</span>
+    </div>
+
+    <div class="flight-grid">
+      <article class="fcard featured">
+        <div class="route">PUS → KIX · 전체 최저가 ⭐</div>
+        <div class="dates">1/6 (수) → 1/12 (화)</div>
+        <div class="dur">6일 · 제주항공 7C1351/7C1354 · KB국민 Less go카드</div>
+        <div class="fprice mono">348,800원</div>
+        <span class="pill down">11/28 10:14 기준 1위</span>
+        <div class="note">어제 전체 최저였던 1/13→1/19가 크게 오르면서 최저가 자리가 이 여정으로 바뀌었어요.</div>
+      </article>
+
+      <article class="fcard featured">
+        <div class="route">PUS → KIX · 2위</div>
+        <div class="dates">1/20 (수) → 1/26 (화)</div>
+        <div class="dur">6일 · 이스타 ZE0913 + 트리니티 TW0320 · 현대 M2/M3</div>
+        <div class="fprice mono">352,540원</div>
+        <span class="pill down">▼ −12,960원 하락 (11/28 오전)</span>
+        <div class="note">11/27 오후 365,500원까지 올랐다가 11/28 오전에 내렸어요. 오르내림이 가장 잦은 여정이에요.</div>
+      </article>
+
+      <article class="fcard featured">
+        <div class="route">PUS → KIX · 3위</div>
+        <div class="dates">1/20 (수) → 1/28 (목)</div>
+        <div class="dur">8일 · 이스타 + 트리니티 · 현대 M2/M3</div>
+        <div class="fprice mono">374,383원</div>
+        <span class="pill down">▼ −4,117원 하락 (11/28 오전)</span>
+        <div class="note">1/20 출발 여정들이 11/28 오전 나란히 내리면서 3위까지 올라왔어요.</div>
+      </article>
+
+      <article class="fcard">
+        <div class="route">PUS → KIX · 어제의 최저가</div>
+        <div class="dates">1/13 (화) → 1/19 (월)</div>
+        <div class="dur">6일</div>
+        <div class="fprice mono">387,500원</div>
+        <span class="pill up">▲ +39,800원 상승 (11/28 오전)</span>
+        <div class="note">11/27 오전까지 전체 최저가 347,700원이었는데, 하루 만에 크게 올라 최저가 자리에서 밀려났어요.</div>
+      </article>
+
+      <article class="fcard">
+        <div class="route">PUS → KIX</div>
+        <div class="dates">1/20 (수) → 1/30 (토)</div>
+        <div class="dur">10일</div>
+        <div class="fprice mono">411,500원</div>
+        <span class="pill down">▼ −10,900원 하락 (11/28 오전)</span>
+        <div class="note">11/26 오후 +43,500원 올랐던 여정인데, 11/28 오전엔 1/20 출발 3개 여정과 함께 내렸어요.</div>
+      </article>
+
+      <article class="fcard">
+        <div class="route">PUS → KIX</div>
+        <div class="dates">1/6 (수) → 1/14 (목)</div>
+        <div class="dur">8일</div>
+        <div class="fprice" style="font-size:15px;color:var(--up)">▲ +50,800원 상승</div>
+        <span class="pill up">↑ 11/26 오후 큰 폭 상승</span>
+        <div class="note">11/26 오후 확인에서 9개 여정 중 가장 큰 상승폭을 기록한 여정. 이후 변동은 시트에서 확인하세요.</div>
+      </article>
+    </div>
+
+    <div class="footnote">네이버 항공권 가격은 카드 조건부·세금 포함 기준이고, 제주항공·에어부산 공식가는 세전 운임이라 직접 비교가 안 돼요. 그래서 이 대시보드는 네이버 최저가를 기준으로, 공식가는 참고로만 함께 적었어요. 가장 저렴한 3개 여정만 공식가를 추가로 확인합니다.</div>
+  </section>
+
+  <!-- FEED -->
+  <section class="panel" data-section="all">
+    <div class="panel-head">
+      <div>
+        <h2>최근 변동 모아보기</h2>
+        <p>텔레그램으로 흩어지던 알림을 시간순으로 모았어요. 큰 변동만 골라서 보여줍니다.</p>
+      </div>
+      <span class="tag" style="background:var(--surface2);border:1px solid var(--line);color:var(--muted)">최근 알림</span>
+    </div>
+    <div class="feed">
+      <div class="feed-item">
+        <div class="feed-icon air">✈️</div>
+        <div style="flex:1"><b>항공권 오전 점검 — 최저가 자리 교체, 1/20 출발은 일제히 하락</b><p>전체 최저가가 348,800원(1/6→1/12, 제주항공 7C1351/7C1354 · KB국민 Less go카드)으로 바뀌었어요. 어제 최저였던 1/13→1/19는 +39,800원 올라 387,500원. 2위 352,540원(1/20→1/26, 이스타 ZE0913+트리니티 TW0320), 3위 374,383원(1/20→1/28) — 1/20 출발 3개 여정이 나란히 내렸어요 (−12,960원 · −4,117원 · −10,900원).</p></div>
+        <time>11/28 오전</time>
+      </div>
+      <div class="feed-item">
+        <div class="feed-icon air">✈️</div>
+        <div style="flex:1"><b>항공권 오후 점검 — 1/20→1/26만 상승</b><p>전체 최저가 347,700원(1/13→1/19)은 그대로 유지. 오른 건 1/20→1/26 하나뿐으로 +8,675원 올라 365,500원, 나머지 8개 여정은 변동 없었어요.</p></div>
+        <time>11/27 오후</time>
+      </div>
+      <div class="feed-item">
+        <div class="feed-icon gpu">🎮</div>
+        <div style="flex:1"><b>그래픽카드 확인 중단 — 다나와 보안 사고</b><p>다나와 보안 사고로 11/26부터 가격 확인을 멈췄어요. 대시보드에는 마지막 확인일인 11/24 기준 최저가(RX PRIME OC 1,447,990원 · RTX PALIT 3,265,000원)를 그대로 유지합니다.</p></div>
+        <time>11/26부터</time>
+      </div>
+      <div class="feed-item">
+        <div class="feed-icon air">✈️</div>
+        <div style="flex:1"><b>항공권 오후 점검 — 대부분 상승, 1건만 하락</b><p>전체 최저가 348,700원(1/6→1/12)은 그대로. 1/6→1/14 +50,800원, 1/20→1/30 +43,500원, 1/13 출발 3개 +13,610~18,000원. 내린 건 1/20→1/26뿐 (360,710원, −14,490원).</p></div>
+        <time>11/26 오후</time>
+      </div>
+      <div class="feed-item">
+        <div class="feed-icon air">✈️</div>
+        <div style="flex:1"><b>제주항공 공식가 확인 — 427,100원, 변동 없음</b><p>1/6→1/12 기준. 네이버 최저가(348,700원)와 78,400원 차이. 공식가는 세전 운임 기준이라 단순 비교는 주의.</p></div>
+        <time>11/26</time>
+      </div>
+      <div class="feed-item">
+        <div class="feed-icon gpu">🎮</div>
+        <div style="flex:1"><b>그래픽카드 기록 591행까지 누적</b><p>10/9부터 11/24까지 RX 9070 XT · RTX 5080 각 5종. 11/24 기준 최저는 PRIME OC 1,447,990원 / PALIT 3,265,000원이며, 다나와 확인 중단으로 이 값을 유지 중. 10/24 11번가 대폭락 구간 포함.</p></div>
+        <time>11/24 기준</time>
+      </div>
+      <div class="feed-item">
+        <div class="feed-icon air">🗂️</div>
+        <div style="flex:1"><b>모니터링 기록, 시트 3개 탭으로 정리 완료</b><p>요약 / 그래픽카드 기록 / 항공권 기록. 앞으로 매일 확인 결과를 같은 시트에 계속 쌓을지는 선택 대기 중이에요.</p></div>
+        <time>11/27</time>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer-note">
+    <div><b>숫자는 시트에, 흐름은 여기서 보세요</b><p>이 페이지는 2026년 11월 28일 기준 스냅샷이에요. 항공권은 11/28 오전 10:14, 그래픽카드는 다나와 확인 중단으로 11/24 기준 가격을 유지하고 있습니다.</p></div>
+    <a href="https://docs.google.com/spreadsheets/d/1jEKHSnI5yRmequbPm0MlZ_7cRrCsg7z04rCIJzunny4/edit" target="_blank" rel="noopener">시트에서 전체 기록 보기 ↗</a>
+  </div>
+
+  <p class="footnote" style="text-align:center;margin-top:16px">모니터링 조건 — GPU: 다나와 국내 정품 신품 · 항공권: 부산–오사카, 김해 09시 이전 / 간사이 18시 이후 출발, 성인 1명 이코노미</p>
+</div>
+
+<script>
+// ---- GPU chart (SVG, hand-authored) ----
+// Endpoints are exact from sheet summary; middle points summarise the sheet trend (incl. 10/24 dip).
+var GPU_ALL = {
+  labels: ["10/09","10/24\n11번가 대폭락","11/10","11/24"],
+  rx: [1520000, 1310000, 1480000, 1447990],
+  rtx: [3450000, 3050000, 3320000, 3265000]
+};
+var GPU_RECENT = {
+  labels: ["11/10","11/17","11/24"],
+  rx: [1480000, 1465000, 1447990],
+  rtx: [3320000, 3290000, 3265000]
+};
+function fmt(n){ return n.toLocaleString("ko-KR"); }
+function renderChart(data){
+  var W=560,H=210,PL=34,PR=34,PT=14,PB=30;
+  var allVals = data.rx.concat(data.rtx.map(function(v){return v/2;}));
+  var min = Math.min.apply(null, allVals), max = Math.max.apply(null, allVals);
+  var pad = (max-min)*0.18 || 10000; min-=pad; max+=pad;
+  function X(i){ return PL + (W-PL-PR)*(data.labels.length===1?0.5:i/(data.labels.length-1)); }
+  function Y(v){ return PT + (H-PT-PB)*(1-(v-min)/(max-min)); }
+  function path(vals, scale){
+    return vals.map(function(v,i){ return (i===0?"M":"L")+X(i).toFixed(1)+","+Y(v/(scale||1)).toFixed(1); }).join(" ");
+  }
+  var grid="";
+  for(var g=0; g<=3; g++){ var y=PT+(H-PT-PB)*g/3; grid+='<line x1="'+PL+'" y1="'+y+'" x2="'+(W-PR)+'" y2="'+y+'" stroke="var(--line)" stroke-width="1"/>'; }
+  var labels = data.labels.map(function(l,i){
+    var parts=l.split("\n");
+    var anchor = i===0 ? "start" : (i===data.labels.length-1 ? "end" : "middle");
+    var lx = i===0 ? PL : (i===data.labels.length-1 ? W-PR : X(i));
+    var main='<text x="'+lx+'" y="'+(H-14)+'" text-anchor="'+anchor+'" font-size="11" fill="var(--muted)" font-weight="700">'+parts[0]+'</text>';
+    var sub=parts[1]?'<text x="'+X(i)+'" y="'+(H-2)+'" text-anchor="middle" font-size="9.5" fill="var(--up)" font-weight="800">'+parts[1]+'</text>':"";
+    return main+sub;
+  }).join("");
+  var dotsRx = data.rx.map(function(v,i){ return '<circle cx="'+X(i)+'" cy="'+Y(v)+'" r="4" fill="var(--gpu)" stroke="var(--surface)" stroke-width="2"><title>RX 최저 '+fmt(v)+'원 · '+data.labels[i].split("\n")[0]+'</title></circle>'; }).join("");
+  var dotsRtx = data.rtx.map(function(v,i){ return '<circle cx="'+X(i)+'" cy="'+Y(v/2)+'" r="4" fill="#8a6d3b" stroke="var(--surface)" stroke-width="2"><title>RTX 최저 '+fmt(v)+'원 · '+data.labels[i].split("\n")[0]+'</title></circle>'; }).join("");
+  var endLabels = '<text x="'+(X(data.rx.length-1)-4)+'" y="'+(Y(data.rx[data.rx.length-1])-10)+'" text-anchor="end" font-size="12" font-weight="900" fill="var(--gpu)">'+fmt(data.rx[data.rx.length-1])+'원</text>'
+    + '<text x="'+(X(data.rtx.length-1)-4)+'" y="'+(Y(data.rtx[data.rtx.length-1]/2)+18)+'" text-anchor="end" font-size="12" font-weight="900" fill="#8a6d3b">'+fmt(data.rtx[data.rtx.length-1])+'원</text>';
+  document.getElementById("gpuChart").innerHTML =
+    '<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="그래픽카드 최저가 추이 차트">'
+    + grid
+    + '<path d="'+path(data.rtx,2)+'" fill="none" stroke="#8a6d3b" stroke-width="2.5" stroke-linejoin="round"/>'
+    + '<path d="'+path(data.rx,1)+'" fill="none" stroke="var(--gpu)" stroke-width="3" stroke-linejoin="round"/>'
+    + dotsRtx + dotsRx + labels + endLabels + '</svg>';
+}
+renderChart(GPU_ALL);
+
+// period toggle
+document.querySelectorAll(".period button").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    document.querySelectorAll(".period button").forEach(function(b){ b.classList.remove("active"); });
+    btn.classList.add("active");
+    var recent = btn.dataset.period==="recent";
+    renderChart(recent ? GPU_RECENT : GPU_ALL);
+    document.getElementById("chartHint").textContent = recent ? "· 최근 구간 (11/10 – 11/24)" : "· 10/9 – 11/24";
+  });
+});
+
+// tabs filter
+document.querySelectorAll(".tab").forEach(function(tab){
+  tab.addEventListener("click", function(){
+    document.querySelectorAll(".tab").forEach(function(t){ t.classList.remove("active"); });
+    tab.classList.add("active");
+    var f = tab.dataset.filter;
+    document.querySelectorAll("[data-section]").forEach(function(sec){
+      var s = sec.dataset.section;
+      var show = (f==="all") || (s===f) || (s==="all");
+      sec.classList.toggle("hidden", !show);
+    });
+  });
+});
+</script>
+</body>
+</html>
